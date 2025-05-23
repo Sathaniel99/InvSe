@@ -106,6 +106,9 @@ html[data-bs-theme=dark] {
 .bg-invert{
     background-color: var(--bs-invert-full);
 }
+.bg-bw{
+    background-color: var(--bs-invert-bw);
+}
 
 .bg-dark-orange-subtle {
     background-color: var(--bs-dark-orange-bg-subtle) !important;
