@@ -1,0 +1,162 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<!-- Contenedor principal -->
+<div class="d-flex flex-wrap flex-row row g-4 my-1">
+
+    <!-- Columna izquierda: Resumen de Inventario -->
+    <div class="col-sm-12 col-md-7 col-lg-7 col-xl-8 col-xxl-8">
+        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4">
+            <h1 class="fs-3 fw-semibold mb-2">Resumen de Inventario</h1>
+            <h3 class="fs-6 fw-normal text-muted mb-4">Visión general del estado actual de inventario</h3>
+
+            <!-- Tarjetas -->
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <div class="col d-flex flex-wrap gap-3">
+                    <!-- Total de productos -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-success p-2 d-flex flex-column justify-content-between col min-width-7 bg-success-subtle bg-gradient">
+                        <small class="text-muted">Total</small>
+                        <div class="fs-4 fw-bold counter-frame text-success-emphasis">125</div>
+                    </div>
+    
+                    <!-- En Stock -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-primary p-2 d-flex flex-column justify-content-between col min-width-7 bg-primary-subtle bg-gradient">
+                        <small class="text-muted">En Stock</small>
+                        <div class="fs-4 fw-bold counter-frame text-primary-emphasis">98</div>
+                    </div>
+                </div>
+
+                <div class="col d-flex flex-wrap gap-3">
+                    <!-- Bajo Stock -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-warning p-2 d-flex flex-column justify-content-between col min-width-7 bg-warning-subtle bg-gradient">
+                        <small class="text-muted">Bajo Stock</small>
+                        <div class="fs-4 fw-bold counter-frame text-warning-emphasis">23</div>
+                    </div>
+    
+                    <!-- Agotados -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-danger p-2 d-flex flex-column justify-content-between col min-width-7 bg-danger-subtle bg-gradient">
+                        <small class="text-muted">Agotados</small>
+                        <div class="fs-4 fw-bold counter-frame text-danger-emphasis">4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna derecha: Alertas de Stock -->
+    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-4 col-xxl-4">
+        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4">
+            <h1 class="fs-3 fw-semibold mb-2">Alertas de Stock</h1>
+            <h3 class="fs-6 fw-normal text-muted mb-4">Productos con bajo nivel de Stock</h3>
+
+            <!-- Lista de alertas -->
+            <div class="d-flex flex-column gap-3 mt-3">
+                <div class="d-flex align-items-center border border-danger rounded shadow-danger-sm p-3 w-100 text-danger bg-danger bg-opacity-25">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <div>
+                        <div class="fw-bold fs-6">Monitor Dell 27"</div>
+                        <small>Stock actual: 18 (Mínimo: 20)</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center border border-danger rounded shadow-danger-sm p-3 w-100 text-danger bg-danger bg-opacity-25">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <div>
+                        <div class="fw-bold fs-6">Impresora Epson EcoTank</div>
+                        <small>Stock actual: 7 (Mínimo: 10)</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center border border-danger rounded shadow-danger-sm p-3 w-100 text-danger bg-danger bg-opacity-25">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <div>
+                        <div class="fw-bold fs-6">Router Cisco Business</div>
+                        <small>Stock actual: 3 (Mínimo: 5)</small>
+                    </div>
+                </div>
+
+                <!-- Botón de acción -->
+                <button class="btn btn-outline-black fw-semibold mt-2" type="button">
+                    Ver todas las Alertas
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Segunda fila: Actividad reciente y gráfico -->
+<div class="d-flex flex-wrap flex-row row g-4 my-1">
+
+    <!-- Actividad Reciente -->
+    <div class="col-sm-12 col-md-7 col-lg-7 col-xl-8 col-xxl-8">
+        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4">
+            <h1 class="fs-5 fw-semibold mb-2">Actividad Reciente</h1>
+            <h3 class="fs-6 fw-normal text-muted mb-4">Últimas acciones realizadas en el sistema</h3>
+
+            <!-- Lista de actividades -->
+            <div class="d-flex flex-column gap-3 mt-3">
+                <div class="d-flex align-items-start border border-secondary-subtle rounded p-3 w-100">
+                    
+                    <div class="rounded-circle bg-secondary-subtle text-center me-3 border border-1 border-secondary-subtle shadow-sm d-flex justify-content-center align-items-center" style="width: 2rem; height: 2rem;">M</div>
+                    <div>
+                        <div class="fw-bold fs-6">María López</div>
+                        <small class="text-muted">Actualizó Inventario: <strong>Laptop HP
+                                EliteBook</strong></small><br>
+                        <small class="text-muted">Hace 5min</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start border border-secondary-subtle rounded p-3 w-100">
+                    
+                    <div class="rounded-circle bg-secondary-subtle text-center me-3 border border-1 border-secondary-subtle shadow-sm d-flex justify-content-center align-items-center" style="width: 2rem; height: 2rem;">C</div>
+
+                    <div>
+                        <div class="fw-bold fs-6">Carlos Rodriguez</div>
+                        <small class="text-muted">Agregó Producto: <strong>Auriculares Sony</strong></small><br>
+                        <small class="text-muted">Hace 2 horas</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start border border-secondary-subtle rounded p-3 w-100">
+                    
+                    <div class="rounded-circle bg-secondary-subtle text-center me-3 border border-1 border-secondary-subtle shadow-sm d-flex justify-content-center align-items-center" style="width: 2rem; height: 2rem;">A</div>
+
+                    <div>
+                        <div class="fw-bold fs-6">Ana García</div>
+                        <small class="text-muted">Movió Stock: <strong>Teclados Logitech</strong></small><br>
+                        <small class="text-muted">Hace 5 horas</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start border border-secondary-subtle rounded p-3 w-100">
+                    
+                    <div class="rounded-circle bg-secondary-subtle text-center me-3 border border-1 border-secondary-subtle shadow-sm d-flex justify-content-center align-items-center" style="width: 2rem; height: 2rem;">R</div>
+
+                    <div>
+                        <div class="fw-bold fs-6">Roberto Fernandez</div>
+                        <small class="text-muted">Realizó Inventario: <strong>Almacén C</strong></small><br>
+                        <small class="text-muted">Hace 1 día</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movimientos (Gráfico) -->
+    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-4 col-xxl-4">
+        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4 h-100">
+            <div class="mb-3">
+                <h1 class="fs-5 fw-semibold">Movimientos</h1>
+                <h3 class="fs-6 fw-normal text-muted">Entradas y salidas de productos</h3>
+            </div>
+            <div class="w-100 h-75 border border-secondary-subtle bg-body-secondary d-flex justify-content-center align-items-center rounded-2" style="height: 30rem !important;">
+                <h1 class="text-muted fs-4">Gráfico Mensual</h1>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content_dashboard %}

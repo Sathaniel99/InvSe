@@ -1,0 +1,19 @@
+<div class="d-flex justify-content-center gap-2 p-2 mb-3">
+    <i class="bi bi-wind text-center display-5" style="transform: rotateY(180deg);"></i>
+    <i class="bi bi-truck text-center display-5"></i>
+</div>
+<form class="d-flex flex-column" method="post" action="{% url 'update-proveedores' proveedor %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <div class="d-flex justify-content-center gap-2 mt-2">
+        <button type="submit" class="btn btn-outline-black">
+            <i class="bi bi-arrow-clockwise"></i> Actualizar
+        </button>
+        <button type="button" class="btn btn-outline-danger-sdcn" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+    </div>
+</form>
+
+<span class="position-absolute bottom-0 end-0 me-3 mb-2 fw-semibold">{{ proveedor }}</span>

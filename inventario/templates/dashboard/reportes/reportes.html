@@ -1,0 +1,100 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<style>
+    .card-reporte{
+        min-width: 15rem !important;
+    }
+</style>
+<div class="border border-secondary-subtle p-3 rounded shadow-sm">
+    <div>
+        <h1 class="fs-3 fw-semibold mb-1">Reportes</h1>
+        <h2 class="fs-6 fw-normal text-muted">Generación y visualización de informes</h2>
+    </div>
+    <div class="d-flex flex-wrap gap-3 mt-4">
+        <!-- Card Inventario Actual -->
+        <div class="border border-secondary-subtle p-3 rounded shadow-sm d-flex flex-column justify-content-between col card-reporte">
+            <div class="">
+                <h1 class="fs-5 fw-semibold">Inventario Actual</h1>
+                <h2 class="fs-6 fw-normal text-muted">Generación de informes detallados del inventario actual.</h2>
+            </div>
+            <button type="button"
+                class="btn btn-outline-black fw-semibold w-100"
+                style="width: max-content;">
+                Generar
+            </button>
+        </div>
+
+        <!-- Card Rotación de Stock -->
+        <div class="border border-secondary-subtle p-3 rounded shadow-sm d-flex flex-column justify-content-between col card-reporte">
+            <div class="">
+                <h1 class="fs-5 fw-semibold">Rotación de Stock</h1>
+                <h2 class="fs-6 fw-normal text-muted">Análisis de la rotación de productos a lo largo del tiempo.</h2>
+            </div>
+            <button type="button"
+                class="btn btn-outline-black fw-semibold w-100"
+                style="width: max-content;">
+                Generar
+            </button>
+        </div>
+
+        <!-- Card Valoración -->
+        <div class="border border-secondary-subtle p-3 rounded shadow-sm d-flex flex-column justify-content-between col card-reporte">
+            <div class="">
+                <h1 class="fs-5 fw-semibold">Valoración</h1>
+                <h2 class="fs-6 fw-normal text-muted">Valoración económica del inventario total.</h2>
+            </div>
+            <button type="button"
+                class="btn btn-outline-black fw-semibold w-100"
+                style="width: max-content;">
+                Generar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="border border-secondary-subtle p-3 rounded shadow-sm mt-4">
+    <div>
+        <h1 class="fs-3 fw-semibold mb-1">Reportes Recientes</h1>
+        <h2 class="fs-6 fw-normal text-muted">Últimos informes generados</h2>
+    </div>
+    <div class="d-flex flex-column gap-3 mt-4">
+        <!-- Reporte 1 -->
+        <div class="d-flex justify-content-between align-items-center p-2 border border-secondary-subtle rounded shadow-sm">
+            <div>
+                <h1 class="fs-5 fw-semibold">Inventario Almacén A</h1>
+                <h2 class="fs-6 fw-normal text-muted">Generado: 10/05/2025</h2>
+            </div>
+            <button type="button"
+                class="btn btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
+                <i class="bi bi-download"></i> Descargar
+            </button>
+        </div>
+
+        <!-- Reporte 2 -->
+        <div class="d-flex justify-content-between align-items-center p-2 border border-secondary-subtle rounded shadow-sm">
+            <div>
+                <h1 class="fs-5 fw-semibold">Valoración Q2 2025</h1>
+                <h2 class="fs-6 fw-normal text-muted">Generado: 01/05/2025</h2>
+            </div>
+            <button type="button"
+                class="btn btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
+                <i class="bi bi-download"></i> Descargar
+            </button>
+        </div>
+
+        <!-- Reporte 3 -->
+        <div class="d-flex justify-content-between align-items-center p-2 border border-secondary-subtle rounded shadow-sm">
+            <div>
+                <h1 class="fs-5 fw-semibold">Rotación Abril 2025</h1>
+                <h2 class="fs-6 fw-normal text-muted">Generado: 30/04/2025</h2>
+            </div>
+            <button type="button"
+                class="btn btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
+                <i class="bi bi-download"></i> Descargar
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock content_dashboard %}

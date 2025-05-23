@@ -1,0 +1,94 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<style>
+    section{
+        position: relative;
+    }
+</style>
+<!-- Contenedor principal -->
+<div class="d-flex flex-wrap flex-row row g-4 my-1">
+
+    <!-- Columna izquierda: Resumen de Proveedores -->
+    <div class="col-sm-12 col-md-7 col-lg-7 col-xl-8 col-xxl-8">
+        <div class="border border-1 border-secondary-subtle rounded p-4 bg-invert">
+            <h1 class="fs-3 fw-semibold mb-2">{{ title_page }}</h1>
+            <h3 class="fs-6 fw-normal text-muted mb-4">Última actualización: {{ fecha_hoy }}</h3>
+
+            <!-- Tarjetas -->
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <div class="col d-flex flex-wrap gap-3">
+                    <!-- Total Proveedores -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-success p-2 d-flex flex-column justify-content-between col min-width-7 bg-success-subtle bg-gradient">
+                        <small class="text-muted">Total Proveedores</small>
+                        <div class="fs-4 fw-bold counter-frame text-success-emphasis">{{ total_proveedores }}</div>
+                    </div>
+
+                    <!-- Total Gastado Mes -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-danger p-2 d-flex flex-column justify-content-between col min-width-7 bg-danger-subtle bg-gradient">
+                        <small class="text-muted">Gasto del Mes</small>
+                        <div class="fs-4 fw-bold text-danger-emphasis">
+                            <span>-$</span>
+                            <span class="counter-frame">{{ total_gastado_mes }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col d-flex flex-wrap gap-3">
+                    <!-- Proveedores que aportaron este mes -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-warning p-2 d-flex flex-column justify-content-between col min-width-7 bg-warning-subtle bg-gradient">
+                        <small class="text-muted">Aportaron este Mes</small>
+                        <div class="fs-4 fw-bold counter-frame text-warning-emphasis">{{ proveedores_activos_mes }}</div>
+                    </div>
+
+                    <!-- Fecha de ultima entrada - preferible este mes -->
+                    <div
+                        class="border border-secondary-subtle rounded shadow-primary p-2 d-flex flex-column justify-content-between col min-width-7 bg-primary-subtle bg-gradient">
+                        <small class="text-muted">Última Entrada</small>
+                        <div class="fs-4 fw-bold text-primary-emphasis">
+                            {% if ultima_entrada %}
+                            <p class="mb-0">
+                                <strong class="counter-frame">{{ ultima_entrada.fecha|date:"d" }}</strong>
+                                <strong class="counter-frame">{{ ultima_entrada.fecha|date:"m" }}</strong>
+                                <strong class="counter-frame">{{ ultima_entrada.fecha|date:"Y" }}</strong>
+                            </p>
+                            {% else %}
+                            <p class="text-muted mb-0 fs-5">Sin registros</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna derecha: Proveedores mas usados -->
+    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-4 col-xxl-4">
+        <div class="border border-1 border-secondary-subtle rounded p-4 bg-invert">
+            <h1 class="fs-4 fw-semibold mb-2"><i class="bi bi-person-check"></i> Proveedores Más Usados</h1>
+            <h3 class="fs-6 fw-normal text-muted mb-4">Este Mes</h3>
+
+            <!-- Lista de Top 5 mas usados -->
+            <div class="d-flex flex-column">
+                {% for prov in proveedores_mas_usados %}
+                <div
+                    class="d-flex justify-content-between align-items-center p-2 transition-200 hover-secondary-subtle fw-semibold">
+                    <span class="">{{ prov.producto__proveedor__nombre|default:"Sin nombre" }}</span>
+                    <span class="">
+                        {{ prov.total_entradas }} - ${{ prov.total_gastado|floatformat:2 }}
+                    </span>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">No hay movimientos aún.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<i class="bi bi-truck position-absolute top-0 start-0" style="font-size: 30rem; transform: rotate(-45deg) translate(7rem, -12rem); color: #7878781c !important; z-index: -1;"></i>
+{% endblock content_dashboard %}
+<div class="container mt-4">

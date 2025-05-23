@@ -1,0 +1,41 @@
+{% extends "dashboard_template.html" %}
+{% load static %}
+
+{% block content_dashboard %}
+<style>section{display: flex; position: relative; overflow: hidden;}</style>
+<div class="border border-1 border-secondary-subtle rounded shadow p-4 m-auto col-xs-10 col-sm-10 col-md-10 col-lg-7 col-xl-5 col-xxl-4 z-index-overall bg-invert">
+    <div class="d-flex justify-content-center gap-2 p-2 mb-3">
+        <i class="bi bi-wind text-center display-5" style="transform: rotateY(180deg);"></i>
+        <i class="bi bi-truck text-center display-5"></i>
+    </div>
+    <form class="d-flex flex-column" method="post">
+        {% csrf_token %}
+        <div class="mb-2">
+            <label for="id_nombre">Nombre del Proveedor:</label>
+            <input type="text" name="nombre" class="form-control" maxlength="150" required="" id="id_nombre">
+        </div>
+        <div class="mb-2">
+            <label for="id_contacto">Contacto:</label>
+            <input type="text" name="contacto" class="form-control" maxlength="100" id="id_contacto">
+        </div>
+        <div class="mb-2">
+            <label for="id_telefono">Teléfono:</label>
+            <input type="text" name="telefono" class="form-control" maxlength="20" id="id_telefono">
+        </div>
+        <div class="mb-2">
+            <label for="id_email">Correo Electrónico:</label>
+            <input type="email" name="email" class="form-control" maxlength="254" id="id_email">
+        </div>
+        <div class="mb-2">
+            <label for="id_direccion">Dirección:</label>
+            <input type="text" name="direccion" class="form-control" id="id_direccion">
+        </div>
+        <button type="submit" class="btn btn-outline-black mt-2">
+            <i class="bi bi-plus-circle"></i> Guardar
+        </button>
+    </form>
+</div>
+
+<i class="bi bi-truck position-absolute top-0 start-0" style="font-size: 30rem; transform: rotate(-45deg) translate(7rem, -12rem); color: #7878781c !important;"></i>
+
+{% endblock content_dashboard %}

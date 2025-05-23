@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" data-bs-theme>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvSe | {{ title_page }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'libs/bootstrap-5.3.3-dist/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="{% static 'libs/bootstrap-icons-1.11.3/bootstrap-icons.min.css' %}">
+    
+    <!-- Bootstrap extends custorm -->
+    <link href="{% static 'libs/bootstrap-5.3.3-dist/bootstrap_custom.css' %}" rel="stylesheet" >
+    <link href="{% static 'main_css.css' %}" rel="stylesheet" >
+</head>
+<body class="bg-invert">
+    {% block content_main %}
+        
+    {% endblock content_main %}
+    <button class="btn btn-black d-flex align-items-center justify-content-center rounded-circle px-3 py-1 position-absolute bottom-0 end-0 m-4 shadow" name="btn-theme" id="btn-theme">
+        <i class="bi bi-sun" style="width: 1rem;"></i>
+    </button>
+    <!-- JS opcional -->
+    <script src="{% static 'libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+    <script src="{% static 'main_js.js' %}"></script>
+</body>
+</html>

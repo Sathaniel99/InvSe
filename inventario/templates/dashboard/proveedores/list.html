@@ -1,0 +1,118 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<link
+    href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.css"
+    rel="stylesheet" integrity="sha384-AHdXImV07k5XJYMyGLDf7LhYawou4SZouf2KCm2KfuRB1DubOpbvF57wzhPMCsY8"
+    crossorigin="anonymous">
+<style>
+    .badge {
+        width: 5rem;
+    }
+    section{
+        position: relative;
+    }
+</style>
+
+<!-- Tabla -->
+<div class="d-flex justify-content-end align-items-center mb-4">
+    <button type="button" class="btn btn-black fw-semibold d-flex align-items-center gap-2">
+        <i class="bi bi-plus-circle"></i> Nuevo proveedor
+    </button>
+</div>
+<table class="table table-hover table-striped table-hover shadow-sm border-0 border-transparent" id="proveedores-table">
+    <caption>Listado de {{ title_page }}</caption>
+    <thead class="bg-light">
+        <tr class="border border-neutral-300">
+            <th scope="col" width="15%">Nombre</th>
+            <th scope="col">Dirección</th>
+            <th scope="col" width="15%">Email</th>
+            <th scope="col" width="10%">Teléfono</th>
+            <th scope="col" width="15%">Contacto</th>
+            <th scope="col" width="10%">Acciones</th>
+        </tr>
+    </thead>
+    <tbody class="bg-invert">
+
+        {% for ax in proveedores %}
+        <tr class="border border-neutral-300">
+            <td>{{ ax.nombre }}</td>
+            <td>{{ ax.direccion }}</td>
+            <td>{{ ax.email }}</td>
+            <td>{{ ax.telefono }}</td>
+            <td>{{ ax.contacto }}</td>
+            <td>
+                <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip" data-bs-title="Editar"
+                    data-bs-toggle="modal" data-bs-target="#EditarModal" hx-get="/search-proveedor-id/{{ ax.id }}"
+                    hx-target="#editarModalContent" hx-swap="innerHTML" hx-trigger="click">
+                    <i class="bi bi-pen w-100 h-100"></i>
+                </button>
+                <button class="btn btn-outline-danger-sdcn" data-bs-toggle-tooltip="tooltip" data-bs-title="Eliminar"
+                    id="{{ ax.id }}" data-bs-toggle="modal" data-bs-target="#DeleteModal" onclick="delete_modal.setAttribute('href', '/proveedores/delete-proveedores/{{ax.id}}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+<div class="modal fade" id="EditarModal" tabindex="-1" aria-labelledby="EditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden bg-invert shadow">
+            <div class="px-5 py-4 z-index-overall" id="editarModalContent">
+                <!--  EDITAR  -->
+                  
+                <!--  EDITAR  -->
+            </div>
+            <i class="bi bi-truck position-absolute top-0 start-0"
+                style="font-size: 35rem; transform: rotate(-45deg) translate(7rem, -11rem); color: #7878781c !important;"></i>
+        </div>
+    </div>
+</div>
+
+<i class="bi bi-truck position-absolute top-0 start-0" style="font-size: 30rem; transform: rotate(-45deg) translate(7rem, -12rem); color: #7878781c !important; z-index: -1;"></i>
+
+<div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="DeleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="p-4">
+                <div class="d-flex flex-row justify-content-center align-items-center gap-2 text-danger mb-2">
+                    <i class="bi bi-exclamation-triangle fs-1"></i>
+                    <h2 class="fw-semibold">¿Estás Seguro?</h2>
+                </div>
+                <h5 class="fw-normal">Esta acción no se puede revertir. El elemento será removido permanentemente de la
+                    base de datos.</h5>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center p-2 pt-0 pb-4 gap-3">
+                <a type="button" class="btn btn-outline-danger-sdcn" id="delete_modal">Eliminar</a>
+                <button type="button" class="btn btn-outline-black" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
+    integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
+    integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n"
+    crossorigin="anonymous"></script>
+<script
+    src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.js"
+    integrity="sha384-ekYQxP5UHe08BFvtvtcrjLc2YsPeISDgLZAqLtdHaJndItMrJ50Db356qMcHx/sH"
+    crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('#proveedores-table').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.3.1/i18n/es-ES.json',
+            },
+            responsive: true,
+        });
+    });
+</script>
+{% endblock content_dashboard %}

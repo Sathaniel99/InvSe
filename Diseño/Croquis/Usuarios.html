@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvSe | Usuarios</title>
+    <script src="./src/tailwind.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./src/style.css">
+    
+</head>
+
+<body class="flex w-full h-[100dvh]">
+    <aside id="main-aside" class="flex flex-col w-[5rem] h-full border-e border-neutral-300 transition duration-300 ease-in-out">
+        <div class="h-full p-2">
+            <div class="flex flex-wrap items-center justify-center gap-2 p-1 overflow-hidden">
+                <i class="bi bi-boxes text-2xl"></i>
+                <h1 class="font-bold text-xl">InvSe</h1>
+            </div>
+            <div class="flex flex-col justify-start my-2 gap-1">
+                <div class="mx-2">
+                    <a class="flex items-center overflow-hidden w-full justify-start rounded-md gap-4 px-3 py-1.5 bg-transparent hover:bg-neutral-950 active:bg-neutral-500 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out"
+                        href="./Inicio.html">
+                        <i class="bi bi-house-door text-xl"></i>
+                        Inicio
+                    </a>
+                </div>
+                <div class="mx-2">
+                    <a class="flex items-center overflow-hidden w-full justify-start rounded-md gap-4 px-3 py-1.5 bg-transparent hover:bg-neutral-950 active:bg-neutral-500 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out"
+                        href="./Inventario.html">
+                        <i class="bi bi-pass text-xl"></i>
+                        Inventario
+                    </a>
+                </div>
+                <div class="mx-2">
+                    <a class="flex items-center overflow-hidden w-full justify-start rounded-md gap-4 px-3 py-1.5 bg-transparent hover:bg-neutral-950 active:bg-neutral-500 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out"
+                        href="./Productos.html">
+                        <i class="bi bi-box-seam text-xl"></i>
+                        Productos
+                    </a>
+                </div>
+                <div class="mx-2">
+                    <a class="flex items-center overflow-hidden w-full justify-start rounded-md gap-4 px-3 py-1.5 bg-transparent hover:bg-neutral-950 active:bg-neutral-500 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out"
+                        href="./Proveedores.html">
+                        <i class="bi bi-truck text-xl"></i>
+                        Proveedores
+                    </a>
+                </div>
+                <div class="mx-2">
+                    <a class="flex items-center overflow-hidden w-full justify-start rounded-md gap-4 px-3 py-1.5 bg-transparent hover:bg-neutral-950 active:bg-neutral-500 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out"
+                        href="./Reportes.html">
+                        <i class="bi bi-clipboard-data text-xl"></i>
+                        Reportes
+                    </a>
+                </div>
+            </div>
+            <hr class="border-neutral-300">
+            <div class="flex flex-col justify-start my-2 gap-1">
+                <div class="mx-2">
+                    <a class="flex items-center overflow-hidden w-full justify-start rounded-md gap-4 px-3 py-1.5 bg-neutral-950 active:bg-neutral-500 text-sm/6 font-semibold text-white transition duration-400 ease-in-out"
+                        href="./Usuarios.html">
+                        <i class="bi bi-person text-xl"></i>
+                        Usuarios
+                    </a>
+                </div>
+                <div class="mx-2">
+                    <a class="flex items-center overflow-hidden w-full justify-start rounded-md gap-4 px-3 py-1.5 bg-transparent hover:bg-neutral-950 active:bg-neutral-700 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out "
+                        href="./Configuración.html">
+                        <i class="bi bi-gear text-xl"></i>
+                        Configuración
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-row justify-between items-center border-t-1 border-neutral-300 p-2 gap-2 shadow-lg">
+            <div class="flex items-center justify-center w-7 h-7 bg-neutral-300 rounded-full">
+                <i class="bi bi-person"></i>
+            </div>
+            <div class="flex flex-col">
+                <h1>Admin</h1>
+                <h2 class="text-[.75rem]">admin@invse.com</h2>
+            </div>
+            <button class="flex items-center overflow-hidden justify-start rounded-md gap-4 px-3 py-1.5 border-1 border-neutral-500 bg-transparent hover:bg-neutral-950 active:bg-neutral-400 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out cursor-pointer">
+                <i class="bi bi-sun"></i>
+            </button>
+        </div>
+    </aside>
+    <main class="flex flex-col w-full">
+        <nav class="p-2 border-b border-neutral-300 flex items-center gap-2 columns-3">
+            <button type="button" id="aside-hide"
+                class="rounded-md gap-2 px-3 py-1.5 bg-transparent cursor-pointer hover:bg-neutral-950 active:bg-neutral-400 text-sm/6 font-semibold text-black hover:text-white transition duration-400 ease-in-out">
+                <i class="bi bi-layout-sidebar font-bold"></i>
+            </button>
+            <h2 class="text-xl font-bold">Usuarios</h2>
+        </nav>
+        <section class="p-5 h-full overflow-y-auto" id="main-section">section</section>
+    </main>
+</body>
+<script src="./src/funct.js"></script>
+
+</html>

@@ -1,0 +1,98 @@
+html[data-bs-theme="dark"] .shadow{
+    box-shadow: 0 0.5rem 1rem rgba(102, 102, 102, 0.15) !important;
+}
+.highcharts-credits{
+    display: none;
+}
+#btn-theme{
+    width: 2.5rem;
+    height: 2.5rem;
+}
+.pointer-events-none{
+    pointer-events: none;
+}
+.z-index-overall{
+    z-index: 1055;
+}
+.transform-y-move:hover{
+    transform: translateY(-5px);
+}
+.hover-secondary-subtle:hover{
+    background-color: hsla(0, 0%, 50%, 0.5);
+}
+.transition-300{
+    transition: all 300ms ease-in-out;
+}
+.transition-250{
+    transition: all 250ms ease-in-out;
+}
+.transition-200{
+    transition: all 200ms ease-in-out;
+}
+.resize-none{
+    resize: none;
+}
+
+select{
+    cursor: pointer;
+}
+select:hover{
+    box-shadow: 0 0 0 .25rem rgb(70 83 102 / 16%) !important;
+}
+select:focus{
+    border-color: #373d45 !important;
+}
+
+.active>.page-link, .page-link.active {
+    background-color: var(--bs-black) !important;
+    border-color: var(--bs-secondary-border-subtle) !important;
+    color: white;
+}
+.active>.page-link:focus, .active>.page-link:hover{
+    color: white;
+}
+.page-link:focus {
+    z-index: 3;
+    color: var(--bs-emphasis-color);
+    background-color: var(--bs-pagination-focus-bg);
+    outline: 0;
+    box-shadow: 0 0 0 .1rem rgb(128 128 128 / 50%) !important;
+}
+.page-link {
+    padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
+    color: var(--bs-emphasis-color);
+    text-decoration: none;
+    background-color: transparent;
+    border: var(--bs-pagination-border-width) solid var(--bs-pagination-hover-border-color) !important;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.page-link:hover{
+    color: var(--bs-emphasis-color) !important;
+    background-color: var(--bs-gray-100) !important;
+    border-color: var(--bs-secondary-text-emphasis) !important;
+    text-shadow: 1px 1px 8px black !important;
+}
+
+.form-control:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #373d45 !important;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgb(70 83 102 / 16%) !important;
+}
+
+@media (min-width: 700px) {
+    div[name="nav-user"] {
+        display: none;
+    }
+}
+.min-width-7{
+    min-width: 7rem;
+}
+#user-img:hover{
+    box-shadow: 0 0 1rem rgb(102 102 102) !important;
+}
+
+ul.dropdown-menu.bg-invert.p-2.show{
+    transform: translate(-50px, 42px) !important;
+}
