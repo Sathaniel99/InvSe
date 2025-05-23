@@ -43,6 +43,9 @@ select:focus{
     border-color: #373d45 !important;
 }
 
+body{
+    background-color: var(--bs-invert-full);
+}
 .active>.page-link, .page-link.active {
     background-color: var(--bs-black) !important;
     border-color: var(--bs-secondary-border-subtle) !important;
