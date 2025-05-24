@@ -11,6 +11,9 @@ html[data-bs-theme="dark"] .shadow{
 .pointer-events-none{
     pointer-events: none;
 }
+.cursor-pointer{
+    cursor: pointer;
+}
 .z-index-overall{
     z-index: 1055;
 }
@@ -79,10 +82,14 @@ body{
 .form-control:focus {
     color: var(--bs-body-color);
     background-color: var(--bs-body-bg);
-    border-color: #373d45 !important;
+    border: solid .15rem rgb(127 127 127) !important;
     outline: 0;
-    box-shadow: 0 0 0 .25rem rgb(70 83 102 / 16%) !important;
+    box-shadow: 0 0 0 .25rem rgb(125 125 125 / 25%) !important;
 }
+.form-control:hover {
+    box-shadow: 0 0 0 .25rem rgb(125 125 125 / 25%) !important;
+}
+
 
 @media (min-width: 700px) {
     div[name="nav-user"] {
