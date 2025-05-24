@@ -200,7 +200,7 @@ def list_proveedores(request):
 
 @login_required
 def read_proveedores(request, id):
-    proveedor = Proveedor.objects.get(id = id)
+    proveedor = Proveedor.objects.get_object_or_404(id = id)
     
     context = {
         'title_page' : 'Proveedores',
@@ -210,7 +210,7 @@ def read_proveedores(request, id):
 
 @login_required
 def update_proveedores(request, id):
-    proveedor = Proveedor.objects.get(id = id)
+    proveedor = Proveedor.objects.get_object_or_404(id = id)
     form = ProveedorForm()
     errors = ""
     if request.method == 'POST':
@@ -227,22 +227,12 @@ def update_proveedores(request, id):
     return render(request, 'dashboard/proveedores/list.html', context)
 
 @login_required
-def list_proveedores(request):
-    proveedores = Proveedor.objects.all()
-
-    context = {
-        'title_page' : 'Listar Proveedores',
-        'proveedores' : proveedores
-    }
-    return render(request, 'dashboard/proveedores/list.html', context)
-
-@login_required
 def delete_proveedores(request, id):
-    Proveedor.objects.get(pk=id).delete()
+    Proveedor.objects.get_object_or_404(pk=id).delete()
     return redirect('list-proveedores')
 
 def search_proveedor_id(request,id):
-    proveedor = Proveedor.objects.get(pk = id)
+    proveedor = Proveedor.objects.get_object_or_404(pk = id)
     form = ProveedorForm(instance=proveedor)
     html = render(request, 'dashboard/proveedores/htmx-update.html', {'form' : form, 'proveedor' : id})
     return HttpResponse(html)

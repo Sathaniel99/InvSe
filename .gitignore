@@ -1,0 +1,39 @@
+# KEY del proyecto
+SECRET_KEY.py
+
+# Archivos de entorno
+.env
+.env.local
+*.env.*
+.env.example
+
+# Archivos de Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.pot
+*.mo
+*.po
+.DS_Store
+*.swp
+*~
+
+# Carpeta de dependencias
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
