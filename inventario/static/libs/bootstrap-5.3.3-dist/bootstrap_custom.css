@@ -216,10 +216,9 @@ html[data-bs-theme=dark] {
     --bs-btn-hover-border-color: var(--bs-secondary-border-subtle);
 
     --bs-btn-focus-shadow-rgb: 2550, 0, 0;
-    /*color: rgb(255, 0, 0);*/
 
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #3b3b3b;
+    --bs-btn-active-color: var(--bs-invert-full);
+    --bs-btn-active-bg: var(--bs-gray-600);
     --bs-btn-active-border-color: #000000;
 
     --bs-btn-disabled-color: #fff;
@@ -407,4 +406,7 @@ html[data-bs-theme=dark] {
 .svg-orange-stroke {
     stroke: var(--bs-orange) !important;
     stroke-width: 2px;
+}
+.form-check>label, .form-check>input, .form-check{
+    cursor: pointer;
 }

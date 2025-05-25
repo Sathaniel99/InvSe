@@ -20,20 +20,46 @@
                 class="btn {% if 'Inventario' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
                 <i class="bi bi-pass fs-5"></i> Inventario
             </a>
-            <a href="{% url 'resumen-productos' %}"
-                class="btn {% if 'Productos' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
-                <i class="bi bi-box-seam fs-5"></i> Productos
-            </a>
+
             <div class="w-100 overflow-hidden">
                 <button
-                    class="btn {% if 'proveedores' in request.path %}btn-black rounded-bottom-0 {% else %}btn-ghost-black border-0 {% endif %}d-flex align-items-center w-100 text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9"
-                    type="button" data-bs-toggle="collapse" data-bs-target="#proveedores-collapse" aria-expanded="false"
-                    aria-controls="proveedores-collapse">
+                class="btn {% if 'productos' in request.path %}btn-black rounded-bottom-0 {% else %}btn-ghost-black border-0 {% endif %}d-flex align-items-center w-100 text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9"
+                type="button" data-bs-toggle="collapse" data-bs-target="#proveedores-collapse" aria-expanded="false" aria-controls="proveedores-collapse">
+                    <i class="bi bi-truck fs-5"></i> Productos
+                </button>
+                <div class="collapse multi-collapse border border-secondary-subtle rounded-1 rounded-top-0 p-0 {% if 'productos' in request.path %}show{% endif %}"
+                id="proveedores-collapse">
+                    {% if request.user.tipo_user == 'Económico' %}
+                    <a href="{% url 'resumen-productos' %}" class="btn btn-outline-black {% if 'resumen-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-card-text"></i> Resumen
+                    </a>
+                    <a href="{% url 'create-proveedores' %}" class="btn btn-outline-black {% if 'create-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-plus-circle"></i> Agregar producto
+                    </a>
+                    <a href="{% url 'list-proveedores' %}" class="btn btn-outline-black {% if 'list-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-list"></i> Listar productos
+                    </a>
+                    {% else %}
+                    <a href="{% url 'solicitar-productos' %}" class="btn btn-outline-black {% if 'solicitar-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-file-earmark-arrow-up"></i> Solicitar productos
+                    </a>
+                    <a href="{% url 'solicitudes-productos' %}" class="btn btn-outline-black {% if 'solicitudes-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-file-earmark-text"></i> Solicitudes
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            {% if request.user.tipo_user == 'Económico' %}
+            <div class="w-100 overflow-hidden">
+                <button
+                class="btn {% if 'proveedores' in request.path %}btn-black rounded-bottom-0 {% else %}btn-ghost-black border-0 {% endif %}d-flex align-items-center w-100 text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9"
+                type="button" data-bs-toggle="collapse" data-bs-target="#proveedores-collapse" aria-expanded="false" aria-controls="proveedores-collapse">
                     <i class="bi bi-truck fs-5"></i> Proveedores
                 </button>
-                </a>
                 <div class="collapse multi-collapse border border-secondary-subtle rounded-1 rounded-top-0 p-0 {% if 'proveedores' in request.path %}show{% endif %}"
-                    id="proveedores-collapse">
+                id="proveedores-collapse">
                     <a href="{% url 'resumen-proveedores' %}" class="btn btn-outline-black {% if 'resumen-proveedores' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-card-text"></i> Resumen
                     </a>
@@ -43,9 +69,9 @@
                     <a href="{% url 'list-proveedores' %}" class="btn btn-outline-black {% if 'list-proveedores' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-list"></i> Listar proveedores
                     </a>
-                    </div>
                 </div>
             </div>
+            {% endif %}
             <a href="{% url 'reportes' %}"
                 class="btn {% if 'Reportes' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
                 <i class="bi bi-clipboard-data fs-5"></i> Reportes
@@ -59,7 +85,7 @@
                 class="btn {% if 'Usuarios' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
                 <i class="bi bi-person fs-5"></i> Usuarios
             </a>
-            <a href="./Configuración.html"
+            <a href="{% url 'self-config' %}"
                 class="btn {% if 'Configuración' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
                 <i class="bi bi-gear fs-5"></i> Configuración
             </a>

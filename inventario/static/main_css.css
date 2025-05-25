@@ -40,10 +40,11 @@ select{
     cursor: pointer;
 }
 select:hover{
-    box-shadow: 0 0 0 .25rem rgb(70 83 102 / 16%) !important;
+    box-shadow: 0 0 0 .25rem rgb(125 125 125 / 25%) !important;
 }
 select:focus{
-    border-color: #373d45 !important;
+    border: solid .15rem rgb(127 127 127) !important;
+    box-shadow: 0 0 0 .25rem rgb(125 125 125 / 25%) !important;
 }
 
 body{
@@ -79,6 +80,9 @@ body{
     text-shadow: 1px 1px 8px black !important;
 }
 
+.form-control {
+    border: .15rem solid var(--bs-border-color) !important;
+}
 .form-control:focus {
     color: var(--bs-body-color);
     background-color: var(--bs-body-bg);
@@ -105,4 +109,8 @@ body{
 
 ul.dropdown-menu.bg-invert.p-2.show{
     transform: translate(-50px, 42px) !important;
+}
+.tooltip-inner {
+  white-space: pre-line;
+  text-align: left;
 }

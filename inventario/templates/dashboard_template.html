@@ -50,8 +50,8 @@
               </ul>
             </div>
             <div class="flex-column">
-                <h1 class="fs-6 mb-0">Admin</h1>
-                <small class="text-muted">admin@invse.com</small>
+                <h1 class="fs-6 mb-0">{{ request.user.username }}</h1>
+                <small class="text-muted">{{ request.user.email }}</small>
             </div>
         </div>
     </div>

@@ -1,13 +1,17 @@
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
-from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.views.generic.edit import CreateView
 from django.db.models import Sum, F, Count
 from django.urls import reverse_lazy
+from django.contrib import messages
 from datetime import datetime
 from .forms import *
 from .models import *
 
-@login_required
+@login_required 
 def home_page(request):
     context = {
         'title_page' : 'Inicio'
@@ -67,12 +71,19 @@ def resumen_productos(request):
     }
     return render(request, 'dashboard/productos/productos.html', context)
 
-@login_required
-def create_productos(request):
-    context = {
-        'title_page' : 'Productos'
-    }
-    return render(request, 'dashboard/productos/productos.html', context)
+class create_productos(CreateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = 'dashboard/productos/create.html'
+    success_url = '/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context = {
+            'title_page': 'Agregar Producto',
+        }
+
+        return context
 
 @login_required
 def list_productos(request):
@@ -101,6 +112,21 @@ def update_productos(request):
 def delete_productos(request):
     return redirect('list-productos')
 
+@login_required
+def solicitar_productos(request):
+    context = {
+        'title_page' : 'Solicitar Productos'
+    }
+    return render(request, 'dashboard/productos/solicitar.html', context)
+
+@login_required
+def solicitudes_productos(request):
+    solicitudes = SolicitudesProductos.objects.all()
+    context = {
+        'title_page' : 'Solicitudes de Productos',
+        'solicitudes' : solicitudes,
+    }
+    return render(request, 'dashboard/productos/solicitudes.html', context)
 
 #############################################################################################################################
 ######################################                   PROVEEDORES                      ###################################
@@ -171,8 +197,6 @@ def resumen_proveedores(request):
     }
     return render(request, 'dashboard/proveedores/resumen.html', context)
 
-from django.views.generic.edit import CreateView
-
 class create_proveedores(CreateView):
     model = Proveedor
     form_class = ProveedorForm
@@ -181,7 +205,6 @@ class create_proveedores(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         context = {
             'title_page': 'Agregar Proveedor',
         }
@@ -191,7 +214,6 @@ class create_proveedores(CreateView):
 @login_required
 def list_proveedores(request):
     proveedores = Proveedor.objects.all()
-
     context = {
         'title_page' : 'Listar Proveedores',
         'proveedores' : proveedores
@@ -199,40 +221,26 @@ def list_proveedores(request):
     return render(request, 'dashboard/proveedores/list.html', context)
 
 @login_required
-def read_proveedores(request, id):
-    proveedor = Proveedor.objects.get_object_or_404(id = id)
-    
-    context = {
-        'title_page' : 'Proveedores',
-        'proveedor' : proveedor
-    }
-    return render(request, 'dashboard/proveedores/proveedores.html', context)
-
-@login_required
 def update_proveedores(request, id):
     proveedor = Proveedor.objects.get_object_or_404(id = id)
     form = ProveedorForm()
-    errors = ""
     if request.method == 'POST':
         form = ProveedorForm(request.POST, instance=proveedor)
         if form.is_valid():
             form.save()
-        else:
-            errors = form.errors
     context = {
         'title_page' : 'Listar Proveedores',
-        'proveedores' : Proveedor.objects.all(),
-        'errors' : errors
+        'proveedores' : Proveedor.objects.all()
     }
     return render(request, 'dashboard/proveedores/list.html', context)
 
 @login_required
 def delete_proveedores(request, id):
-    Proveedor.objects.get_object_or_404(pk=id).delete()
+    get_object_or_404(Proveedor, pk=id).delete()
     return redirect('list-proveedores')
 
 def search_proveedor_id(request,id):
-    proveedor = Proveedor.objects.get_object_or_404(pk = id)
+    proveedor = get_object_or_404(Proveedor, pk = id)
     form = ProveedorForm(instance=proveedor)
     html = render(request, 'dashboard/proveedores/htmx-update.html', {'form' : form, 'proveedor' : id})
     return HttpResponse(html)
@@ -266,3 +274,65 @@ class Main_LoginView(LoginView):
 
 class Main_LogoutView(LogoutView):
     success_url = reverse_lazy('home')
+
+@login_required
+def self_account_config(request):
+    usuario = get_object_or_404(Usuario, pk=request.user.id)
+    
+    context = {
+        'title_page' : 'Configuración',
+        'UsuarioChangeForm' : UsuarioChangeForm(instance=usuario),
+        'PasswordChangeForm' : PasswordChangeForm(user=usuario),
+
+    }            
+    return render(request, 'auth/config.html', context)
+
+# ARREGLAR CON EL CAMBIAR CONTRASEÑA
+@login_required
+def update_self_user(request):
+    user = get_object_or_404(Usuario, pk=request.user.id)
+    
+    if request.method == 'POST':
+        form = UsuarioChangeForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('self-config')
+        else:
+            print(form.errors)  # Para ver errores en consola
+
+    return redirect('self-config')
+
+# ARREGLAR CON EL UPDATE CUENTA
+@login_required
+def update_self_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Mantiene la sesión iniciada
+            messages.success(request, 'Tu contraseña ha sido actualizada correctamente.')
+            return redirect('self-config')  # Cambia por tu URL de éxito
+        else:
+            messages.error(request, 'Por favor corrige los errores del formulario.')
+            print(form.errors)  # Para ver los errores en consola
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return redirect('self-config')
+
+
+@login_required
+def self_cambiar_password(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+
+    if not request.user.is_authenticated or request.user.pk != usuario.pk:
+        return redirect('inicio')  # O donde dirijas al usuario no autorizado
+
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=usuario, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirige al login o a un mensaje de éxito
+    else:
+        form = PasswordChangeForm(user=usuario)
+
+    redirect('auth-config')
