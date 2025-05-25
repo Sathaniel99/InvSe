@@ -15,35 +15,34 @@
 </style>
 
 <!-- Tabla -->
-<table class="table table-hover table-striped table-hover shadow-sm border-0 border-transparent" id="proveedores-table">
+<table class="table table-hover table-striped table-hover shadow-sm border-0 border-transparent" id="productos-table">
     <caption>Listado de {{ title_page }}</caption>
     <thead class="bg-light">
         <tr class="border border-neutral-300">
             <th scope="col" width="15%">Nombre</th>
-            <th scope="col">Dirección</th>
-            <th scope="col" width="15%">Email</th>
-            <th scope="col" width="10%">Teléfono</th>
-            <th scope="col" width="15%">Contacto</th>
+            <th scope="col">Proveedor</th>
+            <th scope="col" width="15%">Marca</th>
+            <th scope="col" width="10%">Modelo</th>
+            <th scope="col" width="15%">Stock actual</th>
             <th scope="col" width="10%">Acciones</th>
         </tr>
     </thead>
     <tbody class="bg-invert">
-
-        {% for ax in proveedores %}
+        {% for ax in productos %}
         <tr class="border border-neutral-300">
             <td>{{ ax.nombre }}</td>
-            <td>{{ ax.direccion }}</td>
-            <td>{{ ax.email }}</td>
-            <td>{{ ax.telefono }}</td>
-            <td>{{ ax.contacto }}</td>
+            <td>{{ ax.proveedor.nombre }}</td>
+            <td>{{ ax.marca }}</td>
+            <td>{{ ax.modelo }}</td>
+            <td>{{ ax.stock_actual }}</td>
             <td>
                 <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip" data-bs-title="Editar"
-                    data-bs-toggle="modal" data-bs-target="#EditarModal" hx-get="/proveedores/show-proveedor/{{ ax.id }}"
+                    data-bs-toggle="modal" data-bs-target="#EditarModal" hx-get="/productos/show-productos/{{ ax.id }}"
                     hx-target="#editarModalContent" hx-swap="innerHTML" hx-trigger="click">
                     <i class="bi bi-pen w-100 h-100"></i>
                 </button>
                 <button class="btn btn-outline-danger-sdcn" data-bs-toggle-tooltip="tooltip" data-bs-title="Eliminar"
-                    id="{{ ax.id }}" data-bs-toggle="modal" data-bs-target="#DeleteModal" onclick="delete_modal.setAttribute('href', '/proveedores/delete-proveedores/{{ax.id}}')">
+                    id="{{ ax.id }}" data-bs-toggle="modal" data-bs-target="#DeleteModal" onclick="delete_modal.setAttribute('href', '/productos/delete-productos/{{ax.id}}')">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
@@ -53,21 +52,22 @@
     </tbody>
 </table>
 
+<i class="bi bi-box position-absolute top-0 start-0" style="font-size: 30rem; transform: rotate(-45deg) translate(5rem, -4rem); color: #7878781c !important; z-index: -1;"></i>
+
 <div class="modal fade" id="EditarModal" tabindex="-1" aria-labelledby="EditarLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content overflow-hidden bg-invert shadow">
             <div class="px-5 py-4 z-index-overall" id="editarModalContent">
                 <!--  EDITAR  -->
                   
                 <!--  EDITAR  -->
             </div>
-            <i class="bi bi-truck position-absolute top-0 start-0"
-                style="font-size: 35rem; transform: rotate(-45deg) translate(7rem, -11rem); color: #7878781c !important;"></i>
+            <i class="bi bi-box position-absolute top-0 start-0"
+                style="font-size: 35rem; transform: rotate(-45deg) translate(6rem, -6rem); color: #7878781c !important;"></i>
         </div>
     </div>
 </div>
 
-<i class="bi bi-truck position-absolute top-0 start-0" style="font-size: 30rem; transform: rotate(-45deg) translate(7rem, -12rem); color: #7878781c !important; z-index: -1;"></i>
 
 <div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="DeleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -102,7 +102,7 @@
     crossorigin="anonymous"></script>
 <script>
     $(document).ready(function () {
-        $('#proveedores-table').DataTable({
+        $('#productos-table').DataTable({
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/2.3.1/i18n/es-ES.json',
             },

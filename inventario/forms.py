@@ -103,6 +103,8 @@ class ProductoForm(forms.ModelForm):
         fields = [
             'nombre',
             'categoria',
+            'marca',
+            'modelo',
             'descripcion',
             'unidad_medida',
             'stock_minimo',
@@ -114,6 +116,8 @@ class ProductoForm(forms.ModelForm):
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
+            'marca': forms.TextInput(attrs={'class': 'form-control'}),
+            'modelo': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'unidad_medida': forms.TextInput(attrs={'class': 'form-control'}),
             'stock_minimo': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -122,6 +126,11 @@ class ProductoForm(forms.ModelForm):
             'proveedor': forms.Select(attrs={'class': 'form-select'}),
             'imagen': forms.FileInput(attrs={'class': 'form-control'}),
         }
+
+    # Asegúrate de que el campo proveedor traiga todos los proveedores ordenados por nombre
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['proveedor'].queryset = Proveedor.objects.all().order_by('nombre')
 
 # --- Formulario: MovimientoInventario ---
 class MovimientoInventarioForm(forms.ModelForm):

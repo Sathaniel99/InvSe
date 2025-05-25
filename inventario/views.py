@@ -3,11 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.template.loader import render_to_string
 from django.views.generic.edit import CreateView
 from django.db.models import Sum, F, Count
 from django.urls import reverse_lazy
 from django.contrib import messages
 from datetime import datetime
+from .utils import *
 from .forms import *
 from .models import *
 
@@ -71,62 +73,56 @@ def resumen_productos(request):
     }
     return render(request, 'dashboard/productos/productos.html', context)
 
-class create_productos(CreateView):
-    model = Producto
-    form_class = ProductoForm
-    template_name = 'dashboard/productos/create.html'
-    success_url = '/'
+def create_productos(request):
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('create-productos')  # Cambia '/' por el nombre de tu URL de éxito
+    else:
+        form = ProductoForm()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context = {
-            'title_page': 'Agregar Producto',
-        }
+    context = {
+        'form': form,
+        'title_page': 'Agregar Producto',
+    }
 
-        return context
+    return render(request, 'dashboard/productos/create.html', context)
 
 @login_required
 def list_productos(request):
     context = {
-        'title_page' : 'Productos'
+        'title_page' : 'Productos',
+        'productos' : Producto.objects.all()
     }
-    producto = Producto.objects.all()
 
     return render(request, 'dashboard/productos/list.html', context)
 
 @login_required
-def read_productos(request):
-    context = {
-        'title_page' : 'Productos'
-    }
-    return render(request, 'dashboard/productos/productos.html', context)
+def show_productos(request,id):
+    producto = get_object_or_404(Producto, pk = id)
+    form = ProductoForm(instance=producto)
+    html = render(request, 'dashboard/productos/htmx-update.html', {'form' : form, 'producto' : id})
+    return HttpResponse(html)
 
 @login_required
 def update_productos(request):
+    producto = get_object_or_404(Producto, id = id)
+    form = ProductoForm()
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES, instance=producto)
+        if form.is_valid():
+            form.save()
     context = {
-        'title_page' : 'Productos'
+        'title_page' : 'Productos',
+        'productos' : Producto.objects.all()
     }
-    return render(request, 'dashboard/productos/productos.html', context)
+    return render(request, 'dashboard/productos/list.html', context)
 
 @login_required
-def delete_productos(request):
+def delete_productos(request, id):
+    get_object_or_404(Producto, pk=id).delete()
     return redirect('list-productos')
-
-@login_required
-def solicitar_productos(request):
-    context = {
-        'title_page' : 'Solicitar Productos'
-    }
-    return render(request, 'dashboard/productos/solicitar.html', context)
-
-@login_required
-def solicitudes_productos(request):
-    solicitudes = SolicitudesProductos.objects.all()
-    context = {
-        'title_page' : 'Solicitudes de Productos',
-        'solicitudes' : solicitudes,
-    }
-    return render(request, 'dashboard/productos/solicitudes.html', context)
 
 #############################################################################################################################
 ######################################                   PROVEEDORES                      ###################################
@@ -201,7 +197,7 @@ class create_proveedores(CreateView):
     model = Proveedor
     form_class = ProveedorForm
     template_name = 'dashboard/proveedores/create.html'
-    success_url = '/'
+    success_url = '/proveedores/create-proveedores/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -222,7 +218,7 @@ def list_proveedores(request):
 
 @login_required
 def update_proveedores(request, id):
-    proveedor = Proveedor.objects.get_object_or_404(id = id)
+    proveedor = get_object_or_404(Proveedor, id = id)
     form = ProveedorForm()
     if request.method == 'POST':
         form = ProveedorForm(request.POST, instance=proveedor)
@@ -239,7 +235,8 @@ def delete_proveedores(request, id):
     get_object_or_404(Proveedor, pk=id).delete()
     return redirect('list-proveedores')
 
-def search_proveedor_id(request,id):
+@login_required
+def show_proveedor(request,id):
     proveedor = get_object_or_404(Proveedor, pk = id)
     form = ProveedorForm(instance=proveedor)
     html = render(request, 'dashboard/proveedores/htmx-update.html', {'form' : form, 'proveedor' : id})
@@ -334,3 +331,86 @@ def self_cambiar_password(request, pk):
         form = PasswordChangeForm(user=usuario)
 
     redirect('auth-config')
+
+
+#############################################################################################################################
+#############################                            SOLICITUDES                            #############################
+#############################################################################################################################
+@login_required
+def solicitar_productos(request):
+    context = {
+        'title_page' : 'Solicitar Productos'
+    }
+    return render(request, 'dashboard/productos/solicitar.html', context)
+
+@login_required
+def solicitudes_productos(request):
+    solicitudes = SolicitudesProductos.objects.all()
+    context = {
+        'title_page' : 'Solicitudes de Productos',
+        'solicitudes' : solicitudes,
+    }
+    return render(request, 'dashboard/productos/solicitudes.html', context)
+
+# agregar producto a la lista de solicitud
+def agregar_a_la_solicitud(request, producto_id, cantidad):
+    producto = get_object_or_404(Producto, id=producto_id)
+    solicitud = get_solicitud_sesion(request)
+
+    solicitud[str(producto_id)] = {
+        "ID": producto.id,
+        "nombre": producto.nombre,
+        "marca" : producto.marca,
+        "modelo" : producto.modelo,
+        "proveedor" : producto.proveedor,
+        "imagen" : producto.imagen,
+        "cantidad": cantidad,
+        "precio": float(producto.precio_unitario or 0),
+    }
+
+    guardar_solicitud_sesion(request, solicitud)
+
+# listar productos de la solicitud
+def ver_solicitud(request):
+    solicitud = get_solicitud_sesion(request)
+    context = {
+        'solicitud': solicitud.items(),
+        'fecha' : datetime.now().date,
+    }
+    html = render(request, 'dashboard/productos/solicitudes/ver_solicitud_htmx.html', context)
+    return HttpResponse(html)
+
+def eliminar_item_solicitud(request, producto_id):
+    solicitud = get_solicitud_sesion(request)
+    producto_id_str = str(producto_id)
+
+    if producto_id_str in solicitud:
+        del solicitud[producto_id_str]
+        guardar_solicitud_sesion(request, solicitud)
+
+    html = render_to_string('dashboard/productos/solicitudes/ver_solicitud_htmx.html', {
+        'solicitud': solicitud.items()
+    })
+
+    return HttpResponse(html)
+
+# confirmar y guardar solicitud
+def confirmar_solicitud(request):
+    if request.method == 'POST':
+        solicitud = get_solicitud_sesion(request)
+
+        # Guardar la solicitud
+        solicitud = SolicitudesProductos.objects.create(
+            usuario=request.user,
+            items=solicitud,
+            fecha_creacion = datetime.now(),
+            estado = 'pendiente'
+        )
+
+        # Limpiar el solicitud después de guardar
+        guardar_solicitud_sesion(request, {})
+
+        messages.success(request, "Solicitud creada exitosamente.")
+        return redirect('mis_solicitudes')
+
+    return redirect('ver_solicitud')

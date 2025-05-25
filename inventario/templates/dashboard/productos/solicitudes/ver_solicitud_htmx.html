@@ -1,0 +1,20 @@
+{% for key, item in solicitud %}
+<div class="d-flex justify-content-between align-items-center border-bottom py-2">
+    <div>
+        <strong>{{ item.nombre }}</strong><br>
+        Cantidad: {{ item.cantidad }}
+    </div>
+    <button hx-delete="{% url 'eliminar_item_solicitud' key %}" 
+            hx-target="closest div" 
+            hx-swap="outerHTML"
+            class="btn btn-sm btn-danger">
+        Eliminar
+    </button>
+</div>
+{% empty %}
+<div class="rounded-2 p-4" style="background-color: rgba(127.5, 127.5, 127.5, 0.5);">
+    <p class="text-center fs-5 fw-semibold m-0">No hay productos en la solicitud.</p>
+</div>
+{% endfor %}
+
+<p class="position-absolute end-0 bottom-0 me-3 mb-2 text-muted">{{ fecha }}</p>

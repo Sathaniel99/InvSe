@@ -4,6 +4,14 @@ from django.db import models
 class Area(models.Model):
     nombre = models.CharField(max_length=15, blank=False, null=False)
 
+    class Meta:
+            verbose_name = "Área"
+            verbose_name_plural = "Áreas"
+
+    def __str__(self):
+        return f"{self.id} - {self.nombre}"
+
+
 class Usuario(AbstractUser):
     TIPO_USER = (
         ('economico', 'Económico'),
@@ -12,7 +20,7 @@ class Usuario(AbstractUser):
     )
     telefono = models.CharField(max_length=15, blank=True, null=True)
     tipo_user = models.CharField(max_length=11, choices=TIPO_USER)
-    area = models.ForeignKey(Area, on_delete=models.CASCADE)
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, default=1)
 
     class Meta:
         verbose_name = "Usuario"
@@ -30,7 +38,6 @@ class Categoria(models.Model):
 
     class Meta:
         verbose_name_plural = "Categorías"
-
 
 class Proveedor(models.Model):
     nombre = models.CharField(max_length=150)
@@ -86,7 +93,7 @@ class ActivoFijo(models.Model):
     ])
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, null=True)
     observaciones = models.TextField(blank=True, null=True)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, default="")
 
     def __str__(self):
         return f"{self.codigo_interno} - {self.nombre}"
@@ -128,21 +135,19 @@ class MovimientoInventario(models.Model):
         verbose_name_plural = "Movimientos de Inventario"
 
 class SolicitudesProductos(models.Model):
-    estado_solicitud = {
-        'aceptada' : 'Aceptada',
-        'en_espera' : 'En espera',
-        'denegada' : 'Denegada',
-    }
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
-    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE)
-    estado = models.CharField(choices=estado_solicitud)
+    ESTADOS_SOLICITUD = (
+        ('pendiente', 'Pendiente'),
+        ('aprobada', 'Aprobada'),
+        ('rechazada', 'Rechazada'),
+    )
 
-    class Meta:
-        verbose_name = "Solicitud de productos"
-        verbose_name_plural = "Solicitudes de productos"
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    items = models.JSONField(default=dict)  # ejemplo: {"1": {"cantidad": 2}, ...}
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS_SOLICITUD, default='pendiente')
 
     def __str__(self):
-        return f"{self.usuario.first_name} {self.usuario.last_name} - [ {self.cantidad} - {self.producto.nombre} ] - {self.ubicacion}"
-    
+        return f"Solicitud #{self.id} - {self.usuario.first_name} {self.usuario.last_name}"
+
+    def total_items(self):
+        return sum(v['cantidad'] for v in self.items.values())

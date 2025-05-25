@@ -8,43 +8,9 @@
         <i class="bi bi-wind text-center display-5" style="transform: rotateY(180deg);"></i>
         <i class="bi bi-truck text-center display-5"></i>
     </div>
-    <form class="d-flex flex-column" method="post">
+    <form class="d-flex flex-column" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="mb-2">
-            <div>
-                <label for="id_nombre">Nombre del Proveedor:</label>
-                <i class="bi bi-question-circle cursor-pointer" data-bs-toggle-tooltip="tooltip" data-bs-title='"Nombre de Empresa", "etc".'></i>
-            </div>
-            <input type="text" name="nombre" class="form-control" maxlength="150" required="" id="id_nombre">
-        </div>
-        <div class="mb-2">
-            <div>
-                <label for="id_contacto">Contacto:</label>
-                <i class="bi bi-question-circle cursor-pointer" data-bs-toggle-tooltip="tooltip" data-bs-title='"Nombre", "Apodo", "etc".'></i>
-            </div>
-            <input type="text" name="contacto" class="form-control" maxlength="100" id="id_contacto">
-        </div>
-        <div class="mb-2">
-            <div>
-                <label for="id_telefono">Teléfono:</label>
-                <i class="bi bi-question-circle cursor-pointer" data-bs-toggle-tooltip="tooltip" data-bs-title='Teléfono móvil o fijo.'></i>
-            </div>
-            <input type="text" name="telefono" class="form-control" maxlength="20" id="id_telefono">
-        </div>
-        <div class="mb-2">
-            <div>
-                <label for="id_email">Correo Electrónico:</label>
-                <i class="bi bi-question-circle cursor-pointer" data-bs-toggle-tooltip="tooltip" data-bs-title='Email o Correo Electrónico.'></i>
-            </div>
-            <input type="email" name="email" class="form-control" maxlength="254" id="id_email">
-        </div>
-        <div class="mb-2">
-            <div>
-                <label for="id_direccion">Dirección:</label>
-                <i class="bi bi-question-circle cursor-pointer" data-bs-toggle-tooltip="tooltip" data-bs-title='Dirección donde se encuentra el establecimiento proveedor.'></i>
-            </div>
-            <input type="text" name="direccion" class="form-control" id="id_direccion">
-        </div>
+        {{ form }}
         <button type="submit" class="btn btn-outline-black mt-2">
             <i class="bi bi-plus-circle"></i> Guardar
         </button>
