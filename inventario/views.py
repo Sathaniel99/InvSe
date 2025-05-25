@@ -293,7 +293,7 @@ def update_self_user(request):
     user = get_object_or_404(Usuario, pk=request.user.id)
     
     if request.method == 'POST':
-        form = UsuarioChangeForm(request.POST, request.FILES, instance=user)
+        form = UsuarioChangeForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
             return redirect('self-config')
@@ -315,8 +315,6 @@ def update_self_password(request):
         else:
             messages.error(request, 'Por favor corrige los errores del formulario.')
             print(form.errors)  # Para ver los errores en consola
-    else:
-        form = PasswordChangeForm(user=request.user)
     return redirect('self-config')
 
 
