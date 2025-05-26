@@ -38,6 +38,7 @@ urlpatterns = [
     path('productos/update-productos/<int:id>', views.update_productos, name='update-productos'),
     path('productos/delete-productos/<int:id>', views.delete_productos, name='delete-productos'),
     path('productos/show-productos/<int:id>', views.show_productos, name='show-productos'),
+    path('productos/edit-productos/<int:id>', views.edit_productos, name='edit-productos'),
     
     ####################################################################################################
     ##########################                   SOLICITUDES                  ##########################
@@ -45,6 +46,8 @@ urlpatterns = [
     path('productos/solicitar-productos/', views.solicitar_productos, name='solicitar-productos'),
     path('productos/solicitudes-productos/', views.solicitudes_productos, name='solicitudes-productos'),
     
+    
+    path('agregar_item_solicitud/<int:id>_<int:cant>', views.agregar_a_la_solicitud, name='agregar_item_solicitud'),
     path('ver-solicitud/', views.ver_solicitud, name='ver_solicitud'),
     path('eliminar-item/<str:producto_id>/', views.eliminar_item_solicitud, name='eliminar_item_solicitud'),
     path('confirmar-solicitud/', views.confirmar_solicitud, name='confirmar_solicitud'),

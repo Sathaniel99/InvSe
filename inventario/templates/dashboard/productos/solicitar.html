@@ -8,6 +8,21 @@
         position: relative;
         overflow: hidden;
     }
+
+    /* Oculta las barras de scroll pero mantiene el desplazamiento */
+    .overflow-y-scroll-hidden {
+        overflow-y: scroll;
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* IE 10+ */
+    }
+
+    /* Para Chrome, Edge, Safari */
+    .overflow-y-scroll-hidden::-webkit-scrollbar {
+        display: none;
+
+    }
 </style>
 <div class="border border-2 border-secondary-subtle rounded-2 w-100">
     <div class="container-fluid d-flex justify-content-end align-items-center gap-2 p-4">
@@ -15,22 +30,107 @@
             class="btn btn-ghost-black d-flex align-items-center justify-content-center bg-opacity-25 rounded-circle me-2 transition-200 p-2"
             data-bs-toggle-tooltip="tooltip" data-bs-title="Visualizar productos Solicitados"
             style="width: 2.5rem; height: 2.5rem;" data-bs-toggle="modal" data-bs-target="#SolicitudModal"
-            hx-get="/ver-solicitud/" hx-target="#SolicitudModalContent" hx-swap="innerHTML"
-            hx-trigger="click">
+            hx-get="/ver-solicitud/" hx-target="#SolicitudModalContent" hx-swap="innerHTML" hx-trigger="click">
             <i class="bi bi-cart"></i>
         </button>
         <span class="fw-semibold">Solicitud</span>
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid" id="container-productos">
 
+        {% for ax in productos %}
+        <div class="card transition-200" style="width: 25rem;">
+            <div class="d-flex justify-content-center align-items-center border border-2 border-secondary-subtle bg-secondary-subtle rounded-2 m-auto w-100"
+                style="height: 15rem;">
+                {% if ax.imagen %}
+                <img class="w-auto h-100 object-fit-cover" src="{{ ax.imagen.url }}"
+                    alt="Imagen del Producto {{ ax.nombre }} {{ ax.marca }} {{ ax.modelo }}">
+                {% else %}
+                <h3 class="fw-semibold">No contiene imagen.</h3>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title fw-bold">{{ ax.nombre }} {{ ax.marca }} {{ ax.modelo }}</h5>
+                <hr>
+                <div class="mb-2 overflow-y-scroll-hidden overflow-x-hidden border border-2 border-secondary-subtle rounded-2 p-2"
+                    style="height: 11rem;">
+                    <div class="row g-3 mb-2">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Cantidad Disponible:</label>
+                            <div
+                                class="border border-2 {% if ax.stock_actual < 4 %}border-danger bg-danger-subtle text-danger{% elif ax.stock_actual > 3 and ax.stock_actual < 6 %}border-warning bg-warning-subtle text-warning{% else %}border-success bg-success-subtle text-success{% endif %} fw-semibold p-2 rounded-2">
+                                {{ ax.stock_actual }}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Precio unitario:</label>
+                            <div class="border border-2 border-secondary-subtle p-2 rounded-2">
+                                $ {{ ax.precio_unitario }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <label class="form-label fw-semibold">Proveedor:</label>
+                        <div class="border border-2 border-secondary-subtle p-2 rounded-2">
+                            {{ ax.proveedor }}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Descripción:</label>
+                        <div class="border border-2 border-secondary-subtle p-2 rounded-2">
+                            {{ ax.descripcion }}
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div class="d-flex flex-row">
+                        <p class="m-0 bg-warning text-black d-flex justify-content-center align-items-center fw-semibold"
+                            style="width: 3rem;" id="select_stock_{{ ax.id }}">
+                            0
+                        </p>
+                        <div class="d-flex flex-column">
+                            <button
+                                class="btn btn-warning d-flex justify-content-center align-items-center rounded-0 border-warning-subtle fw-semibold"
+                                type="button" style="height: 1.2rem; width: 1rem;"
+                                onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val > 0) select_stock_{{ ax.id }}.innerHTML = val - 1;">-</button>
+                            <button
+                                class="btn btn-warning d-flex justify-content-center align-items-center rounded-0 border-warning-subtle fw-semibold"
+                                . type="button" style="height: 1.2rem; width: 1rem;"
+                                onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val < {{ ax.stock_actual }}) select_stock_{{ ax.id }}.innerHTML = val + 1;">+</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-warning rounded-0 fw-semibold" data-bs-toggle="modal"
+                        data-bs-target="#CarritoModal" hx-get="agregar_item_solicitud/1_1" hx-target="#InspeccionarModalContent"
+                        hx-swap="innerHTML" hx-trigger="click" data-bs-toggle-tooltip="tooltip"
+                        data-bs-title="Añadir producto a la solicitud"
+                        onmouseenter="this.setAttribute('hx-get', 'agregar_item_solicitud/{{ax.id}}_' + select_stock_{{ ax.id }}.innerHTML)"
+                        onclick="">
+                        <i class="bi bi-cart me-2"></i> Añadir
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="modal fade" id="CarritoModal" tabindex="-1" aria-labelledby="CarritoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden bg-invert shadow p-4">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-toggle-tooltip="tooltip"
+                data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close" style="z-index: 2;"></button>
+            <div class="px-5 py-4 z-index-overall" id="CarritoModalContent">
+                <!--  EDITAR  -->
+                <!--  EDITAR  -->
+            </div>
+            <i class="bi bi-box position-absolute top-0 start-0"
+                style="font-size: 28rem; transform: rotate(-45deg) translate(5rem, -7rem); color: #7878781c !important; z-index: 1;"></i>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="SolicitudModal" tabindex="-1" aria-labelledby="SolicitudLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content overflow-hidden bg-invert shadow p-4">
-            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-toggle-tooltip="tooltip" data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close"></button>
-            <h2 class="text-center mb-3">Productos</h2>
-            <hr class="m-2">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-toggle-tooltip="tooltip"
+                data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close" style="z-index: 2;"></button>
             <div class="px-5 py-4 z-index-overall" id="SolicitudModalContent">
                 <!--  EDITAR  -->
                 <!--  EDITAR  -->

@@ -99,14 +99,20 @@ def list_productos(request):
     return render(request, 'dashboard/productos/list.html', context)
 
 @login_required
-def show_productos(request,id):
+def edit_productos(request,id):
     producto = get_object_or_404(Producto, pk = id)
     form = ProductoForm(instance=producto)
-    html = render(request, 'dashboard/productos/htmx-update.html', {'form' : form, 'producto' : id})
+    html = render(request, 'dashboard/productos/htmx-update.html', {'form' : form, 'item' : producto, 'producto' : id})
     return HttpResponse(html)
 
 @login_required
-def update_productos(request):
+def show_productos(request,id):
+    producto = get_object_or_404(Producto, pk = id)
+    html = render(request, 'dashboard/productos/htmx-show.html', {'form' : producto, 'producto' : id})
+    return HttpResponse(html)
+
+@login_required
+def update_productos(request,id):
     producto = get_object_or_404(Producto, id = id)
     form = ProductoForm()
     if request.method == 'POST':
@@ -339,7 +345,8 @@ def self_cambiar_password(request, pk):
 @login_required
 def solicitar_productos(request):
     context = {
-        'title_page' : 'Solicitar Productos'
+        'title_page' : 'Solicitar Productos',
+        'productos' : Producto.objects.all()
     }
     return render(request, 'dashboard/productos/solicitar.html', context)
 
@@ -353,18 +360,19 @@ def solicitudes_productos(request):
     return render(request, 'dashboard/productos/solicitudes.html', context)
 
 # agregar producto a la lista de solicitud
-def agregar_a_la_solicitud(request, producto_id, cantidad):
-    producto = get_object_or_404(Producto, id=producto_id)
+def agregar_a_la_solicitud(request, id, cant):
+    producto = get_object_or_404(Producto, id=id)
     solicitud = get_solicitud_sesion(request)
+    print('aqui')
 
-    solicitud[str(producto_id)] = {
+    solicitud[str(id)] = {
         "ID": producto.id,
         "nombre": producto.nombre,
         "marca" : producto.marca,
         "modelo" : producto.modelo,
         "proveedor" : producto.proveedor,
         "imagen" : producto.imagen,
-        "cantidad": cantidad,
+        "cantidad": cant,
         "precio": float(producto.precio_unitario or 0),
     }
 

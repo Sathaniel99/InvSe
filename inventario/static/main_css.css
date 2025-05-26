@@ -94,7 +94,6 @@ body{
     box-shadow: 0 0 0 .25rem rgb(125 125 125 / 25%) !important;
 }
 
-
 @media (min-width: 700px) {
     div[name="nav-user"] {
         display: none;
@@ -113,4 +112,10 @@ ul.dropdown-menu.bg-invert.p-2.show{
 .tooltip-inner {
   white-space: pre-line;
   text-align: left;
+}
+.modal{
+    backdrop-filter: blur(6px) brightness(0.3);
+}
+.card:hover{
+    box-shadow: 0 0 1rem rgb(102 102 102) !important;
 }

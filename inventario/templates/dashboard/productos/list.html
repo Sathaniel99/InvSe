@@ -30,14 +30,19 @@
     <tbody class="bg-invert">
         {% for ax in productos %}
         <tr class="border border-neutral-300">
-            <td>{{ ax.nombre }}</td>
-            <td>{{ ax.proveedor.nombre }}</td>
-            <td>{{ ax.marca }}</td>
-            <td>{{ ax.modelo }}</td>
-            <td>{{ ax.stock_actual }}</td>
+            <td class="py-3">{{ ax.nombre }}</td>
+            <td class="py-3">{{ ax.proveedor.nombre }}</td>
+            <td class="py-3">{{ ax.marca }}</td>
+            <td class="py-3">{{ ax.modelo }}</td>
+            <td class="py-3">{{ ax.stock_actual }}</td>
             <td>
+                <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip" data-bs-title="Inspeccionar"
+                    data-bs-toggle="modal" data-bs-target="#InspeccionarModal" hx-get="/productos/show-productos/{{ ax.id }}"
+                    hx-target="#InspeccionarModalContent" hx-swap="innerHTML" hx-trigger="click">
+                    <i class="bi bi-eye w-100 h-100"></i>
+                </button>
                 <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip" data-bs-title="Editar"
-                    data-bs-toggle="modal" data-bs-target="#EditarModal" hx-get="/productos/show-productos/{{ ax.id }}"
+                    data-bs-toggle="modal" data-bs-target="#EditarModal" hx-get="/productos/edit-productos/{{ ax.id }}"
                     hx-target="#editarModalContent" hx-swap="innerHTML" hx-trigger="click">
                     <i class="bi bi-pen w-100 h-100"></i>
                 </button>
@@ -54,6 +59,20 @@
 
 <i class="bi bi-box position-absolute top-0 start-0" style="font-size: 30rem; transform: rotate(-45deg) translate(5rem, -4rem); color: #7878781c !important; z-index: -1;"></i>
 
+<div class="modal fade" id="InspeccionarModal" tabindex="-1" aria-labelledby="InspeccionarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content overflow-hidden bg-invert shadow">
+            <div class="px-5 py-4 z-index-overall" id="InspeccionarModalContent">
+                <!--  EDITAR  -->
+                  
+                <!--  EDITAR  -->
+            </div>
+            <i class="bi bi-box position-absolute top-0 start-0"
+                style="font-size: 35rem; transform: rotate(-45deg) translate(6rem, -6rem); color: #7878781c !important;"></i>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="EditarModal" tabindex="-1" aria-labelledby="EditarLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content overflow-hidden bg-invert shadow">
@@ -67,7 +86,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="DeleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
