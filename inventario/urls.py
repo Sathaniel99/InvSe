@@ -44,10 +44,11 @@ urlpatterns = [
     ##########################                   SOLICITUDES                  ##########################
     ####################################################################################################
     path('productos/solicitar-productos/', views.solicitar_productos, name='solicitar-productos'),
-    path('productos/solicitudes-productos/', views.solicitudes_productos, name='solicitudes-productos'),
+    path('productos/solicitudes-productos/', views.solicitudes_productos_tabla, name='solicitudes-productos-tabla'),
     
-    
-    path('agregar_item_solicitud/<int:id>_<int:cant>', views.agregar_a_la_solicitud, name='agregar_item_solicitud'),
+    path('productos/solicitudes-productos-api/', views.solicitudes_productos, name='solicitudes-productos-api'),
+    path('preparar_solicitud/<int:id>/<int:cant>', views.preparar_solicitud, name='preparar_solicitud'),
+    path('agregar_item_solicitud/<int:id>/<int:cant>', views.agregar_a_la_solicitud, name='agregar_item_solicitud'),
     path('ver-solicitud/', views.ver_solicitud, name='ver_solicitud'),
     path('eliminar-item/<str:producto_id>/', views.eliminar_item_solicitud, name='eliminar_item_solicitud'),
     path('confirmar-solicitud/', views.confirmar_solicitud, name='confirmar_solicitud'),

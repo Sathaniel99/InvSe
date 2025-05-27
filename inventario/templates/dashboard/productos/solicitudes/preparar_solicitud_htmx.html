@@ -1,0 +1,43 @@
+<div class="mb-3">
+    <h3 class="text-center mb-4 fw-semibold">
+        Esta seguro que desea agregar {{ cantidad }} producto{% if cantidad != 1 %}s{% endif %} ?
+    </h3>
+    <div class="d-flex flex-row gap-3">
+        <div class="w-50 border border-2 border-secondary-subtle p-2 bg-secondary-subtle rounded-2 d-flex justify-content-center align-items-center"
+            style="height: 20rem;">
+
+            {% if ax.imagen and ax.imagen.url != " " %}
+            <img class="object-fit-contain h-100" src="{{ img }}" alt="Imagen producto {{ producto }}">
+            {% else %}
+            <h3 class="text-center fw-semibold">No contiene imagen.</h3>
+            {% endif %}
+        </div>
+        <div class="w-50">
+            <div class="border border-2 border-secondary-subtle p-2 rounded-2 mb-3 bg-primary bg-opacity-25">
+                <h4 class="fw-semibold">Producto : </h4>
+                <hr class="m-0">
+                <h5 class="my-2 ms-2">{{ producto }}</h5>
+            </div>
+            <div class="border border-2 border-secondary-subtle p-2 rounded-2 mb-3 bg-secondary bg-opacity-25">
+                <h4 class="fw-semibold">Precio unitario : </h4>
+                <hr class="m-0">
+                <h5 class="my-2 ms-2">$ {{ precio_unitario }}</h5>
+            </div>
+            <div
+                class="border border-2 border-secondary-subtle p-2 rounded-2 mb-3 {% if stock_restante is 0 or stock_restante < 3 %}bg-danger{% elif stock_restante > 2 and stock_restante < 6 %}bg-warning{% else %}bg-success{% endif %} bg-opacity-25">
+                <h4 class="fw-semibold">Stock restante : </h4>
+                <hr class="m-0">
+                <h5 class="my-2 ms-2">{{ stock_restante }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center gap-3">
+    <button class="btn btn-success rounded-0 fw-semibold" hx-get="{% url 'agregar_item_solicitud' id cantidad %}">
+        <i class="bi bi-check-circle me-2"></i> Añadir
+    </button>
+    <button class="btn btn-outline-danger-sdcn rounded-0 fw-semibold" data-bs-dismiss="modal">
+        <i class="bi bi-check-circle me-2"></i> Cancelar
+    </button>
+</div>

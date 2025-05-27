@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from datetime import datetime
 
 class Area(models.Model):
     nombre = models.CharField(max_length=15, blank=False, null=False)
@@ -143,7 +144,7 @@ class SolicitudesProductos(models.Model):
 
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     items = models.JSONField(default=dict)  # ejemplo: {"1": {"cantidad": 2}, ...}
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_creacion = models.DateTimeField(default=datetime.now())
     estado = models.CharField(max_length=20, choices=ESTADOS_SOLICITUD, default='pendiente')
 
     def __str__(self):

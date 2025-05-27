@@ -1,16 +1,19 @@
-{% for key, item in solicitud %}
-<div class="d-flex justify-content-between align-items-center border-bottom py-2">
-    <div>
-        <strong>{{ item.nombre }}</strong><br>
-        Cantidad: {{ item.cantidad }}
+{% extends "dashboard_template.html" %}
+{% load static %}
+
+{% block content_dashboard %}
+<style>section{display: flex; position: relative; overflow: hidden;}</style>
+<div class="d-flex flex-column border border-2 border-secondary-subtle rounded-2 w-100">
+    {% if solicitudes %}
+        asdasd
+    {% else %}
+    <div class="border border-2 border-secondary-subtle rounded-2 bg-secondary-subtle m-auto p-5 shadow">
+        <h2 class="text-center">No hay solicitudes registradas</h2>
     </div>
-    <button hx-delete="{% url 'eliminar_item_solicitud' key %}" 
-            hx-target="closest div" 
-            hx-swap="outerHTML"
-            class="btn btn-sm btn-danger">
-        Eliminar
-    </button>
+    {% endif %}
+        
 </div>
-{% empty %}
-<p>No hay productos en la solicitud.</p>
-{% endfor %}
+
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+{% endblock content_dashboard %}

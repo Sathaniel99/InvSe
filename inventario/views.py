@@ -343,40 +343,82 @@ def self_cambiar_password(request, pk):
 #############################                            SOLICITUDES                            #############################
 #############################################################################################################################
 @login_required
-def solicitar_productos(request):
-    context = {
-        'title_page' : 'Solicitar Productos',
-        'productos' : Producto.objects.all()
-    }
-    return render(request, 'dashboard/productos/solicitar.html', context)
-
-@login_required
-def solicitudes_productos(request):
-    solicitudes = SolicitudesProductos.objects.all()
+def solicitudes_productos_tabla(request):
+    solicitudes = SolicitudesProductos.objects.filter(usuario = request.user.id)
     context = {
         'title_page' : 'Solicitudes de Productos',
         'solicitudes' : solicitudes,
     }
     return render(request, 'dashboard/productos/solicitudes.html', context)
 
+@login_required
+def solicitar_productos(request):
+    context = {
+        'title_page' : 'Solicitar Productos',
+        'productos' : Producto.objects.exclude(stock_actual = 0),
+    }
+    return render(request, 'dashboard/productos/solicitar.html', context)
+
+@login_required
+def solicitudes_productos(request):
+    solicitudes = SolicitudesProductos.objects.filter(usuario = request.user.id)
+    context = {
+        'title_page' : 'Solicitudes de Productos',
+        'solicitudes' : solicitudes,
+    }
+    return render(request, 'dashboard/productos/solicitudes/solicitudes_htmx.html', context)
+
+
+def preparar_solicitud(request, id, cant):
+    producto = get_object_or_404(Producto, pk=id)
+    
+    # Validación adicional
+    try:
+        cant = int(cant)
+    except ValueError:
+        return HttpResponse("Cantidad inválida", status=400)
+
+    if cant <= 0:
+        return HttpResponse("<p>Cantidad debe ser mayor a cero.</p>", status=400)
+
+    stock_actual = int(producto.stock_actual or 0)
+    stock_restante = max(stock_actual - cant, 0)
+
+    context = {
+        'producto': f"{producto.nombre} {producto.marca or ''} {producto.modelo or ''}".strip(),
+        'img': producto.imagen.url if producto.imagen else "",
+        'precio_unitario': float(producto.precio_unitario or 0),
+        'stock_restante': stock_restante,
+        'cantidad': cant,
+        'id': id,
+    }
+
+    html = render(request, 'dashboard/productos/solicitudes/preparar_solicitud_htmx.html', context)
+    return HttpResponse(html)
+
 # agregar producto a la lista de solicitud
 def agregar_a_la_solicitud(request, id, cant):
     producto = get_object_or_404(Producto, id=id)
     solicitud = get_solicitud_sesion(request)
-    print('aqui')
+    cant = int(cant)
+    
+    print('agregada la solicitud')
 
     solicitud[str(id)] = {
         "ID": producto.id,
         "nombre": producto.nombre,
         "marca" : producto.marca,
         "modelo" : producto.modelo,
-        "proveedor" : producto.proveedor,
-        "imagen" : producto.imagen,
+        "proveedor" : producto.proveedor.nombre,
+        "imagen": producto.imagen.url if producto.imagen else "",
         "cantidad": cant,
         "precio": float(producto.precio_unitario or 0),
     }
+    print(solicitud[str(id)])
 
     guardar_solicitud_sesion(request, solicitud)
+
+    return HttpResponse(f"<div>Producto '{producto.nombre}' añadido ({cant} unidades)</div>")
 
 # listar productos de la solicitud
 def ver_solicitud(request):

@@ -35,13 +35,14 @@
         </button>
         <span class="fw-semibold">Solicitud</span>
     </div>
-    <div class="container-fluid" id="container-productos">
+    <div class="container-fluid d-flex flex-row flex-wrap gap-3 justify-content-center" id="container-productos">
 
+        {% if productos %}
         {% for ax in productos %}
         <div class="card transition-200" style="width: 25rem;">
             <div class="d-flex justify-content-center align-items-center border border-2 border-secondary-subtle bg-secondary-subtle rounded-2 m-auto w-100"
                 style="height: 15rem;">
-                {% if ax.imagen %}
+                {% if ax.imagen and ax.imagen.url != " " %}
                 <img class="w-auto h-100 object-fit-cover" src="{{ ax.imagen.url }}"
                     alt="Imagen del Producto {{ ax.nombre }} {{ ax.marca }} {{ ax.modelo }}">
                 {% else %}
@@ -94,30 +95,36 @@
                                 onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val > 0) select_stock_{{ ax.id }}.innerHTML = val - 1;">-</button>
                             <button
                                 class="btn btn-warning d-flex justify-content-center align-items-center rounded-0 border-warning-subtle fw-semibold"
-                                . type="button" style="height: 1.2rem; width: 1rem;"
+                                type="button" style="height: 1.2rem; width: 1rem;"
                                 onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val < {{ ax.stock_actual }}) select_stock_{{ ax.id }}.innerHTML = val + 1;">+</button>
                         </div>
                     </div>
-                    <button class="btn btn-warning rounded-0 fw-semibold" data-bs-toggle="modal"
-                        data-bs-target="#CarritoModal" hx-get="agregar_item_solicitud/1_1" hx-target="#InspeccionarModalContent"
-                        hx-swap="innerHTML" hx-trigger="click" data-bs-toggle-tooltip="tooltip"
-                        data-bs-title="Añadir producto a la solicitud"
-                        onmouseenter="this.setAttribute('hx-get', 'agregar_item_solicitud/{{ax.id}}_' + select_stock_{{ ax.id }}.innerHTML)"
-                        onclick="">
+                    <!-- EL PRE-RENDERIZADO DE HTMX NO DEJA HACER CAMBIOS DINAMICOS POR TANTO HAY QUE USARLA CON AJAX EN MODALES DE CONFIRMACION -->
+                    <button class="btn btn-warning rounded-0 fw-semibold add-to-cart-btn" data-bs-toggle="modal"
+                        data-bs-target="#CarritoModal" data-product-id="{{ ax.id }}" data-url="/preparar_solicitud"
+                        id="add-to-cart-btn-{{ ax.id }}" type="button" title="Añadir producto a la solicitud">
                         <i class="bi bi-cart me-2"></i> Añadir
                     </button>
                 </div>
             </div>
         </div>
         {% endfor %}
+        {% else %}
+        <div class="border border-2 border-secondary-subtle p-5 bg-secondary-subtle shadow">
+            <h1 class="text-center">
+                No hay productos registrados.
+            </h1>
+        </div>
+        {% endif %}
     </div>
 </div>
+<script>
+    const _0x446773=_0x3d25;function _0x3d25(_0x5fbd91,_0x421157){const _0x1dc90f=_0x1dc9();return _0x3d25=function(_0x3d2553,_0x31dd52){_0x3d2553=_0x3d2553-0x1b0;let _0x3a450a=_0x1dc90f[_0x3d2553];return _0x3a450a;},_0x3d25(_0x5fbd91,_0x421157);}(function(_0x4f2469,_0x2b3f5c){const _0x341914=_0x3d25,_0x1ee989=_0x4f2469();while(!![]){try{const _0x783f1d=parseInt(_0x341914(0x1c7))/0x1+parseInt(_0x341914(0x1ce))/0x2*(parseInt(_0x341914(0x1c2))/0x3)+parseInt(_0x341914(0x1c3))/0x4*(parseInt(_0x341914(0x1c6))/0x5)+-parseInt(_0x341914(0x1ca))/0x6*(parseInt(_0x341914(0x1b2))/0x7)+parseInt(_0x341914(0x1bd))/0x8*(-parseInt(_0x341914(0x1d5))/0x9)+-parseInt(_0x341914(0x1cb))/0xa*(parseInt(_0x341914(0x1b8))/0xb)+parseInt(_0x341914(0x1bc))/0xc;if(_0x783f1d===_0x2b3f5c)break;else _0x1ee989['push'](_0x1ee989['shift']());}catch(_0x2d8b1a){_0x1ee989['push'](_0x1ee989['shift']());}}}(_0x1dc9,0xaabeb),document[_0x446773(0x1d1)](_0x446773(0x1c5),function(){const _0x3cd2f7=_0x446773;document['querySelectorAll']('.add-to-cart-btn')[_0x3cd2f7(0x1cc)](_0xd5277b=>{const _0xe77ec2=_0x3cd2f7,_0x9d4424=_0xd5277b[_0xe77ec2(0x1bb)](_0xe77ec2(0x1d6)),_0x2ad2b3=document[_0xe77ec2(0x1b0)](_0xe77ec2(0x1d3)+_0x9d4424);function _0x56681e(){const _0x538f0d=_0xe77ec2;if(!_0x2ad2b3)return;const _0x45eece=parseInt(_0x2ad2b3[_0x538f0d(0x1d2)])||0x0;_0x45eece<=0x0?(_0xd5277b[_0x538f0d(0x1d0)](_0x538f0d(0x1c8),!![]),_0xd5277b[_0x538f0d(0x1d7)]=_0x538f0d(0x1cf)):(_0xd5277b['removeAttribute'](_0x538f0d(0x1c8)),_0xd5277b[_0x538f0d(0x1d7)]='Añadir\x20al\x20carrito');}_0x56681e();if(_0x2ad2b3){const _0x4eec99=new MutationObserver(_0x56681e);_0x4eec99[_0xe77ec2(0x1d4)](_0x2ad2b3,{'childList':!![],'subtree':!![]});}_0xd5277b[_0xe77ec2(0x1d1)](_0xe77ec2(0x1c4),function(){const _0x3e93b3=_0xe77ec2;if(!_0x2ad2b3){console[_0x3e93b3(0x1c0)](_0x3e93b3(0x1b4)+_0x9d4424);return;}const _0x3a1716=parseInt(_0x2ad2b3[_0x3e93b3(0x1d2)])||0x0;if(_0x3a1716<=0x0){alert(_0x3e93b3(0x1c1));return;}const _0x425055=_0x3e93b3(0x1d8)+_0x9d4424+'/'+_0x3a1716,_0x46db52=document[_0x3e93b3(0x1b0)](_0x3e93b3(0x1b6));_0x46db52&&(_0x46db52[_0x3e93b3(0x1d2)]='<div\x20class=\x22text-center\x22>Cargando...</div>'),fetch(_0x425055,{'method':_0x3e93b3(0x1b7),'headers':{'X-Requested-With':_0x3e93b3(0x1cd)}})[_0x3e93b3(0x1b1)](_0x2544be=>{const _0x3e1e6e=_0x3e93b3;if(!_0x2544be['ok'])throw new Error(_0x3e1e6e(0x1b5));return _0x2544be[_0x3e1e6e(0x1b9)]();})[_0x3e93b3(0x1b1)](_0x9b20aa=>{_0x46db52&&(_0x46db52['innerHTML']=_0x9b20aa);})[_0x3e93b3(0x1b3)](_0x3c2c1d=>{const _0x5ace88=_0x3e93b3;_0x46db52&&(_0x46db52[_0x5ace88(0x1d2)]=_0x5ace88(0x1be)+_0x3c2c1d[_0x5ace88(0x1bf)]+_0x5ace88(0x1c9)),console[_0x5ace88(0x1c0)](_0x5ace88(0x1ba),_0x3c2c1d);});}),_0xd5277b['addEventListener']('mouseenter',function(){_0x56681e();});});}));function _0x1dc9(){const _0x3becb9=['message','error','La\x20cantidad\x20debe\x20ser\x20mayor\x20a\x20cero.','12cJiUPO','4WjMubU','click','DOMContentLoaded','5783525LEUZgm','607284NZQFcF','disabled','</h4>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>','2910yeKmWK','2667260FtDqZx','forEach','XMLHttpRequest','165184venBXM','No\x20hay\x20cantidad\x20seleccionada','setAttribute','addEventListener','innerHTML','select_stock_','observe','10915578aFYkOH','data-product-id','title','/preparar_solicitud/','getElementById','then','5362kCGcVh','catch','No\x20se\x20encontró\x20el\x20campo\x20de\x20cantidad\x20para\x20el\x20producto\x20','Error\x20en\x20la\x20respuesta\x20del\x20servidor.','CarritoModalContent','GET','55oqdqJK','text','Error\x20al\x20cargar\x20contenido:','getAttribute','18275952otFnTr','8AdmEOQ','<div\x20class=\x22border\x20border-2\x20border-danger-subtle\x20text-danger\x20bg-danger-subtle\x20w-100\x20rounded-2\x20p-3\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<h4\x20class=\x22text-start\x22><i\x20class=\x22bi\x20bi-exclamation-circle\x20me-2\x22></i>Error:</h4>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<hr\x20class=\x22border-bottom\x20border-2\x20border-danger-subtle\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<h4\x20class=\x22text-center\x22>'];_0x1dc9=function(){return _0x3becb9;};return _0x1dc9();}
+</script>
 <div class="modal fade" id="CarritoModal" tabindex="-1" aria-labelledby="CarritoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content overflow-hidden bg-invert shadow p-4">
-            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-toggle-tooltip="tooltip"
-                data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close" style="z-index: 2;"></button>
-            <div class="px-5 py-4 z-index-overall" id="CarritoModalContent">
+            <div class="p-3 z-index-overall" id="CarritoModalContent">
                 <!--  EDITAR  -->
                 <!--  EDITAR  -->
             </div>
@@ -129,8 +136,8 @@
 <div class="modal fade" id="SolicitudModal" tabindex="-1" aria-labelledby="SolicitudLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content overflow-hidden bg-invert shadow p-4">
-            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-toggle-tooltip="tooltip"
-                data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close" style="z-index: 2;"></button>
+            <h4 class="text-center fw-semibold">Solicitud</h4>
+            <hr class="my-2">
             <div class="px-5 py-4 z-index-overall" id="SolicitudModalContent">
                 <!--  EDITAR  -->
                 <!--  EDITAR  -->
