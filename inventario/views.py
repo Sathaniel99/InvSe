@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.template.loader import render_to_string
@@ -397,6 +398,7 @@ def preparar_solicitud(request, id, cant):
     return HttpResponse(html)
 
 # agregar producto a la lista de solicitud
+@require_http_methods(["POST"])
 def agregar_a_la_solicitud(request, id, cant):
     producto = get_object_or_404(Producto, id=id)
     solicitud = get_solicitud_sesion(request)
@@ -464,3 +466,4 @@ def confirmar_solicitud(request):
         return redirect('mis_solicitudes')
 
     return redirect('ver_solicitud')
+
