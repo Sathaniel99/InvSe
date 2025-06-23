@@ -4,7 +4,7 @@
         <strong>{{ item.nombre }}</strong><br>
         Cantidad: {{ item.cantidad }}
     </div>
-    <button hx-delete="{% url 'eliminar_item_solicitud' key %}" 
+    <button hx-delete="{% url 'eliminar-item-solicitud-api' key %}" 
             hx-target="closest div" 
             hx-swap="outerHTML"
             class="btn btn-sm btn-danger">

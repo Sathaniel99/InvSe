@@ -6,7 +6,7 @@
         <div class="w-50 border border-2 border-secondary-subtle p-2 bg-secondary-subtle rounded-2 d-flex justify-content-center align-items-center"
             style="height: 20rem;">
 
-            {% if ax.imagen and ax.imagen.url != " " %}
+            {% if img and img != " " %}
             <img class="object-fit-contain h-100" src="{{ img }}" alt="Imagen producto {{ producto }}">
             {% else %}
             <h3 class="text-center fw-semibold">No contiene imagen.</h3>
@@ -34,7 +34,10 @@
 </div>
 
 <div class="d-flex justify-content-center gap-3">
-    <button class="btn btn-success rounded-0 fw-semibold" data-bs-id="{{ id }}" data-bs-cant="{{ cantidad }}" data-bs-dismiss="modal" id="add-modal-solicitud">
+    <button class="btn btn-success rounded-0 fw-semibold"
+            data-bs-id="{{ id }}"
+            data-bs-cant="{{ cantidad }}"
+            id="add-modal-solicitud">
         <i class="bi bi-check-circle me-2"></i> Añadir
     </button>
     <button class="btn btn-outline-danger-sdcn rounded-0 fw-semibold" data-bs-dismiss="modal">
@@ -43,42 +46,36 @@
 </div>
 <script>
     document.getElementById("add-modal-solicitud").addEventListener('click', function (event) {
-        // Obtén los datos desde dataset
         const id = event.target.dataset.bsId;
         const cantidad = event.target.dataset.bsCant;
-
-        console.log('ID:', id);
-        console.log('Cantidad:', cantidad);
 
         if (!id || !cantidad) {
             alert('Datos incompletos');
             return;
         }
 
-        const url = `/agregar_item_solicitud/${id}/${cantidad}/`;
+        const url = `/agregar-item_solicitud-api/${id}/${cantidad}/`;
 
         fetch(url, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: new URLSearchParams({
-                'id': id,
-                'cantidad': cantidad
-            })
+            }
         })
-            .then(response => {
-                if (!response.ok) throw new Error("Error en la respuesta");
-                return response.text();
-            })
-            .then(html => {
-                // Actualiza el contenido del carrito dinámicamente
-                document.getElementById('solicitud-content').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Hubo un problema al añadir el producto.');
-            });
+        .then(response => {
+            if (!response.ok) throw new Error("Error en la respuesta");
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('solicitud-content').innerHTML = html;
+            // Cierra el modal manualmente si usas Bootstrap 5
+            const modal = bootstrap.Modal.getInstance(document.querySelector('.modal.show'));
+            if (modal) modal.hide();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un problema al añadir el producto.');
+        });
     });
 </script>

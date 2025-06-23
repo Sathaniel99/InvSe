@@ -119,3 +119,10 @@ ul.dropdown-menu.bg-invert.p-2.show{
 .card:hover{
     box-shadow: 0 0 1rem rgb(102 102 102) !important;
 }
+.papel-carta{
+    width: 8.5in;
+    height: 11in;
+    box-sizing: border-box;
+    page-break-after: always;
+    position: relative;
+}

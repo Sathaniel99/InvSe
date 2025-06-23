@@ -1,0 +1,131 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<!-- <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.css" rel="stylesheet" integrity="sha384-AHdXImV07k5XJYMyGLDf7LhYawou4SZouf2KCm2KfuRB1DubOpbvF57wzhPMCsY8" crossorigin="anonymous"> -->
+<link href="{% static 'libs/DataTables/datatables.min.css' %}" rel="stylesheet">
+<div class="border border-2 border-secondary-subtle h-100 p-4 rounded-2">
+
+    <style>
+        .badge {
+            width: 5rem;
+        }
+    </style>
+
+    <div class="d-flex justify-content-end align-items-center mb-4">
+        <button type="button" class="btn btn-black fw-semibold d-flex align-items-center gap-2">
+            <i class="bi bi-plus-circle"></i> Nuevo producto
+        </button>
+    </div>
+
+    <!-- Tabla -->
+    <table class="table table-hover table-striped table-hover shadow-sm border border-1 border-secondary-subtle rounded-2"
+        id="inventario-table" style="max-width: 55rem;">
+        <caption>Listado de {{ title_page }}</caption>
+        <thead>
+            <tr class="table-secondary">
+                <th scope="col" class="text-center" width="5rem">No</th>
+                <th scope="col">Ubicación</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ax in ubicaciones %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td>{{ ax.nombre }}</td>
+                <td>
+                    <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                        data-bs-title="Ver inventario actual" data-bs-toggle="modal" data-bs-target="#VerInventarioModal"
+                        hx-get="/inventario/actual-inventario-api/{{ax.id}}" hx-target="#VerInventarioModalContent"
+                        hx-swap="innerHTML" hx-trigger="click">
+                        <i class="bi bi-clipboard-minus w-100 h-100"></i>
+                    </button>
+                    <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                        data-bs-title="Ver historial de inventarios" data-bs-toggle="modal"
+                        data-bs-target="#HistorialInventarioModal" hx-get="/inventario/historial-inventario-api/{{ax.id}}"
+                        hx-target="#HistorialInventarioModalContent" hx-swap="innerHTML" hx-trigger="click">
+                        <i class="bi bi-clock-history w-100 h-100"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+<div class="modal fade" id="VerInventarioModal" tabindex="-1" aria-labelledby="VerInventarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content overflow-hidden bg-invert shadow">
+            <div class="position-absolute top-0 end-0" style="z-index: 1600;">
+                <button class="btn-close p-2 mx-2 my-1" type="button" data-bs-toggle-tooltip="tooltip"
+                    data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div
+                    class="d-flex flex-column align-items-center border-end-0 border border-3 border-secondary overflow-hidden">
+                    <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button"
+                        data-bs-toggle-tooltip="tooltip" data-bs-title="Imprimir" id="print-modal-button"
+                        onclick="generarPaginas()">
+                        <i class="bi bi-printer"></i>
+                    </button>
+                    <hr class="m-0 w-100 border border-2 border-secondary">
+                    <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button"
+                        data-bs-toggle-tooltip="tooltip" data-bs-title="Crear PDF" id="pdf-modal-button">
+                        <i class="bi bi-file-pdf"></i>
+                    </button>
+                    <hr class="m-0 w-100 border border-2 border-secondary">
+                    <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button"
+                        data-bs-toggle-tooltip="tooltip" data-bs-title="Crear imágenes" id="img-modal-button">
+                        <i class="bi bi-image"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="position-relative px-5 py-4 z-index-overall d-flex flex-column" id="VerInventarioModalContent">
+                <!--  EDITAR  -->
+
+                <!--  EDITAR  -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="HistorialInventarioModal" tabindex="-1" aria-labelledby="HistorialInventarioLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content overflow-hidden bg-invert shadow">
+            <div class="px-5 py-4 z-index-overall" id="HistorialInventarioModalContent">
+                <!--  EDITAR  -->
+
+                <!--  EDITAR  -->
+            </div>
+            <i class="bi bi-box position-absolute top-0 start-0"
+                style="font-size: 35rem; transform: rotate(-45deg) translate(6rem, -6rem); color: #7878781c !important;"></i>
+        </div>
+    </div>
+</div>
+
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/pdfmake.min.js' %}"></script>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/vfs_fonts.js' %}"></script>
+
+<!-- <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.js" integrity="sha384-ekYQxP5UHe08BFvtvtcrjLc2YsPeISDgLZAqLtdHaJndItMrJ50Db356qMcHx/sH" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/datatables.min.js' %}"></script>
+
+<script>
+    const carta_height = 27.94;
+    const carta_width = 21.59;
+    const margen_y = 5;
+    const margen_x = 6;
+    const carta_util_height = parseFloat(carta_height - margen_y);
+    const carta_util_width = parseFloat(carta_width - margen_x);
+
+    $(document).ready(function () {
+        $('#inventario-table').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.3.1/i18n/es-ES.json',
+            },
+            responsive: true,
+        });
+    });
+</script>
+{% endblock content_dashboard %}

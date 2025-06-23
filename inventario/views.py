@@ -9,8 +9,9 @@ from django.views.generic.edit import CreateView
 from django.db.models import Sum, F, Count
 from django.urls import reverse_lazy
 from django.contrib import messages
+from collections import defaultdict
 from datetime import datetime
-from .utils import *
+from .utils import get_solicitud_sesion, guardar_solicitud_sesion
 from .forms import *
 from .models import *
 
@@ -24,49 +25,146 @@ def home_page(request):
 #############################################################################################################################
 ###################################                       INVENTARIO                      ###################################
 #############################################################################################################################
+# genera y guarda el inventario de una ubicacion
 @login_required
-def main_inventario(request):
+def revisar_inventario(request):
+    ubicacion = Ubicacion.objects.filter(area = request.user.area)
     context = {
-        'title_page' : 'Inventario'
+        'title_page' : 'Revisar Inventario',
+        'ubicaciones' : ubicacion
     }
-    return render(request, 'dashboard/inventario/inventario.html', context)
+    return render(request, 'dashboard/inventario/revisar_inventario.html', context)
 
-@login_required
-def create_inventario(request):
-    context = {
-        'title_page' : 'Inventario'
-    }
-    return render(request, 'dashboard/inventario/inventario.html', context)
-
+# lista las ubicaciones para consultar su inventario
 @login_required
 def list_inventario(request):
+    ubicaciones = Ubicacion.objects.filter(area = request.user.area)
+    if 'economico' in request.user.tipo_user or request.user.is_superuser:
+        ubicaciones = Ubicacion.objects.all()
     context = {
-        'title_page' : 'Inventario'
+        'title_page' : 'Listado de Inventarios',
+        'ubicaciones' : ubicaciones,
     }
-    
-    return render(request, 'dashboard/inventario/inventario.html', context)
+    return render(request, 'dashboard/inventario/list.html', context)
 
+# consulta el inventario actual de una ubicacion
 @login_required
-def read_inventario(request):
-    context = {
-        'title_page' : 'Inventario'
-    }
-    return render(request, 'dashboard/inventario/inventario.html', context)
+def actual_inventario_api(request, id):
+    activos_fijos = ActivoFijo.objects.filter(ubicacion__id = id).select_related('producto').order_by('producto__nombre')
+    responsable_area = Usuario.objects.filter(tipo_user = 'jefe_area').filter(area = get_object_or_404(Ubicacion, pk=id).area).first()
+    
+    nombre_responsable_area = "No posee aún"
+    if responsable_area is not None:
+        nombre_responsable_area = f"{responsable_area.first_name} {responsable_area.last_name}"
+    
+    grouped_data = defaultdict(list)
 
+    for af in activos_fijos:
+        if af.get_estado_display() == 'En uso':
+            key = af.producto.nombre
+            grouped_data[key].append({
+                'codigo_interno': af.codigo_interno,
+                'serial_number': af.serial_number or 'No registrado'
+            })
+
+    # formato final con listas unidas
+    processed_data = []
+    counter = 1
+    for producto_nombre, items in grouped_data.items():
+        codigos = '<br>'.join([item['codigo_interno'] for item in items])
+        seriales = '<br>'.join([item['serial_number'] for item in items])
+
+        processed_data.append({
+            'no': counter,
+            'producto_nombre': producto_nombre,
+            'cantidad': len(items),
+            'codigos': codigos,
+            'seriales': seriales,
+        })
+        counter += 1
+
+    # Renderizar el template con los datos agrupados
+    html = render(request, 'dashboard/inventario/actual_inventario_htmx.html', {
+        'grouped_activo_list': processed_data,
+        'ubicacion' : Ubicacion.objects.get(pk=id).nombre,
+        "responsable_area" : nombre_responsable_area
+    })
+
+    return HttpResponse(html)
+
+# revisar el inventario actual de una ubicacion
+@login_required
+def revisar_inventario_api(request, id):
+    activos_fijos = ActivoFijo.objects.filter(ubicacion__id = id).select_related('producto').order_by('producto__nombre')
+    
+    grouped_data = defaultdict(list)
+
+    for af in activos_fijos:
+        if af.get_estado_display() == 'En uso':
+            key = af.producto.nombre
+            grouped_data[key].append({
+                'codigo_interno': af.codigo_interno,
+                'serial_number': af.serial_number or 'No registrado'
+            })
+
+    # formato final con listas unidas
+    processed_data = []
+    counter = 1
+    for producto_nombre, items in grouped_data.items():
+        codigos = '<br>'.join([item['codigo_interno'] for item in items])
+        seriales = '<br>'.join([item['serial_number'] for item in items])
+
+        processed_data.append({
+            'no': counter,
+            'producto_nombre': producto_nombre,
+            'cantidad': len(items),
+            'codigos': codigos,
+            'seriales': seriales,
+        })
+        counter += 1
+
+    # Renderizar el template con los datos agrupados
+    html = render(request, 'dashboard/inventario/revisar_inventario_htmx.html', {
+        'grouped_activo_list': activos_fijos,
+        'ubicacion' : Ubicacion.objects.get(pk=id).nombre,
+    })
+
+    return HttpResponse(html)
+
+# consulta el historial del inventario seleccionado
+@login_required
+def historial_inventario_api(request, id):
+    inventario = Inventario.objects.filter(ubicacion__id=id).order_by("-fecha")
+    html = render(request, 'dashboard/inventario/historial_inventario_htmx.html', {'historial' : inventario})
+    return HttpResponse(html)
+
+# consulta el ultimo inventario de una ubicacion
+@login_required
+def read_inventario(request, id):
+    inventario = Inventario.objects.filter(ubicacion__id=id).order_by('fecha')
+    
+    print(inventario)
+    html = render(request, 'dashboard/inventario/read_htmx.html', {'context' : inventario})
+    return HttpResponse(html)
+
+# actualiza el inventario de una ubicacion
 @login_required
 def update_inventario(request):
     context = {
         'title_page' : 'Inventario'
     }
-    return render(request, 'dashboard/inventario/inventario.html', context)
+    return render(request, 'dashboard/inventario/list.html', context)
 
+# elimina el inventario de una ubicacion si tiene menos de 24h creadas
 @login_required
-def delete_inventario(request):
+def delete_inventario(request, id):
+    inventario = get_object_or_404(Inventario, pk=id)
     return redirect('list-inventario')
 
 #############################################################################################################################
 ######################################                    PRODUCTOS                       ###################################
 #############################################################################################################################
+# economico
 @login_required
 def resumen_productos(request):
     context = {
@@ -134,6 +232,7 @@ def delete_productos(request, id):
 #############################################################################################################################
 ######################################                   PROVEEDORES                      ###################################
 #############################################################################################################################
+# rol economico
 @login_required
 def resumen_proveedores(request):
     
@@ -343,6 +442,8 @@ def self_cambiar_password(request, pk):
 #############################################################################################################################
 #############################                            SOLICITUDES                            #############################
 #############################################################################################################################
+# rol Jefe de Area
+
 @login_required
 def solicitudes_productos_tabla(request):
     solicitudes = SolicitudesProductos.objects.filter(usuario = request.user.id)
@@ -361,7 +462,7 @@ def solicitar_productos(request):
     return render(request, 'dashboard/productos/solicitar.html', context)
 
 @login_required
-def solicitudes_productos(request):
+def solicitudes_productos_api(request):
     solicitudes = SolicitudesProductos.objects.filter(usuario = request.user.id)
     context = {
         'title_page' : 'Solicitudes de Productos',
@@ -370,7 +471,7 @@ def solicitudes_productos(request):
     return render(request, 'dashboard/productos/solicitudes/solicitudes_htmx.html', context)
 
 
-def preparar_solicitud(request, id, cant):
+def preparar_solicitud_api(request, id, cant):
     producto = get_object_or_404(Producto, pk=id)
     
     # Validación adicional
@@ -399,40 +500,42 @@ def preparar_solicitud(request, id, cant):
 
 # agregar producto a la lista de solicitud
 @require_http_methods(["POST"])
-def agregar_a_la_solicitud(request, id, cant):
+def agregar_a_la_solicitud_api(request, id, cant):
     producto = get_object_or_404(Producto, id=id)
     solicitud = get_solicitud_sesion(request)
     cant = int(cant)
-    
-    print('agregada la solicitud')
 
     solicitud[str(id)] = {
         "ID": producto.id,
         "nombre": producto.nombre,
-        "marca" : producto.marca,
-        "modelo" : producto.modelo,
-        "proveedor" : producto.proveedor.nombre,
+        "marca": producto.marca,
+        "modelo": producto.modelo,
+        "proveedor": producto.proveedor.nombre if producto.proveedor else "",
         "imagen": producto.imagen.url if producto.imagen else "",
         "cantidad": cant,
         "precio": float(producto.precio_unitario or 0),
     }
-    print(solicitud[str(id)])
 
     guardar_solicitud_sesion(request, solicitud)
 
-    return HttpResponse(f"<div>Producto '{producto.nombre}' añadido ({cant} unidades)</div>")
-
-# listar productos de la solicitud
-def ver_solicitud(request):
-    solicitud = get_solicitud_sesion(request)
+    # Devuelve el HTML actualizado del carrito
     context = {
         'solicitud': solicitud.items(),
-        'fecha' : datetime.now().date,
+        'fecha': datetime.now().date,
     }
     html = render(request, 'dashboard/productos/solicitudes/ver_solicitud_htmx.html', context)
     return HttpResponse(html)
 
-def eliminar_item_solicitud(request, producto_id):
+def ver_solicitud(request):
+    solicitud = get_solicitud_sesion(request)
+    context = {
+        'solicitud': solicitud.items(),
+        'fecha': datetime.now().date,
+    }
+    html = render(request, 'dashboard/productos/solicitudes/ver_solicitud_htmx.html', context)
+    return HttpResponse(html)
+
+def eliminar_item_solicitud_api(request, producto_id):
     solicitud = get_solicitud_sesion(request)
     producto_id_str = str(producto_id)
 
@@ -441,25 +544,25 @@ def eliminar_item_solicitud(request, producto_id):
         guardar_solicitud_sesion(request, solicitud)
 
     html = render_to_string('dashboard/productos/solicitudes/ver_solicitud_htmx.html', {
-        'solicitud': solicitud.items()
+        'solicitud': solicitud.items(),
+        'fecha': datetime.now().date,
     })
 
     return HttpResponse(html)
 
-# confirmar y guardar solicitud
-def confirmar_solicitud(request):
+def confirmar_solicitud_api(request):
     if request.method == 'POST':
         solicitud = get_solicitud_sesion(request)
 
         # Guardar la solicitud
-        solicitud = SolicitudesProductos.objects.create(
+        SolicitudesProductos.objects.create(
             usuario=request.user,
             items=solicitud,
-            fecha_creacion = datetime.now(),
-            estado = 'pendiente'
+            fecha_creacion=datetime.now(),
+            estado='pendiente'
         )
 
-        # Limpiar el solicitud después de guardar
+        # Limpiar la solicitud después de guardar
         guardar_solicitud_sesion(request, {})
 
         messages.success(request, "Solicitud creada exitosamente.")

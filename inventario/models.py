@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import datetime
+from core.settings_web_project import ENTIDAD_WEB
 
 class Area(models.Model):
     nombre = models.CharField(max_length=15, blank=False, null=False)
@@ -11,7 +12,6 @@ class Area(models.Model):
 
     def __str__(self):
         return f"{self.id} - {self.nombre}"
-
 
 class Usuario(AbstractUser):
     TIPO_USER = (
@@ -46,13 +46,14 @@ class Proveedor(models.Model):
     telefono = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
+    img = models.ImageField(upload_to='proveedores/', null=True, blank=True)
 
     def __str__(self):
         return self.nombre
 
 class Ubicacion(models.Model):
     # PRINCIPAL UBICACION "Almacen"
-
+    area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
 
@@ -81,39 +82,42 @@ class Producto(models.Model):
     class Meta:
         verbose_name_plural = "Productos"
 
-class ActivoFijo(models.Model):
-    codigo_interno = models.CharField(max_length=50, unique=True)
-    descripcion = models.TextField(blank=True, null=True)
-    fecha_adquisicion = models.DateField()
-    valor_adquisicion = models.DecimalField(max_digits=12, decimal_places=2)
-    estado = models.CharField(max_length=30, choices=[
-        ('en_uso', 'En uso'),
-        ('almacen', 'Almacen'),
-        ('en_reparacion', 'En reparación'),
-        ('dado_de_baja', 'Dado de baja')
-    ])
-    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, null=True)
-    observaciones = models.TextField(blank=True, null=True)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, default="")
-
-    def __str__(self):
-        return f"{self.codigo_interno} - {self.nombre}"
-
-    class Meta:
-        verbose_name_plural = "Activos Fijos"
-
 class Inventario(models.Model):
-    codigo = models.CharField(max_length=50, unique=True)
-    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, null=True)
     descripcion = models.TextField(blank=True, null=True)
+    fecha = models.DateField(default=datetime.now())
+    file = models.FileField(upload_to='inventario-files/', null=True, blank=True)
+    img = models.ImageField(upload_to='inventario-imgs/', null=True, blank=True)
 
     def __str__(self):
-            return f"{self.codigo}"
+            return f"{self.ubicacion} - {self.fecha}"
     
     class Meta:
         verbose_name = "Inventario"
         verbose_name_plural = "Inventarios"
+
+class ActivoFijo(models.Model):
+    ESTADOS = {
+        ('en_uso', 'En uso'),
+        ('almacen', 'Almacen'),
+        ('en_reparacion', 'En reparación'),
+        ('dado_de_baja', 'Dado de baja')
+    }
+    codigo_interno = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(blank=True, null=True)
+    fecha_adquisicion = models.DateField(default=datetime.now())
+    valor_adquisicion = models.DecimalField(max_digits=12, decimal_places=2)
+    estado = models.CharField(max_length=30, choices=ESTADOS)
+    serial_number = models.CharField(max_length=100, blank=True, null=True)
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, null=True)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, default="")
+    observaciones = models.TextField(blank=True, null=True)
+ 
+    def __str__(self):
+        return f"{self.ubicacion} - {ENTIDAD_WEB} - {self.codigo_interno}"
+
+    class Meta:
+        verbose_name_plural = "Activos Fijos"
 
 class MovimientoInventario(models.Model):
     TIPO_MOVIMIENTO = (
@@ -121,7 +125,6 @@ class MovimientoInventario(models.Model):
         ('salida', 'Salida'),
         ('ajuste', 'Ajuste'),
     )
-
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     tipo = models.CharField(max_length=10, choices=TIPO_MOVIMIENTO)
     cantidad = models.PositiveIntegerField()
@@ -145,7 +148,7 @@ class SolicitudesProductos(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     items = models.JSONField(default=dict)  # ejemplo: {"1": {"cantidad": 2}, ...}
     fecha_creacion = models.DateTimeField(default=datetime.now())
-    estado = models.CharField(max_length=20, choices=ESTADOS_SOLICITUD, default='pendiente')
+    estado = models.CharField(max_length=20, choices=ESTADOS_SOLICITUD, default='Pendiente')
 
     def __str__(self):
         return f"Solicitud #{self.id} - {self.usuario.first_name} {self.usuario.last_name}"

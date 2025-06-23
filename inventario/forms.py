@@ -127,7 +127,6 @@ class ProductoForm(forms.ModelForm):
             'imagen': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
-    # Asegúrate de que el campo proveedor traiga todos los proveedores ordenados por nombre
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['proveedor'].queryset = Proveedor.objects.all().order_by('nombre')
@@ -168,7 +167,6 @@ class UsuarioCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
-
 
 class UsuarioChangeForm(UserChangeForm):
     class Meta:

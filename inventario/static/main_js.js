@@ -58,6 +58,19 @@ counters.forEach(counter => {
   }
 })
 
+function getElementDimensions(element) {
+    const rect = element.getBoundingClientRect();
+    const styles = window.getComputedStyle(element);
+    
+    const full_Height = rect.height + parseFloat(styles.marginTop) + parseFloat(styles.marginBottom) + parseFloat(styles.paddingBottom) + parseFloat(styles.paddingTop);
+    const full_Width = rect.width + parseFloat(styles.marginLeft) + parseFloat(styles.marginRight) + parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+
+    return {
+        height: full_Height,
+        width: full_Width
+    };
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const aside_hide = document.getElementById("aside-hide");

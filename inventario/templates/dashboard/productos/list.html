@@ -1,10 +1,8 @@
 {% extends 'dashboard_template.html' %}
 {% load static %}
 {% block content_dashboard %}
-<link
-    href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.css"
-    rel="stylesheet" integrity="sha384-AHdXImV07k5XJYMyGLDf7LhYawou4SZouf2KCm2KfuRB1DubOpbvF57wzhPMCsY8"
-    crossorigin="anonymous">
+<!-- <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.css" rel="stylesheet" integrity="sha384-AHdXImV07k5XJYMyGLDf7LhYawou4SZouf2KCm2KfuRB1DubOpbvF57wzhPMCsY8" crossorigin="anonymous"> -->
+<link href="{% static 'libs/DataTables/datatables.min.css' %}" rel="stylesheet">
 <style>
     .badge {
         width: 5rem;
@@ -108,16 +106,14 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
-    integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7"
-    crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
-    integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n"
-    crossorigin="anonymous"></script>
-<script
-    src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.js"
-    integrity="sha384-ekYQxP5UHe08BFvtvtcrjLc2YsPeISDgLZAqLtdHaJndItMrJ50Db356qMcHx/sH"
-    crossorigin="anonymous"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/pdfmake.min.js' %}"></script>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/vfs_fonts.js' %}"></script>
+
+<!-- <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.js" integrity="sha384-ekYQxP5UHe08BFvtvtcrjLc2YsPeISDgLZAqLtdHaJndItMrJ50Db356qMcHx/sH" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/datatables.min.js' %}"></script>
 <script>
     $(document).ready(function () {
         $('#productos-table').DataTable({

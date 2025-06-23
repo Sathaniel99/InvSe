@@ -22,12 +22,16 @@ urlpatterns = [
     ####################################################################################################
     ##########################                   INVENTARIO                   ##########################
     ####################################################################################################
-    path('inventario/', views.main_inventario, name='inventario'),
-    path('inventario/create-inventario/', views.create_inventario, name='create-inventario'),
+    path('inventario/revisar-inventario/', views.revisar_inventario, name='revisar-inventario'),
     path('inventario/list-inventario/', views.list_inventario, name='list-inventario'),
-    path('inventario/read-inventario/', views.read_inventario, name='read-inventario'),
-    path('inventario/update-inventario/', views.update_inventario, name='update-inventario'),
-    path('inventario/delete-inventario/', views.delete_inventario, name='delete-inventario'),
+    path('inventario/read-inventario/<int:id>', views.read_inventario, name='read-inventario'),
+    path('inventario/update-inventario/<int:id>', views.update_inventario, name='update-inventario'),
+    path('inventario/delete-inventario/<int:id>', views.delete_inventario, name='delete-inventario'),
+    
+    # ENDPOINTS
+    path('inventario/actual-inventario-api/<int:id>', views.actual_inventario_api, name='actual_inventario_api'),
+    path('inventario/revisar-inventario-api/<int:id>', views.revisar_inventario_api, name='revisar_inventario_api'),
+    path('inventario/historial-inventario-api/<int:id>', views.historial_inventario_api, name='historial_inventario_api'),
 
     ####################################################################################################
     #########################                    PRODUCTOS                    ##########################
@@ -46,12 +50,13 @@ urlpatterns = [
     path('productos/solicitar-productos/', views.solicitar_productos, name='solicitar-productos'),
     path('productos/solicitudes-productos/', views.solicitudes_productos_tabla, name='solicitudes-productos-tabla'),
     
-    path('productos/solicitudes-productos-api/', views.solicitudes_productos, name='solicitudes-productos-api'),
-    path('preparar_solicitud/<int:id>/<int:cant>', views.preparar_solicitud, name='preparar_solicitud'),
-    path('agregar_item_solicitud/<int:id>/<int:cant>', views.agregar_a_la_solicitud, name='agregar_item_solicitud'),
-    path('ver-solicitud/', views.ver_solicitud, name='ver_solicitud'),
-    path('eliminar-item/<str:producto_id>/', views.eliminar_item_solicitud, name='eliminar_item_solicitud'),
-    path('confirmar-solicitud/', views.confirmar_solicitud, name='confirmar_solicitud'),
+    # ENDPOINTS
+    path('productos/solicitudes-productos-api/', views.solicitudes_productos_api, name='solicitudes-productos-api'),
+    path('productos/preparar_solicitud/<int:id>/<int:cant>', views.preparar_solicitud_api, name='preparar_solicitud-api'),
+    path('productos/agregar-item-solicitud-api/<int:id>/<int:cant>', views.agregar_a_la_solicitud_api, name='agregar-item_solicitud-api'),
+    path('productos/ver-solicitud-api/', views.ver_solicitud, name='ver_solicitud'),
+    path('productos/eliminar-item-api/<str:producto_id>/', views.eliminar_item_solicitud_api, name='eliminar-item-solicitud-api'),
+    path('productos/confirmar-solicitud-api/', views.confirmar_solicitud_api, name='confirmar-solicitud-api'),
 
     ####################################################################################################
     ##########################                  PROVEEDORES                   ##########################

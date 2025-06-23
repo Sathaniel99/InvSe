@@ -5,3 +5,4 @@ def get_solicitud_sesion(request):
 
 def guardar_solicitud_sesion(request, solicitud):
     request.session['solicitud'] = solicitud
+    request.session.modified = True

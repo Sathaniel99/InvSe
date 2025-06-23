@@ -1,5 +1,5 @@
 # KEY del proyecto
-SECRET_KEY.py
+settings_web_project.py
 
 # Archivos de entorno
 .env
