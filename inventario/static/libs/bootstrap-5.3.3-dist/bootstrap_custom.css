@@ -426,3 +426,7 @@ html[data-bs-theme=dark] {
 .form-check>label, .form-check>input, .form-check{
     cursor: pointer;
 }
+.backdrop-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}

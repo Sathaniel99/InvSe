@@ -76,7 +76,7 @@
         <div class="d-flex justify-content-center align-items-center border border-2 border-secondary-subtle bg-secondary-subtle rounded-2 m-auto"
             style="width: 20rem; height: 20rem;">
             {% if item.imagen %}
-            <img class="w-auto h-100 object-fit-cover" src="{{ item.imagen.url }}" alt="Imagen del Producto {{ item.nombre }} {{ item.marca }} {{ item.modelo }}" srcset="">
+            <img class="w-100 h-100 object-fit-contain" src="{{ item.imagen.url }}" alt="Imagen del Producto {{ item.nombre }} {{ item.marca }} {{ item.modelo }}" srcset="">
             {% else %}
             <h3 class="fw-semibold">No contiene imagen.</h3>
             {% endif %}

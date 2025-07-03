@@ -11,9 +11,9 @@
         <hr class="my-3">
         <div class="row g-3">
             <div class="col-md-12">
-                <div class="d-flex justify-content-center align-items-center border border-2 border-secondary-subtle bg-secondary-subtle rounded-2 m-auto" style="width: 20rem; height: 20rem;">
+                <div class="d-flex justify-content-center align-items-center border border-2 border-secondary-subtle bg-secondary-subtle rounded-2 m-auto overflow-hidden" style="width: 20rem; height: 20rem;">
                 {% if form.imagen %}
-                    <img src="{{ form.imagen.url }}" alt="Imagen del Producto {{ form.nombre }} {{ form.marca }} {{ form.modelo }}" srcset="">
+                    <img class="h-100 w-100 object-fit-contain" src="{{ form.imagen.url }}" alt='Imagen del Producto {{ form.nombre }} {{ form.marca|default_if_none:"" }} {{ form.modelo|default_if_none:"" }}' srcset="">
                 {% else %}
                     <h3 class="fw-semibold">No contiene imagen.</h3>
                 {% endif %}

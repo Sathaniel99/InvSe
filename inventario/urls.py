@@ -43,12 +43,15 @@ urlpatterns = [
     path('productos/delete-productos/<int:id>', views.delete_productos, name='delete-productos'),
     path('productos/show-productos/<int:id>', views.show_productos, name='show-productos'),
     path('productos/edit-productos/<int:id>', views.edit_productos, name='edit-productos'),
+    path('productos/solicitados', views.productos_solicitados, name='productos-solicitados'),
     
     ####################################################################################################
     ##########################                   SOLICITUDES                  ##########################
     ####################################################################################################
     path('productos/solicitar-productos/', views.solicitar_productos, name='solicitar-productos'),
     path('productos/solicitudes-productos/', views.solicitudes_productos_tabla, name='solicitudes-productos-tabla'),
+    path('productos/vaciar-carrito/', views.vaciar_carrito_api, name='vaciar-carrito-api'),
+    path('productos/eliminar-solicitudes-productos-creados/<int:id>', views.eliminar_solicitudes_productos_tabla, name='eliminar-solicitudes-productos-creados'),
     
     # ENDPOINTS
     path('productos/solicitudes-productos-api/', views.solicitudes_productos_api, name='solicitudes-productos-api'),
@@ -57,6 +60,10 @@ urlpatterns = [
     path('productos/ver-solicitud-api/', views.ver_solicitud, name='ver_solicitud'),
     path('productos/eliminar-item-api/<str:producto_id>/', views.eliminar_item_solicitud_api, name='eliminar-item-solicitud-api'),
     path('productos/confirmar-solicitud-api/', views.confirmar_solicitud_api, name='confirmar-solicitud-api'),
+    path('productos/ver-solicitud-creada-api/<int:id>', views.ver_solicitud_creada, name='ver-solicitud-creada-api'),
+    path('productos/rechazar-solicitud/<int:id>', views.rechazar_solicitud, name='rechazar-solicitud-api'),
+    path('productos/aprobar-solicitud/<int:id>', views.aprobar_solicitud, name='aprobar-solicitud-api'),
+
 
     ####################################################################################################
     ##########################                  PROVEEDORES                   ##########################

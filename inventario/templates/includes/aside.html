@@ -47,7 +47,7 @@
                     id="productos-collapse">
                     {% if request.user.tipo_user == 'economico' %}
                     <a href="{% url 'resumen-productos' %}"
-                        class="btn btn-outline-black {% if 'resumen-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        class="btn btn-outline-black {% if 'resumen_productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-card-text"></i> Resumen
                     </a>
                     <a href="{% url 'create-productos' %}"
@@ -58,6 +58,10 @@
                         class="btn btn-outline-black {% if 'list-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-list"></i> Listar productos
                     </a>
+                    <a href="{% url 'productos-solicitados' %}"
+                        class="btn btn-outline-black {% if 'solicitados' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-file-earmark-post"></i> Productos solicitados
+                    </a>
                     {% else %}
                     <a href="{% url 'solicitar-productos' %}"
                         class="btn btn-outline-black {% if 'solicitar-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
@@ -66,6 +70,10 @@
                     <a href="{% url 'solicitudes-productos-tabla' %}"
                         class="btn btn-outline-black {% if 'solicitudes-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-file-earmark-text"></i> Solicitudes
+                    </a>
+                    <a href=""
+                        class="btn btn-outline-black {% if 'historial-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-archive"></i> Activos sin local
                     </a>
                     {% endif %}
                 </div>

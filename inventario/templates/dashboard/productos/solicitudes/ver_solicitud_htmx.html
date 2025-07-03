@@ -1,24 +1,38 @@
-{% for key, item in solicitud %}
-<div class="d-flex justify-content-between align-items-center border-bottom py-2">
-    <div>
-        <strong>{{ item.nombre }}</strong><br>
-        Cantidad: {{ item.cantidad }}
+{% if solicitud %}
+<button type="button" hx-get="{% url 'vaciar-carrito-api' %}" hx-target="#SolicitudModalContent" hx-swap="innerHTML"
+    class="btn btn-ghost-black d-flex gap-2 align-items-center justify-content-center bg-opacity-25 rounded me-2 mt-2 transition-200 p-2 position-absolute top-0 end-0 border-secondary-subtle">
+    <i class="bi bi-trash3"></i>Vaciar carrito
+</button>
+{% endif %}
+<div>
+    {% for key, item in solicitud %}
+    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+        <div>
+            <strong>{{ item.nombre }}</strong><br>
+            Cantidad: {{ item.cantidad }}
+        </div>
+        <button hx-get="{% url 'eliminar-item-solicitud-api' key %}" hx-target="#SolicitudModalContent"
+            hx-swap="innerHTML" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar
+        </button>
     </div>
-    <button hx-delete="{% url 'eliminar-item-solicitud-api' key %}" 
-            hx-target="closest div" 
-            hx-swap="outerHTML"
-            class="btn btn-sm btn-danger">
-        Eliminar
-    </button>
+    {% empty %}
+    <div class="rounded-2 p-4" style="background-color: rgba(127.5, 127.5, 127.5, 0.5);">
+        <p class="text-center fs-5 fw-semibold m-0">No hay productos en la solicitud.</p>
+    </div>
+    {% endfor %}
 </div>
-{% empty %}
-<div class="rounded-2 p-4" style="background-color: rgba(127.5, 127.5, 127.5, 0.5);">
-    <p class="text-center fs-5 fw-semibold m-0">No hay productos en la solicitud.</p>
-</div>
-{% endfor %}
-
-<div class="d-flex justify-content-end mt-3">
-    <button type="button" class="btn btn-outline-danger-sdcn rounded-0 fw-semibold" data-bs-dismiss="modal">Cerrar</button>
+<div class="d-flex justify-content-around align-items-center mt-3">
+    {% if solicitud %}
+    <form method="post" action="{% url 'confirmar-solicitud-api' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-success-sdcn rounded-0 fw-semibold">
+            Crear Solicitud
+        </button>
+    </form>
+    {% endif %}
+    <button type="button" class="btn btn-outline-danger-sdcn rounded-0 fw-semibold"
+        data-bs-dismiss="modal">Cerrar</button>
 </div>
 
 <p class="position-absolute end-0 bottom-0 me-3 mb-2 text-muted">{{ fecha }}</p>

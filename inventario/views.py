@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from collections import defaultdict
 from datetime import datetime
-from .utils import get_solicitud_sesion, guardar_solicitud_sesion
+from .utils import get_solicitud_sesion, guardar_solicitud_sesion, parse_items_json
 from .forms import *
 from .models import *
 
@@ -228,6 +228,17 @@ def update_productos(request,id):
 def delete_productos(request, id):
     get_object_or_404(Producto, pk=id).delete()
     return redirect('list-productos')
+
+@login_required
+def productos_solicitados(request):
+    solicitudes = SolicitudesProductos.objects.all()
+    
+    context = {
+        'title_page' : 'Solicitudes de Productos',
+        'solicitudes' : solicitudes
+    }
+
+    return render(request, 'dashboard/productos/productos_solicitados.html', context)
 
 #############################################################################################################################
 ######################################                   PROVEEDORES                      ###################################
@@ -499,7 +510,6 @@ def preparar_solicitud_api(request, id, cant):
     return HttpResponse(html)
 
 # agregar producto a la lista de solicitud
-@require_http_methods(["POST"])
 def agregar_a_la_solicitud_api(request, id, cant):
     producto = get_object_or_404(Producto, id=id)
     solicitud = get_solicitud_sesion(request)
@@ -522,9 +532,10 @@ def agregar_a_la_solicitud_api(request, id, cant):
     context = {
         'solicitud': solicitud.items(),
         'fecha': datetime.now().date,
+        'title_page' : 'Solicitar Productos',
+        'productos' : Producto.objects.exclude(stock_actual = 0),
     }
-    html = render(request, 'dashboard/productos/solicitudes/ver_solicitud_htmx.html', context)
-    return HttpResponse(html)
+    return redirect('solicitar-productos')
 
 def ver_solicitud(request):
     solicitud = get_solicitud_sesion(request)
@@ -565,8 +576,60 @@ def confirmar_solicitud_api(request):
         # Limpiar la solicitud después de guardar
         guardar_solicitud_sesion(request, {})
 
-        messages.success(request, "Solicitud creada exitosamente.")
-        return redirect('mis_solicitudes')
+    return redirect('solicitudes-productos-tabla')
 
-    return redirect('ver_solicitud')
+def ver_solicitud_creada(request, id):
+    solicitud = SolicitudesProductos.objects.get(id=id)
+    items_dict = parse_items_json(solicitud.items)  # Asegúrate que esto devuelve un dict
 
+    context = {
+        'solicitud': items_dict,
+        'fecha_creada' : solicitud.fecha_creacion,
+        'estado' : solicitud.estado.upper(),
+        'fecha': datetime.now().date,
+        'title_page': 'Ver Solicitud',
+    }
+    html = render(request, 'dashboard/productos/solicitudes/ver_solicitud_creada_htmx.html', context)
+    return HttpResponse(html)
+
+def eliminar_solicitudes_productos_tabla(request, id):
+    solicitud = get_object_or_404(SolicitudesProductos, pk=id)
+    solicitud.delete()
+    
+    return redirect('solicitudes-productos-tabla')
+
+def vaciar_carrito_api(request):
+    guardar_solicitud_sesion(request, {})
+    solicitud = get_solicitud_sesion(request)
+    html = render_to_string('dashboard/productos/solicitudes/ver_solicitud_htmx.html', {
+        'solicitud': solicitud.items(),
+        'fecha': datetime.now().date,
+    })
+
+    return HttpResponse(html)
+
+def rechazar_solicitud(request, id):
+    solicitud = get_object_or_404(SolicitudesProductos, pk=id)
+    solicitud.estado = 'rechazada'
+    solicitud.save()
+
+    return redirect('productos-solicitados')
+
+def aprobar_solicitud(request, id):
+    solicitud = get_object_or_404(SolicitudesProductos, pk=id)
+    solicitud.estado = 'aprobada'
+    solicitud.save()
+
+    # aqui viene la logica de restar de la base de datos la cantidad solicitada a la cantidad registrada, osea
+    # si existen 3 servidores y se aprueba la solicitud de 2 quedaria 1 servidor disponible
+    # Asegúrate de tener un dict real
+    items_dict = parse_items_json(solicitud.items)
+
+    # Itera sobre los valores (cada producto solicitado)
+    for item in items_dict.values():
+        producto = Producto.objects.get(id=item['ID'])
+        if producto.stock_actual >= item['cantidad']:
+            producto.stock_actual -= item['cantidad']
+            producto.save()
+            
+    return redirect('productos-solicitados')

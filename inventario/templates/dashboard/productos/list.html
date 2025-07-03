@@ -30,8 +30,8 @@
         <tr class="border border-neutral-300">
             <td class="py-3">{{ ax.nombre }}</td>
             <td class="py-3">{{ ax.proveedor.nombre }}</td>
-            <td class="py-3">{{ ax.marca }}</td>
-            <td class="py-3">{{ ax.modelo }}</td>
+            <td class="py-3">{{ ax.marca|default_if_none:"Desconocida" }}</td>
+            <td class="py-3">{{ ax.modelo|default_if_none:"Desconocida" }}</td>
             <td class="py-3">{{ ax.stock_actual }}</td>
             <td>
                 <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip" data-bs-title="Inspeccionar"

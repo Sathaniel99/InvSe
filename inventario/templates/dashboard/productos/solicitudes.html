@@ -2,9 +2,6 @@
 {% load static %}
 
 {% block content_dashboard %}
-<!-- <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.css" rel="stylesheet" integrity="sha384-AHdXImV07k5XJYMyGLDf7LhYawou4SZouf2KCm2KfuRB1DubOpbvF57wzhPMCsY8" crossorigin="anonymous"> -->
-<link href="{% static 'libs/DataTables/datatables.min.css' %}" rel="stylesheet">
-
 <style>
     .badge {
         width: 5rem;
@@ -17,48 +14,54 @@
         <i class="bi bi-plus-circle"></i> Nueva Solicitud
     </a>
 </div>
-<table class="table table-hover table-striped table-hover shadow-sm border border-1 border-secondary-subtle rounded-2" id="solicitudes-table">
-    <caption>Listado de {{ title_page }}</caption>
-    <thead>
-        <tr class="table-secondary">
-            <th scope="col">ID</th>
-            <th scope="col">Cant. Items</th>
-            <th scope="col">Fecha de Creacion</th>
-            <th scope="col">Estado</th>
-        </tr>
-    </thead>
-    <tbody class="">
-        {% for ax in solicitudes %}
-        <tr class="border border-neutral-300">
-            <td class="text-center">{{ ax.id }}</td>
-            <td class="">{{ ax.usuario }}</td>
-            <td class="">{{ ax.items.len }}</td>
-            <td class="">{{ ax.fecha_creacion }}</td>
-            <td class="">
-                <span class="badge bg-black rounded-pill py-2 text-white">{{ ax.estado }}</span>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="modal fade" id="ProductosSolicitudModal" tabindex="-1" aria-labelledby="ProductosSolicitudLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content overflow-hidden bg-invert shadow p-4">
+            <div class="p-3 z-index-overall" id="ProductosSolicitudContent">
+                <!--  EDITAR  -->
+                <!--  EDITAR  -->
+            </div>
+            <i class="bi bi-box position-absolute top-0 start-0"
+                style="font-size: 28rem; transform: rotate(-45deg) translate(5rem, -7rem); color: #7878781c !important; z-index: 1;"></i>
+        </div>
+    </div>
+</div>
 
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7" crossorigin="anonymous"></script> -->
-<script src="{% static 'libs/DataTables/pdfmake.min.js' %}"></script>
-
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script> -->
-<script src="{% static 'libs/DataTables/vfs_fonts.js' %}"></script>
-
-<!-- <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.js" integrity="sha384-ekYQxP5UHe08BFvtvtcrjLc2YsPeISDgLZAqLtdHaJndItMrJ50Db356qMcHx/sH" crossorigin="anonymous"></script> -->
-<script src="{% static 'libs/DataTables/datatables.min.js' %}"></script>
-
-<script>
-    $(document).ready(function () {
-        $('#solicitudes-table').DataTable({
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.3.1/i18n/es-ES.json',
-            },
-            responsive: true,
-        });
-      });
-</script>
+<div class="d-flex flex-wrap gap-4 justify-content-center mt-4">
+    {% for ax in solicitudes %}
+    <div class="card shadow-sm border border-secondary-subtle bg-{% if ax.estado == 'pendiente' %}black{% elif ax.estado == 'aprobada' %}success{% else %}danger{% endif %}-subtle rounded-3 transition-200" style="width: 20rem; min-width: 18rem; position: relative;">
+        <div class="card-body d-flex flex-column gap-2">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge rounded-pill py-2 text-white bg-{% if ax.estado == 'pendiente' %}black{% elif ax.estado == 'aprobada' %}success{% else %}danger{% endif %}">
+                    {{ ax.estado|capfirst }}
+                </span>
+            </div>
+            <div class="">
+                <span class="fw-semibold">Cantidad de productos:</span>
+                <span>{{ ax.items|length }}</span>
+            </div>
+            <div class="">
+                <span class="fw-semibold">Fecha de creación:</span>
+                <span>{{ ax.fecha_creacion }}</span>
+            </div>
+            <hr class="m-0">
+            <div class="d-flex justify-content-around mt-2">
+                <button class="btn btn-outline-info" data-bs-toggle-tooltip="tooltip"
+                    data-bs-title="Visualizar productos Solicitados" data-bs-toggle="modal"
+                    data-bs-target="#ProductosSolicitudModal" hx-get="/productos/ver-solicitud-creada-api/{{ ax.id }}"
+                    hx-target="#ProductosSolicitudContent" hx-swap="innerHTML" hx-trigger="click">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <a class="btn btn-outline-danger-sdcn" data-bs-toggle-tooltip="tooltip"
+                    data-bs-title="Eliminar lista de productos Solicitados"
+                    href="{% url 'eliminar-solicitudes-productos-creados' ax.id %}">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+</div>
 {% endblock content_dashboard %}

@@ -53,6 +53,7 @@ class Proveedor(models.Model):
 
 class Ubicacion(models.Model):
     # PRINCIPAL UBICACION "Almacen"
+    # SECUNDARIA UBICACION "Sin Ubicacion"
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
