@@ -14,6 +14,9 @@ html[data-bs-theme="dark"] .shadow{
 .cursor-pointer{
     cursor: pointer;
 }
+.cursor-not-allowed{
+    cursor: not-allowed;
+}
 .z-index-overall{
     z-index: 1055;
 }
@@ -125,4 +128,21 @@ ul.dropdown-menu.bg-invert.p-2.show{
     box-sizing: border-box;
     page-break-after: always;
     position: relative;
+}
+input[type="date"]::-webkit-calendar-picker-indicator{
+    cursor: pointer;
+    background-color: rgba(112, 112, 112, 0.336);
+    border-radius: 1rem;
+    padding: .35rem;
+    border: 1px solid rgb(122, 122, 122);
+    transition: 200ms all ease-in-out;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover{
+    background-color: rgba(112, 112, 112, 0.575);
+    box-shadow: 0 0 .25rem rgba(112, 112, 112, 0.575);
+}
+input[type="date"]::-webkit-calendar-picker-indicator:active{
+    background-color: rgba(73, 73, 73, 0.575);
+    box-shadow: 0 0 .25rem rgba(112, 112, 112, 0.575);
+    color: white;
 }

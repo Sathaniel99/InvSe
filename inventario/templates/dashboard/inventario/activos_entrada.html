@@ -1,0 +1,51 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+
+<div
+    class="border border-1 border-secondary-subtle rounded shadow p-4 m-auto col-xs-10 col-sm-10 col-md-10 col-lg-7 col-xl-5 col-xxl-4 z-index-overall bg-invert">
+    <div class="d-flex justify-content-center gap-2 p-2 mb-3">
+        <i class="bi bi-wind text-center display-5" style="transform: rotateY(180deg);"></i>
+        <i class="bi bi-truck text-center display-5"></i>
+    </div>
+    <form class="d-flex flex-column" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-2">
+            <label for="id_{{form.producto.label|lower}}">{{form.producto.label}}:</label>
+            {{form.producto}}
+        </div>
+        <div class="mb-2">
+            <label for="id_{{form.descripcion.label|lower}}">{{form.descripcion.label}}:</label>
+            {{ form.descripcion }}
+        </div>
+        <div class="mb-2">
+            <label for="id_fecha_adquisicion">Fecha de Adquisición:</label>
+            {{ form.fecha_adquisicion }}
+        </div>
+        <div class="mb-2">
+            <label for="id_estado">Estado:</label>
+            <select name="estado" class="form-select cursor-not-allowed pe-none" id="id_estado">
+                <option value="Almacen" selected="">Almacen</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="id_serial_number">Número de serie:</label>
+            {{ form.serial_number}}
+        </div>
+        <div class="mb-2">
+            <label for="id_ubicacion">Ubicación:</label>
+            <select name="ubicacion" class="form-select cursor-not-allowed pe-none" id="id_ubicacion">
+                <option value="1">Almacen</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="id_{{ form.observaciones.label | lower }}">{{ form.observaciones.label }}:</label>
+            {{ form.observaciones }}
+        </div>
+        <button type="submit" class="btn btn-outline-black mt-4">
+            <i class="bi bi-plus-circle"></i> Guardar
+        </button>
+    </form>
+</div>
+{% endblock content_dashboard %}

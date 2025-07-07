@@ -27,6 +27,14 @@ urlpatterns = [
     path('inventario/read-inventario/<int:id>', views.read_inventario, name='read-inventario'),
     path('inventario/update-inventario/<int:id>', views.update_inventario, name='update-inventario'),
     path('inventario/delete-inventario/<int:id>', views.delete_inventario, name='delete-inventario'),
+
+    ####################################################################################################
+    #########################                  ACTIVOS FIJOS                  ##########################
+    ####################################################################################################
+    path('inventario/entrada-activos', views.entrada_activos, name='entrada-activos'),
+    path('inventario/ajuste-activos', views.ajuste_activos, name='ajuste-activos'),
+    path('inventario/salida-activos/<int:id>', views.salida_activos, name='salida-activos'),
+
     
     # ENDPOINTS
     path('inventario/actual-inventario-api/<int:id>', views.actual_inventario_api, name='actual_inventario_api'),

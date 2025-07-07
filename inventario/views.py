@@ -11,14 +11,26 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from collections import defaultdict
 from datetime import datetime
-from .utils import get_solicitud_sesion, guardar_solicitud_sesion, parse_items_json
+from .utils import get_solicitud_sesion, guardar_solicitud_sesion, parse_items_json, generar_numero_inventario
 from .forms import *
 from .models import *
 
 @login_required 
 def home_page(request):
+    productos = Producto.objects.all()
+    total = productos.count()
+    agotados = productos.filter(stock_actual=0).count()
+    bajo_stock = productos.filter(stock_actual__lte=F('stock_minimo'), stock_actual__gt=0).count()
+    en_stock = productos.filter(stock_actual__gt=F('stock_minimo')).count()
+
+    print(f"Total productos: {total}, Agotados: {agotados}, Bajo stock: {bajo_stock}, En stock: {en_stock}")
+
     context = {
-        'title_page' : 'Inicio'
+        'title_page': 'Inicio',
+        'total_productos': int(total),
+        'productos_agotados': int(agotados),
+        'productos_bajo_stock': int(bajo_stock),
+        'productos_en_stock': int(en_stock),
     }
     return render(request, 'dashboard/home_page.html', context)
 
@@ -161,6 +173,61 @@ def delete_inventario(request, id):
     inventario = get_object_or_404(Inventario, pk=id)
     return redirect('list-inventario')
 
+
+# registra la entrada de un activo fijo y actualiza el stock del tipo de producto
+@login_required
+def entrada_activos(request):
+    if request.method == 'POST':
+        form = ActivoFijoForm(request.POST)
+        if form.is_valid():
+            activo = form.save(commit=False)
+            activo.serial_number = generar_numero_inventario()
+            activo.save()
+
+            id_activo = activo.producto.id
+            # filtrar todos los activos con el id del producto y contarlos
+            cantidad = ActivoFijo.objects.filter(producto__id = id_activo).count()
+            # actualizar el producto con la cantidad anterior
+            Producto.objects.filter(pk=id_activo).update(stock_actual=cantidad)
+            return redirect('entrada-activos')
+
+    context = {
+        'title_page' : 'Entrada de Activo Fijo',
+        'form' : ActivoFijoForm()
+    }
+    return render(request, 'dashboard/inventario/activos_entrada.html', context)
+
+# registra el cambio de ubicacion o area de un activo fijo
+@login_required
+def ajuste_activos(request):
+    pass
+
+
+# # # # # # # # # # # # # # # # # # # # # #              REVISAR              # # # # # # # # # # # # # # # # # # # # # #
+# registra la salida de un activo fijo y actualiza el stock del tipo de producto
+@login_required
+def salida_activos(request, id):
+    object_activo = get_object_or_404(ActivoFijo, pk = id)
+
+    if request.method == 'POST':
+        form = ActivoFijoForm(request.POST, instance=object_activo)
+        if form.is_valid():
+            activo = form.save(commit=False)
+            activo.estado = ESTADOS.DADO_DE_BAJA
+            activo.save()
+
+            id_activo = activo.producto.id
+            cantidad = ActivoFijo.objects.filter(producto__id=id_activo).exclude(estado__in=[ESTADOS.DADO_DE_BAJA, ESTADOS.EN_REPARACION]).count()
+            Producto.objects.filter(pk=id_activo).update(stock_actual=int(cantidad-1))
+            
+            return redirect('salida-activos')
+    context = {
+        'title_page': 'Salida de Activo Fijo',
+        'form': ActivoFijoForm(instance = object_activo)
+    }
+    return render(request, 'dashboard/inventario/activos_salida.html', context)
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 #############################################################################################################################
 ######################################                    PRODUCTOS                       ###################################
 #############################################################################################################################
@@ -168,7 +235,7 @@ def delete_inventario(request, id):
 @login_required
 def resumen_productos(request):
     context = {
-        'title_page' : 'Productos'
+        'title_page' : 'Resumen de Productos'
     }
     return render(request, 'dashboard/productos/productos.html', context)
 
@@ -191,7 +258,7 @@ def create_productos(request):
 @login_required
 def list_productos(request):
     context = {
-        'title_page' : 'Productos',
+        'title_page' : 'Listado de Productos',
         'productos' : Producto.objects.all()
     }
 
@@ -300,7 +367,7 @@ def resumen_proveedores(request):
         ).order_by('-fecha').first()
 
     context = {
-        'title_page' : 'Proveedores',
+        'title_page' : 'Resumen de Proveedores',
         'fecha_hoy' : f"{dia_actual}/{mes_actual}/{year_actual}",
         'total_proveedores' : total_proveedores,
         'total_gastado_mes' : total_gastado_mes,
@@ -328,7 +395,7 @@ class create_proveedores(CreateView):
 def list_proveedores(request):
     proveedores = Proveedor.objects.all()
     context = {
-        'title_page' : 'Listar Proveedores',
+        'title_page' : 'Listado de Proveedores',
         'proveedores' : proveedores
     }
     return render(request, 'dashboard/proveedores/list.html', context)

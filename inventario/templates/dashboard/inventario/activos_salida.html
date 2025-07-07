@@ -1,0 +1,218 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+
+<div class="technical-sheet card border-0 rounded-3 overflow-hidden shadow-sm m-auto" style="max-width: 800px; background: #fefefe;">
+    <!-- Encabezado con logo y datos clave -->
+    <div class="technical-header d-flex justify-content-between align-items-center p-4" style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);">
+        <div>
+            <h2 class="text-white mb-1"><i class="bi bi-hdd-network me-2"></i> Ficha Técnica</h2>
+            <p class="text-white-50 mb-0">ACTIVO FIJO | Código: <strong>AF-2025-0789</strong></p>
+        </div>
+        <div class="text-end">
+            <div class="badge bg-white text-dark fs-6 px-3 py-2">
+                <i class="bi bi-qr-code me-1"></i> ID: 789XJ5
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuerpo dividido en secciones técnicas -->
+    <div class="card-body p-4">
+        <!-- 1. Datos Generales -->
+        <div class="technical-section mb-4">
+            <h5 class="section-title"><i class="bi bi-card-checklist me-2"></i> Datos Generales</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="tech-data">
+                        <label>Producto:</label>
+                        <p>Servidor Dell PowerEdge R360</p>
+                    </div>
+                    <div class="tech-data">
+                        <label>Modelo:</label>
+                        <p>PE-R360-X2</p>
+                    </div>
+                    <div class="tech-data">
+                        <label>Fecha Adquisición:</label>
+                        <p>05/07/2025 <span class="text-muted">(Garantía hasta 05/07/2027)</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="tech-data">
+                        <label>Valor:</label>
+                        <p>$630,000.00 MXN</p>
+                    </div>
+                    <div class="tech-data">
+                        <label>Estado:</label>
+                        <p><span class="badge bg-success">OPERATIVO</span></p>
+                    </div>
+                    <div class="tech-data">
+                        <label>Ubicación:</label>
+                        <p><i class="bi bi-geo-alt-fill text-danger me-1"></i> Almacén Principal - Pasillo 3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Especificaciones Técnicas -->
+        <div class="technical-section mb-4">
+            <h5 class="section-title"><i class="bi bi-motherboard me-2"></i> Especificaciones Técnicas</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="tech-specs">
+                        <label>Procesador:</label>
+                        <p>2x Intel Xeon Silver 4310 (12 núcleos)</p>
+                    </div>
+                    <div class="tech-specs">
+                        <label>Memoria RAM:</label>
+                        <p>64GB DDR4 ECC (4x 16GB)</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="tech-specs">
+                        <label>Almacenamiento:</label>
+                        <p>4x 480GB SSD (RAID 10)</p>
+                    </div>
+                    <div class="tech-specs">
+                        <label>Consumo Eléctrico:</label>
+                        <p>750W (220V)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Identificación y Seguridad -->
+        <div class="technical-section mb-4">
+            <h5 class="section-title"><i class="bi bi-shield-lock me-2"></i> Identificación</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="tech-data">
+                        <label>N° Serie:</label>
+                        <p class="font-monospace">SN-DELL-789XJ5-2025</p>
+                    </div>
+                    <div class="tech-data">
+                        <label>Código de Barras:</label>
+                        <p class="text-muted">[Imagen de código de barras]</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="tech-data">
+                        <label>Responsable:</label>
+                        <p>Departamento de TI <span class="text-muted">(Asignado a: Juan Pérez)</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Historial/Mantenimiento -->
+        <div class="technical-section">
+            <h5 class="section-title"><i class="bi bi-clipboard2-pulse me-2"></i> Historial</h5>
+            <div class="tech-history">
+                <div class="history-item">
+                    <span class="history-date">15/06/2025</span>
+                    <span class="history-desc">Mantenimiento preventivo realizado</span>
+                    <span class="history-status badge bg-info">COMPLETADO</span>
+                </div>
+                <div class="history-item">
+                    <span class="history-date">02/05/2025</span>
+                    <span class="history-desc">Actualización de firmware</span>
+                    <span class="history-status badge bg-success">EXITOSO</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de ficha técnica -->
+    <div class="card-footer bg-light py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">Última actualización: 05/07/2025 14:30</small>
+            <div>
+                <button class="btn btn-sm btn-outline-secondary me-2">
+                    <i class="bi bi-printer me-1"></i> Imprimir
+                </button>
+                <button class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-file-pdf me-1"></i> Exportar PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos para ficha técnica profesional -->
+<style>
+    .technical-sheet {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        border: 1px solid #e0e0e0 !important;
+    }
+    
+    .technical-header {
+        border-bottom: 4px solid #2980b9;
+    }
+    
+    .section-title {
+        color: #2c3e50;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #eaeaea;
+        font-weight: 600;
+        margin-bottom: 1.2rem;
+    }
+    
+    .tech-data, .tech-specs {
+        margin-bottom: 1rem;
+    }
+    
+    .tech-data label, .tech-specs label {
+        font-weight: 600;
+        color: #7f8c8d;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        margin-bottom: 0.2rem;
+        display: block;
+    }
+    
+    .tech-data p, .tech-specs p {
+        font-size: 1rem;
+        color: #34495e;
+        margin-bottom: 0;
+        padding-left: 0.5rem;
+    }
+    
+    .tech-history {
+        border-left: 3px solid #3498db;
+        padding-left: 1rem;
+    }
+    
+    .history-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px dashed #ecf0f1;
+    }
+    
+    .history-date {
+        width: 100px;
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 0.85rem;
+    }
+    
+    .history-desc {
+        flex-grow: 1;
+        color: #34495e;
+    }
+    
+    .history-status {
+        width: 100px;
+        text-align: center;
+        font-size: 0.75rem;
+    }
+    
+    .font-monospace {
+        font-family: 'Courier New', monospace;
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        display: inline-block;
+    }
+</style>
+{% endblock content_dashboard %}

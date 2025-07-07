@@ -9,3 +9,8 @@ economico:
 
 
 Crear por defecto en los modelos de Ubicacion para cuando no tenga ubicacion establecida que sea por defecto "Sin Ubicación"
+
+
+
+se le da entrada a 1 o varios activos
+se le genera automaticamente 

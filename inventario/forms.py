@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .utils import generar_numero_inventario
 
 # --- Formulario: Categoria ---
 class CategoriaForm(forms.ModelForm):
@@ -55,32 +56,36 @@ class ActivoFijoForm(forms.ModelForm):
     class Meta:
         model = ActivoFijo
         fields = [
-            'codigo_interno',
+            'producto',
             'descripcion',
             'fecha_adquisicion',
-            'valor_adquisicion',
             'estado',
+            'serial_number',
             'ubicacion',
             'observaciones'
         ]
         widgets = {
-            'codigo_interno': forms.TextInput(attrs={'class': 'form-control'}),
+            'producto' : forms.Select(attrs={'class': 'form-select'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'fecha_adquisicion': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'valor_adquisicion': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'estado': forms.Select(attrs={'class': 'form-select'}),
-            'ubicacion': forms.Select(attrs={'class': 'form-select'}),
+            'fecha_adquisicion': forms.DateInput(format='%Y-%m-%d',attrs={'type': 'date', 'class': 'form-control'}),
+            'estado': forms.Select(attrs={'class': 'form-select pe-none'}),
+            'serial_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'ubicacion': forms.Select(attrs={'class': 'form-select pe-none'}),
             'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {
-            'codigo_interno': 'Código Interno',
+            'producto' : 'Producto',
             'descripcion': 'Descripción',
             'fecha_adquisicion': 'Fecha de Adquisición',
-            'valor_adquisicion': 'Valor de Adquisición',
             'estado': 'Estado',
+            'serial_number' : 'Número de serie',
             'ubicacion': 'Ubicación',
             'observaciones': 'Observaciones',
         }
+
+        def __init__(self, *args, **kwargs):
+            super(ActivoFijoForm, self).__init__(*args, **kwargs)
+            self.fields['serial_number'].initial = generar_numero_inventario()
 
 # --- Formulario: Area ---
 class AreaForm(forms.ModelForm):
@@ -154,7 +159,7 @@ class MovimientoInventarioForm(forms.ModelForm):
 # --- Formulario: Usuarios ---
 class UsuarioCreationForm(UserCreationForm):
     telefono = forms.CharField(max_length=15, required=False, label="Teléfono")
-    tipo_user = forms.ChoiceField(choices=Usuario.TIPO_USER, label="Tipo de Usuario")
+    tipo_user = forms.ChoiceField(choices=TIPO_USER, label="Tipo de Usuario",)
 
     class Meta:
         model = Usuario
@@ -186,7 +191,7 @@ class UsuarioChangeForm(UserChangeForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
-            'tipo_user': forms.Select(attrs={'class': 'form-select'},choices=Usuario.TIPO_USER,),
+            'tipo_user': forms.Select(attrs={'class': 'form-select'},choices=TIPO_USER,),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

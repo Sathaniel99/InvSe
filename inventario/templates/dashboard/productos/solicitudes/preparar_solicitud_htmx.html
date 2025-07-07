@@ -3,11 +3,11 @@
         Esta seguro que desea agregar {{ cantidad }} producto{% if cantidad != 1 %}s{% endif %} ?
     </h3>
     <div class="d-flex flex-row gap-3">
-        <div class="w-50 border border-2 border-secondary-subtle p-2 bg-secondary-subtle rounded-2 d-flex justify-content-center align-items-center"
-            style="height: 20rem;">
+        <div class="border border-2 border-secondary-subtle p-2 bg-secondary-subtle rounded-2 d-flex justify-content-center align-items-center"
+            style="height: 20rem; width: 20rem;">
 
             {% if img and img != " " %}
-            <img class="object-fit-contain h-100" src="{{ img }}" alt="Imagen producto {{ producto }}">
+            <img class="object-fit-contain h-100 w-100" src="{{ img }}" alt="Imagen producto {{ producto }}">
             {% else %}
             <h3 class="text-center fw-semibold">No contiene imagen.</h3>
             {% endif %}

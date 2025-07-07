@@ -17,14 +17,14 @@
                     <div
                         class="border border-secondary-subtle rounded shadow-success p-2 d-flex flex-column justify-content-between col min-width-7 bg-success-subtle bg-gradient">
                         <small class="text-muted">Total</small>
-                        <div class="fs-4 fw-bold counter-frame text-success-emphasis">125</div>
+                        <div class="fs-4 fw-bold counter-frame text-success-emphasis">{{ total_productos }}</div>
                     </div>
     
                     <!-- En Stock -->
                     <div
                         class="border border-secondary-subtle rounded shadow-primary p-2 d-flex flex-column justify-content-between col min-width-7 bg-primary-subtle bg-gradient">
                         <small class="text-muted">En Stock</small>
-                        <div class="fs-4 fw-bold counter-frame text-primary-emphasis">98</div>
+                        <div class="fs-4 fw-bold counter-frame text-primary-emphasis">{{ productos_en_stock }}</div>
                     </div>
                 </div>
 
@@ -33,14 +33,14 @@
                     <div
                         class="border border-secondary-subtle rounded shadow-warning p-2 d-flex flex-column justify-content-between col min-width-7 bg-warning-subtle bg-gradient">
                         <small class="text-muted">Bajo Stock</small>
-                        <div class="fs-4 fw-bold counter-frame text-warning-emphasis">23</div>
+                        <div class="fs-4 fw-bold counter-frame text-warning-emphasis">{{ productos_bajo_stock }}</div>
                     </div>
     
                     <!-- Agotados -->
                     <div
                         class="border border-secondary-subtle rounded shadow-danger p-2 d-flex flex-column justify-content-between col min-width-7 bg-danger-subtle bg-gradient">
                         <small class="text-muted">Agotados</small>
-                        <div class="fs-4 fw-bold counter-frame text-danger-emphasis">4</div>
+                        <div class="fs-4 fw-bold counter-frame text-danger-emphasis">{{ productos_agotados }}</div>
                     </div>
                 </div>
             </div>
