@@ -1,218 +1,202 @@
 {% extends 'dashboard_template.html' %}
 {% load static %}
 {% block content_dashboard %}
+<!-- JsBarcode -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.1/JsBarcode.all.min.js" integrity="sha512-fLmJPYDfCIAZ0gpG/iiIzPw113KquhzI1bxG0XhiLYyqm8Ax2lEiq1h1qv2vafH9tLzkjm4HYRWSeKoGFH4xIw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- QRCode -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- HTML2PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<!-- html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<div class="technical-sheet card border-0 rounded-3 overflow-hidden shadow-sm m-auto" style="max-width: 800px; background: #fefefe;">
-    <!-- Encabezado con logo y datos clave -->
-    <div class="technical-header d-flex justify-content-between align-items-center p-4" style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);">
-        <div>
-            <h2 class="text-white mb-1"><i class="bi bi-hdd-network me-2"></i> Ficha Técnica</h2>
-            <p class="text-white-50 mb-0">ACTIVO FIJO | Código: <strong>AF-2025-0789</strong></p>
-        </div>
-        <div class="text-end">
-            <div class="badge bg-white text-dark fs-6 px-3 py-2">
-                <i class="bi bi-qr-code me-1"></i> ID: 789XJ5
-            </div>
-        </div>
+<div class="container">
+    <div class="my-4 d-flex justify-content-center gap-3">
+        <button type="button" class="btn btn-sm btn-outline-success-sdcn" id="img-create">
+            <i class="bi bi-image me-1"></i> Exportar Imagen
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-primary-sdcn" id="pdf-create">
+            <i class="bi bi-file-pdf me-1"></i> Exportar PDF
+        </button>
+        
+        {% if not activo.estado == 'Dado de baja' %}
+            <button type="button" class="btn btn-sm btn-outline-danger-sdcn" id="salida-modal" data-bs-toggle="modal" data-bs-target="#SalidaActivo">
+                <i class="bi bi-box-arrow-down-left me-1"></i> Dar Salida
+            </button>
+        {% endif %}
+            
     </div>
 
-    <!-- Cuerpo dividido en secciones técnicas -->
-    <div class="card-body p-4">
-        <!-- 1. Datos Generales -->
-        <div class="technical-section mb-4">
-            <h5 class="section-title"><i class="bi bi-card-checklist me-2"></i> Datos Generales</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="tech-data">
-                        <label>Producto:</label>
-                        <p>Servidor Dell PowerEdge R360</p>
-                    </div>
-                    <div class="tech-data">
-                        <label>Modelo:</label>
-                        <p>PE-R360-X2</p>
-                    </div>
-                    <div class="tech-data">
-                        <label>Fecha Adquisición:</label>
-                        <p>05/07/2025 <span class="text-muted">(Garantía hasta 05/07/2027)</span></p>
-                    </div>
+    <div class="style-tecnico border border-2 border-secondary-subtle card rounded-3 overflow-hidden shadow-sm m-auto text-black transition-200 transition-all" id="ficha-tecnica" style="width: 50rem;" data-bs-theme="light">
+        <!-- Encabezado con logo y datos clave -->
+        <div class="d-flex justify-content-between align-items-center p-4"
+            style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);">
+            <div class="d-flex flex-column w-100">
+                <h2 class="text-white mb-1"><i class="bi bi-hdd-network me-2"></i> Ficha Técnica</h2>
+                <p class="text-white-50 mb-0">ACTIVO FIJO | Código: <strong>{{ activo.codigo_interno|default_if_none:"-------------" }}</strong></p>
+            </div>
+            <div class="dropdown">
+                  <button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle-tooltip="tooltip" data-bs-title="Obtener código QR">
+                    <i class="bi bi-qr-code"></i>
+                  </button>
+                  <ul class="dropdown-menu p-2" style="min-width: 14rem; min-height: 14rem;">
+                    <div id="qrcode"></div>
+                  </ul>
                 </div>
-                <div class="col-md-6">
-                    <div class="tech-data">
-                        <label>Valor:</label>
-                        <p>$630,000.00 MXN</p>
+        </div>
+
+        <!-- Cuerpo dividido en secciones técnicas -->
+        <div class="card-body p-4">
+            <!-- 1. Datos Generales -->
+            <div class="mb-4">
+                <h5 class="border-bottom border-2 border-secondary-subtle pb-2 mb-3 text-muted"><i class="bi bi-card-checklist me-2"></i> Datos Generales</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">Producto:</label>
+                            <p class="ms-2 text-primary-emphasis">{{ activo.producto.nombre }} {{ activo.producto.marca|default_if_none:"" }} {{ activo.producto.modelo|default_if_none:"" }}</p>
+                        </div>
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">Modelo:</label>
+                            <p class="ms-2 text-primary-emphasis">{{activo.producto.modelo|default_if_none:"No tiene Modelo"}}</p>
+                        </div>
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">Fecha Adquisición:</label>
+                            <p class="ms-2 text-primary-emphasis">{{ activo.fecha_adquisicion }}</p>
+                        </div>
                     </div>
-                    <div class="tech-data">
-                        <label>Estado:</label>
-                        <p><span class="badge bg-success">OPERATIVO</span></p>
-                    </div>
-                    <div class="tech-data">
-                        <label>Ubicación:</label>
-                        <p><i class="bi bi-geo-alt-fill text-danger me-1"></i> Almacén Principal - Pasillo 3</p>
+                    <div class="col-md-6">
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">Valor:</label>
+                            <p class="ms-2 text-primary-emphasis">{{ activo.producto.precio_unitario }}</p>
+                        </div>
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">Estado:</label>
+                            <p class="ms-2 text-primary-emphasis"><span class="border-2 border border-dark fw-semibold badge bg-{% if 'En uso' == activo.estado %}success">{{activo.estado}}{% elif 'Almacen' == activo.estado %}dark-orange">{{activo.estado}}{% elif 'En reparación' == activo.estado %}warning text-dark">{{activo.estado}}{% else%}danger">{{activo.estado}}{% endif %}</span></p>
+                        </div>
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">Ubicación:</label>
+                            <p class="ms-2 text-primary-emphasis"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ activo.ubicacion }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 2. Especificaciones Técnicas -->
-        <div class="technical-section mb-4">
-            <h5 class="section-title"><i class="bi bi-motherboard me-2"></i> Especificaciones Técnicas</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="tech-specs">
-                        <label>Procesador:</label>
-                        <p>2x Intel Xeon Silver 4310 (12 núcleos)</p>
+            <!-- 2. Identificación y Seguridad -->
+            <div class="mb-4">
+                <h5 class="border-bottom border-2 border-secondary-subtle pb-2 mb-3 text-muted"><i class="bi bi-shield-lock me-2"></i> Identificación</h5>
+                <div class="row fm">
+                    <div class="col-md-6">
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">N° Serie:</label>
+                            <p class="font-monospaces bg-warning bg-opacity-10">{{ activo.serial_number }}</p>
+                        </div>
+                        <div class="">
+                            <label class="fw-semibold text-secondary fs-6 text-uppercase">N° Inventario:</label>
+                            <p class="ms-2 text-primary-emphasis">{{ activo.codigo_interno|default_if_none:"-------------" }}</p>
+                        </div>
                     </div>
-                    <div class="tech-specs">
-                        <label>Memoria RAM:</label>
-                        <p>64GB DDR4 ECC (4x 16GB)</p>
+                    <div class="col-md-6">
+                        <label class="fw-semibold text-secondary fs-6 text-uppercase">Responsable:</label>
+                        <div class="d-flex flex-row gap-2">
+                            {% with activo.responsable.img as img %}
+                            <div class="border border-2 border-secondary overflow-hidden position-relative {% if not img %}bg-secondary bg-opacity-25 shadow{% endif %} rounded-circle d-flex justify-content-center align-items-center" style="width: 7rem; height: 6rem;">
+                                {% if img %}
+                                <img class="object-fit-contain w-100 h-100 d-block" src="/media/{{ activo.responsable.img }}" alt="Perfil Responsable" style="z-index: 2;">
+                                <img class="w-100 h-100 position-absolute" src="/media/{{ activo.responsable.img }}" alt="Perfil Responsable" style="z-index: 1; filter: blur(5px);">
+                                {% else %}
+                                <i class="bi bi-person display-2 text-dark"></i>
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                            <div class="text-primary-emphasis">
+                                <p class="m-0">
+                                    <strong>Area:</strong> {{ activo.ubicacion.area.nombre }}
+                                </p>
+                                <p class="m-0">
+                                    <strong>Ubicación:</strong> {{ activo.ubicacion }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="tech-specs">
-                        <label>Almacenamiento:</label>
-                        <p>4x 480GB SSD (RAID 10)</p>
-                    </div>
-                    <div class="tech-specs">
-                        <label>Consumo Eléctrico:</label>
-                        <p>750W (220V)</p>
+                    <div class="col">
+                        <label class="fw-semibold text-secondary fs-6 text-uppercase">Código de Barras:</label>
+                        <svg class="w-100" id="barcode"></svg>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 3. Identificación y Seguridad -->
-        <div class="technical-section mb-4">
-            <h5 class="section-title"><i class="bi bi-shield-lock me-2"></i> Identificación</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="tech-data">
-                        <label>N° Serie:</label>
-                        <p class="font-monospace">SN-DELL-789XJ5-2025</p>
+            <!-- 3. Historial/Mantenimiento -->
+            <div class="">
+                <h5 class="border-bottom border-2 border-secondary-subtle pb-2 mb-1 text-muted"><i class="bi bi-clipboard2-pulse me-2"></i> Historial</h5>
+                {% if historial %}
+                <div class="border-start border-3 border-primary bg-body-secondary">
+                    {% for ax in historial %}
+                    <div class="d-flex align-items-center p-3 border-bottom border-2 border-secondary-subtle">
+                        <span style="min-width: 6rem;">{{ ax.fecha|date:"d/m/Y" }}</span>
+                        <span class="flex-grow-1">{{ ax.accion }}</span>
+                        <span class="text-uppercase badge bg-{% if 'Completado' == ax.estado %}success{% elif ax.estado == 'Proceso' %}warning{% else %}danger{% endif %}" style="min-width: 6rem;">{{ ax.estado }}</span>
                     </div>
-                    <div class="tech-data">
-                        <label>Código de Barras:</label>
-                        <p class="text-muted">[Imagen de código de barras]</p>
-                    </div>
+                    {% endfor %}
                 </div>
-                <div class="col-md-6">
-                    <div class="tech-data">
-                        <label>Responsable:</label>
-                        <p>Departamento de TI <span class="text-muted">(Asignado a: Juan Pérez)</span></p>
-                    </div>
+                {% else %}
+                <div class="border border-2 border-secondary-subtle border-dashed bg-body-secondary p-3">
+                    <h5 class="text-center w-100">Sin historial registrado</h5>
                 </div>
+                {% endif %}
             </div>
         </div>
 
-        <!-- 4. Historial/Mantenimiento -->
-        <div class="technical-section">
-            <h5 class="section-title"><i class="bi bi-clipboard2-pulse me-2"></i> Historial</h5>
-            <div class="tech-history">
-                <div class="history-item">
-                    <span class="history-date">15/06/2025</span>
-                    <span class="history-desc">Mantenimiento preventivo realizado</span>
-                    <span class="history-status badge bg-info">COMPLETADO</span>
-                </div>
-                <div class="history-item">
-                    <span class="history-date">02/05/2025</span>
-                    <span class="history-desc">Actualización de firmware</span>
-                    <span class="history-status badge bg-success">EXITOSO</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pie de ficha técnica -->
-    <div class="card-footer bg-light py-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Última actualización: 05/07/2025 14:30</small>
-            <div>
-                <button class="btn btn-sm btn-outline-secondary me-2">
-                    <i class="bi bi-printer me-1"></i> Imprimir
-                </button>
-                <button class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-file-pdf me-1"></i> Exportar PDF
-                </button>
+        <!-- Pie de ficha técnica -->
+        <div class="card-footer bg-light py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Última actualización: 
+                {% if last_act.fecha %}
+                    {{ last_act.fecha|date:"d/m/Y h:i a" }}
+                {% else %}
+                    <strong>No posee aún</strong>
+                {% endif %}
+                    </small>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Estilos para ficha técnica profesional -->
+{% if not activo.estado == 'Dado de baja' %}    
+<div class="modal fade" id="SalidaActivo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="SalidaActivoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="p-4">
+                <div class="d-flex flex-row justify-content-center align-items-center gap-2 text-danger mb-2">
+                    <i class="bi bi-exclamation-triangle fs-1"></i>
+                    <h2 class="fw-semibold">¿Estás Seguro?</h2>
+                </div>
+                <h5 class="fw-normal">Esta acción no se puede revertir.</h5>
+                <h5 class="fw-normal">- El Activo Fijo <strong class="text-primary-emphasis">{{ activo.producto.nombre }} {{ activo.producto.marca|default_if_none:"" }} {{ activo.producto.modelo|default_if_none:"" }}</strong> procederá a darse Salida.</h5>
+            </div>
+
+            <form method="post" class="d-flex flex-wrap justify-content-center p-2 pt-0 pb-4 gap-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger-sdcn rounded-0" id="delete_modal" data-bs-dismiss="modal">Eliminar</button>
+                <button type="button" class="btn btn-outline-black rounded-0" data-bs-dismiss="modal">Cancelar</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <style>
-    .technical-sheet {
+    .style-tecnico {
         font-family: 'Segoe UI', system-ui, sans-serif;
-        border: 1px solid #e0e0e0 !important;
     }
-    
-    .technical-header {
-        border-bottom: 4px solid #2980b9;
-    }
-    
-    .section-title {
-        color: #2c3e50;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #eaeaea;
-        font-weight: 600;
-        margin-bottom: 1.2rem;
-    }
-    
-    .tech-data, .tech-specs {
-        margin-bottom: 1rem;
-    }
-    
-    .tech-data label, .tech-specs label {
-        font-weight: 600;
-        color: #7f8c8d;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        margin-bottom: 0.2rem;
-        display: block;
-    }
-    
-    .tech-data p, .tech-specs p {
-        font-size: 1rem;
-        color: #34495e;
-        margin-bottom: 0;
-        padding-left: 0.5rem;
-    }
-    
-    .tech-history {
-        border-left: 3px solid #3498db;
-        padding-left: 1rem;
-    }
-    
-    .history-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.8rem;
-        padding-bottom: 0.8rem;
-        border-bottom: 1px dashed #ecf0f1;
-    }
-    
-    .history-date {
-        width: 100px;
-        font-weight: 500;
-        color: #2c3e50;
-        font-size: 0.85rem;
-    }
-    
-    .history-desc {
-        flex-grow: 1;
-        color: #34495e;
-    }
-    
-    .history-status {
-        width: 100px;
-        text-align: center;
-        font-size: 0.75rem;
-    }
-    
-    .font-monospace {
+    .font-monospaces {
         font-family: 'Courier New', monospace;
-        background: #f8f9fa;
-        padding: 0.2rem 0.4rem;
-        border-radius: 3px;
-        display: inline-block;
     }
 </style>
+<script>
+    const name = 'Ficha Técnica Activo Fijo - {{ activo.codigo_interno|default_if_none:"-------------" }}';
+    var url = "{{ activo.producto.nombre }} {{ activo.producto.marca|default_if_none:'' }} {{ activo.producto.modelo|default_if_none:'' }}, {{ activo.fecha_adquisicion }} - {{ activo.producto.precio_unitario }} CUP";
+    function _0x2813(){const _0x43f5a6=['href','img-create','.png','.pdf','save','classList','click','2506paNsVb','2292OmPULW','187912urzcUi','position','DOMContentLoaded','marginRight','139832skkZJg','#barcode','img','2851660GnFdem','#ffffff','pdf-create','105990zMcMeW','#fff','800px','image/png','15IRpRuB','getElementById','error','portrait','jpeg','w-100','toDataURL','letter','marginLeft','Error\x20al\x20generar\x20imagen:','style','ficha-tecnica','CODE128','#000000','set','createElement','download','1838382XGUZOo','catch','from','none','left','5656880FdHuLG','width','108KQhCuF','CorrectLevel','querySelector'];_0x2813=function(){return _0x43f5a6;};return _0x2813();}const _0x263bb0=_0x581c;function _0x581c(_0x44fe17,_0x162b0f){const _0x2813bb=_0x2813();return _0x581c=function(_0x581c2b,_0x31bb18){_0x581c2b=_0x581c2b-0xe3;let _0x280aea=_0x2813bb[_0x581c2b];return _0x280aea;},_0x581c(_0x44fe17,_0x162b0f);}(function(_0x1d142f,_0x29a9e0){const _0x162c68=_0x581c,_0x59dae9=_0x1d142f();while(!![]){try{const _0x387345=parseInt(_0x162c68(0xf4))/0x1+parseInt(_0x162c68(0x109))/0x2+parseInt(_0x162c68(0xf8))/0x3*(parseInt(_0x162c68(0xea))/0x4)+-parseInt(_0x162c68(0xf1))/0x5+-parseInt(_0x162c68(0xe9))/0x6*(-parseInt(_0x162c68(0xe8))/0x7)+-parseInt(_0x162c68(0xee))/0x8*(-parseInt(_0x162c68(0x110))/0x9)+-parseInt(_0x162c68(0x10e))/0xa;if(_0x387345===_0x29a9e0)break;else _0x59dae9['push'](_0x59dae9['shift']());}catch(_0x2f4b67){_0x59dae9['push'](_0x59dae9['shift']());}}}(_0x2813,0x72e1b));function generarCodigos(){const _0x1cf211=_0x581c;JsBarcode(_0x1cf211(0xef),url,{'format':_0x1cf211(0x104),'lineColor':_0x1cf211(0x105),'width':0x2,'height':0x64,'displayValue':!![]});let _0x41ce4a=document[_0x1cf211(0xf9)]('qrcode');var _0x17f663=new QRCode(_0x41ce4a,{'text':url,'width':0x80,'height':0x80,'colorDark':_0x1cf211(0x105),'colorLight':_0x1cf211(0xf2),'correctLevel':QRCode[_0x1cf211(0x111)]['H'],'class':_0x1cf211(0xfd)});if(_0x41ce4a['querySelector'](_0x1cf211(0xf0)))_0x41ce4a[_0x1cf211(0x112)]('img')[_0x1cf211(0xe6)]['add'](_0x1cf211(0xfd));}window['onload']=generarCodigos,document['addEventListener'](_0x263bb0(0xec),()=>{const _0x181c28=_0x263bb0,_0x40b196=document['getElementById'](_0x181c28(0x103));document[_0x181c28(0xf9)](_0x181c28(0x114))['addEventListener'](_0x181c28(0xe7),()=>{const _0x1c93f6=_0x181c28;_0x40b196['style'][_0x1c93f6(0x100)]='0',_0x40b196[_0x1c93f6(0x102)][_0x1c93f6(0xed)]='0',_0x40b196['style'][_0x1c93f6(0x10d)]='0',_0x40b196[_0x1c93f6(0x102)]['transform']=_0x1c93f6(0x10c),_0x40b196[_0x1c93f6(0x102)][_0x1c93f6(0xeb)]='relative',_0x40b196['style'][_0x1c93f6(0x10f)]=_0x1c93f6(0xf6);const _0x4c3440={'scale':0x2,'useCORS':!![],'allowTaint':![],'backgroundColor':_0x1c93f6(0xf5),'logging':![]};html2canvas(_0x40b196,_0x4c3440)['then'](_0x22f3f2=>{const _0x2b8588=_0x1c93f6,_0x5a8d6d=document[_0x2b8588(0x107)]('a');_0x5a8d6d[_0x2b8588(0x108)]=name+_0x2b8588(0xe3),_0x5a8d6d[_0x2b8588(0x113)]=_0x22f3f2[_0x2b8588(0xfe)](_0x2b8588(0xf7)),_0x5a8d6d['click']();})[_0x1c93f6(0x10a)](_0x4f6e2b=>{const _0x33b3b1=_0x1c93f6;console[_0x33b3b1(0xfa)](_0x33b3b1(0x101),_0x4f6e2b);});}),document[_0x181c28(0xf9)](_0x181c28(0xf3))['addEventListener'](_0x181c28(0xe7),()=>{const _0x4d4933=_0x181c28,_0x494fb5={'margin':0x0,'filename':name+_0x4d4933(0xe4),'image':{'type':_0x4d4933(0xfc),'quality':0x1},'html2canvas':{'scale':0x1},'jsPDF':{'unit':'in','format':_0x4d4933(0xff),'orientation':_0x4d4933(0xfb)}};html2pdf()[_0x4d4933(0x106)](_0x494fb5)[_0x4d4933(0x10b)](_0x40b196)[_0x4d4933(0xe5)]();});});
+</script>
 {% endblock content_dashboard %}

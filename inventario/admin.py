@@ -10,4 +10,5 @@ admin.site.register(ActivoFijo),
 admin.site.register(Inventario),
 admin.site.register(Producto),
 admin.site.register(MovimientoInventario),
-admin.site.register(SolicitudesProductos)
+admin.site.register(SolicitudesProductos),
+admin.site.register(HistorialActivo)

@@ -204,26 +204,26 @@ def ajuste_activos(request):
 
 
 # # # # # # # # # # # # # # # # # # # # # #              REVISAR              # # # # # # # # # # # # # # # # # # # # # #
-# registra la salida de un activo fijo y actualiza el stock del tipo de producto
+# registra la salida de un activo fijo
 @login_required
 def salida_activos(request, id):
-    object_activo = get_object_or_404(ActivoFijo, pk = id)
-
+    activo = get_object_or_404(ActivoFijo, pk = id)
     if request.method == 'POST':
-        form = ActivoFijoForm(request.POST, instance=object_activo)
-        if form.is_valid():
-            activo = form.save(commit=False)
-            activo.estado = ESTADOS.DADO_DE_BAJA
-            activo.save()
-
-            id_activo = activo.producto.id
-            cantidad = ActivoFijo.objects.filter(producto__id=id_activo).exclude(estado__in=[ESTADOS.DADO_DE_BAJA, ESTADOS.EN_REPARACION]).count()
-            Producto.objects.filter(pk=id_activo).update(stock_actual=int(cantidad-1))
-            
-            return redirect('salida-activos')
+        activo.estado = ESTADOS.DADO_DE_BAJA
+        activo.save() 
+        HistorialActivo.objects.create(
+            activo = activo,
+            responsable = request.user,
+            accion = ACCIONES_HISTORIAL.DADO_DE_BAJA,
+            estado = ESTADO_ACCION_HISTORIAL.COMPLETADO,
+        )
+    
+    historial = HistorialActivo.objects.filter(activo = id)
     context = {
         'title_page': 'Salida de Activo Fijo',
-        'form': ActivoFijoForm(instance = object_activo)
+        'historial' : historial,
+        'last_act': historial.last,
+        'activo': activo,
     }
     return render(request, 'dashboard/inventario/activos_salida.html', context)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

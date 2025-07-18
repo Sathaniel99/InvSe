@@ -18,6 +18,7 @@ class Usuario(AbstractUser):
     telefono = models.CharField(max_length=15, blank=True, null=True)
     tipo_user = models.CharField(max_length=23, choices=TIPO_USER)
     area = models.ForeignKey(Area, on_delete=models.CASCADE, default=1)
+    img = models.ImageField(upload_to='users-img/', null=True, blank=True)
 
     class Meta:
         verbose_name = "Usuario"
@@ -95,7 +96,7 @@ class Inventario(models.Model):
         verbose_name = "Inventario"
         verbose_name_plural = "Inventarios"
 class ActivoFijo(models.Model):
-    codigo_interno = models.CharField(max_length=50, unique=True)
+    codigo_interno = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True, null=True)
     fecha_adquisicion = models.DateField(default=now)
     estado = models.CharField(max_length=30, choices=ESTADOS, default=ESTADOS.ALMACEN)
@@ -103,6 +104,7 @@ class ActivoFijo(models.Model):
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, null=True, default=("-----------"))
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, default="")
     observaciones = models.TextField(blank=True, null=True)
+    responsable = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True, default="")
  
     def __str__(self):
         return f"{self.ubicacion} - {ENTIDAD_WEB} - {self.codigo_interno}"
@@ -126,7 +128,7 @@ class MovimientoInventario(models.Model):
 
 class SolicitudesProductos(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    items = models.JSONField(default=dict)  # ejemplo: {"1": {"cantidad": 2}, ...}
+    items = models.JSONField(default=dict)
     fecha_creacion = models.DateTimeField(default=now)
     estado = models.CharField(max_length=20, choices=ESTADOS_SOLICITUD, default=ESTADOS_SOLICITUD.PENDIENTE)
 
@@ -135,3 +137,13 @@ class SolicitudesProductos(models.Model):
 
     def total_items(self):
         return sum(v['cantidad'] for v in self.items.values())
+    
+class HistorialActivo(models.Model):
+    activo = models.ForeignKey(ActivoFijo, on_delete=models.CASCADE)
+    responsable = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(default=now)
+    accion = models.CharField(max_length=25, choices=ACCIONES_HISTORIAL)
+    estado = models.CharField(max_length=20, choices=ESTADO_ACCION_HISTORIAL)
+    
+    def __str__(self):
+        return f"Activo fijo {self.activo.codigo_interno} - Usuario -> {self.responsable.first_name} {self.responsable.last_name} - {self.fecha}"
