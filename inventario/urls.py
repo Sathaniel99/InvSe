@@ -34,7 +34,7 @@ urlpatterns = [
     path('inventario/entrada-activos', views.entrada_activos, name='entrada-activos'),
     path('inventario/ajuste-activos', views.ajuste_activos, name='ajuste-activos'),
     path('inventario/salida-activos/<int:id>', views.salida_activos, name='salida-activos'),
-
+    path('inventario/sin-local-activos', views.sin_local_activos, name='sin-local-activos'),
     
     # ENDPOINTS
     path('inventario/actual-inventario-api/<int:id>', views.actual_inventario_api, name='actual_inventario_api'),
@@ -93,4 +93,7 @@ urlpatterns = [
     ####################################################################################################
     path('update-user', views.update_self_user, name='update-self-user'),
     path('update-password', views.update_self_password, name='update-self-password'),
+    path('alertas-stock-api', views.alertas_stock_api, name='alertas-stock-api'),
+    path('alertas-stocks-api-filter', views.alertas_stocks_api_filter, name='alertas-stocks-api-filter'),
+    path('alertas-stocks-api-delete/<int:id>', views.alertas_stocks_api_delete, name='alertas-stocks-api-delete'),
 ]

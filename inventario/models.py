@@ -47,6 +47,9 @@ class Proveedor(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+    class Meta:
+        verbose_name_plural = "Proveedores"
 
 class Ubicacion(models.Model):
     # PRINCIPAL UBICACION "Almacen"
@@ -121,7 +124,7 @@ class MovimientoInventario(models.Model):
     motivo = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.tipo.capitalize()} - {self.producto.nombre} ({self.cantidad})"
+        return f"{self.id} : {self.tipo.capitalize()} - {self.producto.nombre} ({self.cantidad})"
 
     class Meta:
         verbose_name_plural = "Movimientos de Inventario"
@@ -138,6 +141,9 @@ class SolicitudesProductos(models.Model):
     def total_items(self):
         return sum(v['cantidad'] for v in self.items.values())
     
+    class Meta:
+        verbose_name_plural = "Solicitudes de Productos"
+    
 class HistorialActivo(models.Model):
     activo = models.ForeignKey(ActivoFijo, on_delete=models.CASCADE)
     responsable = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -147,3 +153,19 @@ class HistorialActivo(models.Model):
     
     def __str__(self):
         return f"Activo fijo {self.activo.codigo_interno} - Usuario -> {self.responsable.first_name} {self.responsable.last_name} - {self.fecha}"
+    
+    class Meta:
+        verbose_name_plural = "Historial de Activos"
+
+class Alertas(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    historial = models.ForeignKey(HistorialActivo, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(default=now)
+    stock = models.PositiveIntegerField(default=10)
+    stock_minimo = models.PositiveIntegerField(default=10)
+
+    def __str__(self):
+        return f"{self.id} : {self.fecha} - {self.producto.nombre} {self.producto.marca} {self.producto.modelo}"
+    
+    class Meta:
+        verbose_name_plural = "Alertas"

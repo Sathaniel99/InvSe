@@ -52,6 +52,10 @@ select:focus{
 
 body{
     background-color: var(--bs-invert-full);
+    font-family: "Winky Rough", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 .active>.page-link, .page-link.active {
     background-color: var(--bs-black) !important;
@@ -145,4 +149,22 @@ input[type="date"]::-webkit-calendar-picker-indicator:active{
     background-color: rgba(73, 73, 73, 0.575);
     box-shadow: 0 0 .25rem rgba(112, 112, 112, 0.575);
     color: white;
+}
+.bg-secondary-subtle-hover:hover{
+    background-color: var(--bs-secondary-bg-subtle) !important;
+}
+.bg-primary-subtle-hover:hover{
+    background-color: var(--bs-primary-bg-subtle) !important;
+}
+.bg-success-subtle-hover:hover{
+    background-color: var(--bs-success-bg-subtle) !important;
+}
+.bg-warning-subtle-hover:hover{
+    background-color: var(--bs-warning-bg-subtle) !important;
+}
+.bg-info-subtle-hover:hover{
+    background-color: var(--bs-info-bg-subtle) !important;
+}
+.bg-danger-subtle-hover:hover{
+    background-color: var(--bs-danger-bg-subtle) !important;
 }

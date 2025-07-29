@@ -8,5 +8,8 @@ economico:
 - crea proveedores
 
 
-se le da entrada a 1 o varios activos
-se le genera automaticamente
+TERMINAR LA VIEW:
+- sin_local_activos
+- ajuste_activos
+
+TERMINAR DE AGREGARLE UN REGISTRO DE HISTORIAL A TODO

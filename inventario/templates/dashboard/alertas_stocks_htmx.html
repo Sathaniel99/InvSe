@@ -1,0 +1,69 @@
+{% load static %}
+<div class="d-flex flex-wrap m-auto w-100">
+    
+    {% if alertas %}
+    {% for item in alertas %}
+        <div class="card border border-danger rounded shadow-sm p-3 m-2 bg-danger bg-opacity-10 bg-danger-subtle-hover transition-200 cursor-pointer position-relative" style="width: 20rem;">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-circle me-2 text-danger"></i>
+                <div>
+                    <div class="fw-bold fs-6">{{ item.producto.nombre }} {{ item.producto.modelo|default_if_none:"" }} {{ item.producto.marca|default_if_none:"" }}</div>
+                    <small>Stock actual: {{ item.stock }} (Mínimo: {{ item.stock_minimo }})</small>
+                </div>
+                <div class="d-flex flex-column m-2 position-absolute top-0 end-0">
+                    <small class="m-0 lh-1">{{ item.fecha|date:"d/m/Y" }}</small>
+                    <small class="m-0 lh-1">{{ item.fecha|date:"H:m a" }}</small>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger-sdcn position-absolute bottom-0 end-0 m-2 rounded-0 button-red-delete"
+                    id="{{ item.id }}" hx-get="/alertas-stocks-api-delete/{{ item.id }}" hx-trigger="clicks"
+                    >
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+    {% else %}
+    <div class="w-100 border border-2 border-secondary-subtle p-2">
+        <div class="p-4 bg-secondary-subtle w-100 text-center">
+            <span class="text-uppercase">Sin Elementos</span>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+    document.querySelectorAll('.button-red-delete').forEach(button => {
+        button.replaceWith(button.cloneNode(true));
+    });
+    var deleteButtons = document.querySelectorAll('.button-red-delete');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Selecciona el elemento a eliminar y su contenedor padre
+            const elementToRemove = this.parentElement.parentElement;
+            const parentContainer = elementToRemove.parentElement;
+            const allItems = parentContainer.querySelectorAll('.button-red-delete').length;
+
+            // Añade efecto de desvanecimiento
+            elementToRemove.style.transition = 'opacity 0.5s ease';
+            elementToRemove.style.opacity = '0';
+
+            setTimeout(() => {  
+                // Elimina el elemento
+                elementToRemove.remove();
+
+                // Comprueba si era el último elemento
+                const remainingItems = parentContainer.querySelectorAll('.button-red-delete').length;
+
+                if (remainingItems === 0) {
+                    // Inserta el mensaje "Sin Elementos"
+                    parentContainer.innerHTML = `
+                        <div class="w-100 border border-2 border-secondary-subtle p-2">
+                            <div class="p-4 bg-secondary-subtle w-100 text-center">
+                                <span class="text-uppercase">Sin Elementos</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }, 500);
+        });
+    });2
+</script>

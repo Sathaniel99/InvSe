@@ -33,6 +33,10 @@
                         class="btn btn-outline-black {% if 'list-inventario' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-list"></i> Listar inventarios
                     </a>
+                    <a href="{% url 'sin-local-activos' %}"
+                        class="btn btn-outline-black {% if 'sin-local-activos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+                        <i class="bi bi-archive"></i> Activos sin local
+                    </a>
                 </div>
             </div>
 
@@ -45,7 +49,7 @@
                 </button>
                 <div class="collapse multi-collapse border border-secondary-subtle rounded-1 rounded-top-0 p-0 {% if 'productos' in request.path %}show{% endif %}"
                     id="productos-collapse">
-                    {% if request.user.tipo_user == 'economico' %}
+                    {% if request.user.tipo_user == 'Económico' %}
                     <a href="{% url 'resumen-productos' %}"
                         class="btn btn-outline-black {% if 'resumen_productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-card-text"></i> Resumen
@@ -71,16 +75,12 @@
                         class="btn btn-outline-black {% if 'solicitudes-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
                         <i class="bi bi-file-earmark-text"></i> Solicitudes
                     </a>
-                    <a href=""
-                        class="btn btn-outline-black {% if 'historial-productos' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
-                        <i class="bi bi-archive"></i> Activos sin local
-                    </a>
                     {% endif %}
                 </div>
             </div>
 
 
-            {% if request.user.tipo_user == 'economico' %}
+            {% if request.user.tipo_user == 'Económico' %}
             <div class="w-100 overflow-hidden">
                 <button
                     class="btn {% if 'proveedores' in request.path %}btn-black rounded-bottom-0 {% else %}btn-ghost-black border-0 {% endif %}d-flex align-items-center w-100 text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9"
@@ -114,10 +114,6 @@
         <hr class="border-secondary my-2" />
 
         <div class="d-flex flex-column gap-1">
-            <a href="./Usuarios.html"
-                class="btn {% if 'Usuarios' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
-                <i class="bi bi-person fs-5"></i> Usuarios
-            </a>
             <a href="{% url 'self-config' %}"
                 class="btn {% if 'Configuración' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
                 <i class="bi bi-gear fs-5"></i> Configuración

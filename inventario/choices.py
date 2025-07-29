@@ -10,6 +10,7 @@ class ESTADOS(models.TextChoices):
     ALMACEN = 'Almacen',
     EN_REPARACION = 'En reparación',
     DADO_DE_BAJA = 'Dado de baja',
+    SIN_UBICACION = 'Sin ubicación'
 
 class ESTADOS_SOLICITUD(models.TextChoices):
     PENDIENTE = 'Pendiente',

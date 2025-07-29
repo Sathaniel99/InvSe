@@ -10,6 +10,8 @@ from django.db.models import Sum, F, Count
 from django.urls import reverse_lazy
 from django.contrib import messages
 from collections import defaultdict
+from django.utils import timezone
+from django.db.models import Q
 from datetime import datetime
 from .utils import get_solicitud_sesion, guardar_solicitud_sesion, parse_items_json, generar_numero_inventario
 from .forms import *
@@ -17,22 +19,110 @@ from .models import *
 
 @login_required 
 def home_page(request):
-    productos = Producto.objects.all()
-    total = productos.count()
-    agotados = productos.filter(stock_actual=0).count()
-    bajo_stock = productos.filter(stock_actual__lte=F('stock_minimo'), stock_actual__gt=0).count()
-    en_stock = productos.filter(stock_actual__gt=F('stock_minimo')).count()
+    if request.user.tipo_user == TIPO_USER.ECONOMICO:
+        return economico(request)
+    else:
+        return jefe_area(request)
 
-    print(f"Total productos: {total}, Agotados: {agotados}, Bajo stock: {bajo_stock}, En stock: {en_stock}")
+@login_required
+def economico(request):
+    # Seccion Resumen de Productos
+    productos = Producto.objects.all()
+    productos_total = productos.aggregate(total=Sum('stock_actual'))['total']
+    productos_agotados = productos.filter(stock_actual=0).count()
+    productos_bajo_stock = productos.filter(stock_actual__lte=F('stock_minimo'), stock_actual__gt=0).count()
+    productos_en_stock = productos.filter(stock_actual__gt=F('stock_minimo')).count()
+
+    # Seccion Resumen de Activos Fijos
+    activos_fijos = ActivoFijo.objects.all()
+    activos_fijos_en_uso = activos_fijos.filter(estado=ESTADOS.EN_USO).count()
+    activos_fijos_almacen = activos_fijos.filter(estado=ESTADOS.ALMACEN).count()
+    activos_fijos_en_reparacion = activos_fijos.filter(estado=ESTADOS.EN_REPARACION).count()
+    activos_fijos_dado_de_baja = activos_fijos.filter(estado=ESTADOS.DADO_DE_BAJA).count()
+
+    # Seccion Actividad Reciente
+    # 4 recientes items 
+    historial = HistorialActivo.objects.all()[:4]
+    
+    # entradas, salidas, movimientos
+    movimientos = MovimientoInventario.objects.all()
+    
+    # Obtener el primer y último día del mes actual
+    start_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    entradas = movimientos.filter(tipo=TIPO_MOVIMIENTO.ENTRADA,fecha__gte=start_of_month).count()
+    salidas = movimientos.filter(tipo=TIPO_MOVIMIENTO.SALIDA,fecha__gte=start_of_month).count()
+    ajustes = movimientos.filter(tipo=TIPO_MOVIMIENTO.AJUSTE,fecha__gte=start_of_month).count()
+
+    # Seccion Alertas
+    alertas = Alertas.objects.all()[:3]
 
     context = {
         'title_page': 'Inicio',
-        'total_productos': int(total),
-        'productos_agotados': int(agotados),
-        'productos_bajo_stock': int(bajo_stock),
-        'productos_en_stock': int(en_stock),
+        'productos_total': int(productos_total),
+        'productos_agotados': int(productos_agotados),
+        'productos_bajo_stock': int(productos_bajo_stock),
+        'productos_en_stock': int(productos_en_stock),
+        'activos_fijos_en_uso': int(activos_fijos_en_uso),
+        'activos_fijos_almacen': int(activos_fijos_almacen),
+        'activos_fijos_en_reparacion': int(activos_fijos_en_reparacion),
+        'activos_fijos_dado_de_baja': int(activos_fijos_dado_de_baja),
+        'historial' : historial,
+        'entradas': entradas,
+        'salidas': salidas,
+        'ajustes': ajustes,
+        'alertas': alertas,
     }
-    return render(request, 'dashboard/home_page.html', context)
+    return render(request, 'dashboard/economico_home_page.html', context)
+
+@login_required
+def jefe_area(request):
+    context = {
+        'title_page': 'Inicio',
+        'explicacion' : "Pagina inicial de Jefe de Área en desarrollo."
+    }
+    return render(request, 'includes/build.html', context)
+
+@login_required
+def alertas_stock_api(request):
+    alertas = Alertas.objects.all()
+    html = render(request, 'dashboard/alertas_stocks_htmx.html', {'alertas' : alertas})
+    return HttpResponse(html)
+
+@login_required
+def alertas_stocks_api_filter(request):
+    text_input = request.POST.get('textInput', '')
+    date_input = request.POST.get('dateInput', '')
+    
+    alertas = Alertas.objects.all()
+
+    # filtrar por texto si se proporciona
+    if text_input:
+        alertas = alertas.filter(
+            Q(producto__nombre__icontains=text_input) |
+            Q(producto__marca__icontains=text_input) |
+            Q(producto__modelo__icontains=text_input)
+        )
+
+    # filtrar por fecha si se proporciona
+    if date_input:
+        try:
+            date_obj = timezone.datetime.strptime(date_input, '%Y-%m-%d').date()
+            start_of_day = timezone.make_aware(timezone.datetime.combine(date_obj, timezone.datetime.min.time()))
+            end_of_day = timezone.make_aware(timezone.datetime.combine(date_obj, timezone.datetime.max.time()))
+            alertas = alertas.filter(fecha__range=(start_of_day, end_of_day))
+        except ValueError:
+            print(ValueError)
+
+    html = render(request, 'dashboard/alertas_stocks_htmx.html', {'alertas': alertas})
+    return HttpResponse(html)
+
+@login_required
+def alertas_stocks_api_delete(request, id):
+    ax = Alertas.objects.get(pk=id)
+    print(ax)
+    # ax.delete()
+    return HttpResponse(status=204)
+
 
 #############################################################################################################################
 ###################################                       INVENTARIO                      ###################################
@@ -41,17 +131,20 @@ def home_page(request):
 @login_required
 def revisar_inventario(request):
     ubicacion = Ubicacion.objects.filter(area = request.user.area)
+    print(request.user.area.nombre)
     context = {
         'title_page' : 'Revisar Inventario',
-        'ubicaciones' : ubicacion
+        'ubicaciones' : ubicacion,
     }
+    if request.user.area.nombre == "Almacén":
+        print("Alaamar")
     return render(request, 'dashboard/inventario/revisar_inventario.html', context)
 
 # lista las ubicaciones para consultar su inventario
 @login_required
 def list_inventario(request):
     ubicaciones = Ubicacion.objects.filter(area = request.user.area)
-    if 'economico' in request.user.tipo_user or request.user.is_superuser:
+    if 'Económico' in request.user.tipo_user or request.user.is_superuser:
         ubicaciones = Ubicacion.objects.all()
     context = {
         'title_page' : 'Listado de Inventarios',
@@ -202,6 +295,22 @@ def entrada_activos(request):
 def ajuste_activos(request):
     pass
 
+# **** TERMINAR
+@login_required
+def sin_local_activos(request):
+    # mostrar los activos fijos que estan en un area pero no tienen ubicacion
+    area = request.user.area
+    
+    activos = ActivoFijo.objects.filter(
+        responsable__area=area,
+        ubicacion__isnull=True
+    ).filter(estado=ESTADOS.SIN_UBICACION)
+
+    context = {
+        'title_page' : 'Activos sin local',
+        'activos' : activos
+    }
+    return render(request, 'dashboard/inventario/activos_sin_local.html', context)
 
 # # # # # # # # # # # # # # # # # # # # # #              REVISAR              # # # # # # # # # # # # # # # # # # # # # #
 # registra la salida de un activo fijo
@@ -684,19 +793,33 @@ def rechazar_solicitud(request, id):
 
 def aprobar_solicitud(request, id):
     solicitud = get_object_or_404(SolicitudesProductos, pk=id)
-    solicitud.estado = 'aprobada'
+    # Cambia el estado de la solicitud y guarda
+    solicitud.estado = ESTADOS_SOLICITUD.APROBADA
     solicitud.save()
 
-    # aqui viene la logica de restar de la base de datos la cantidad solicitada a la cantidad registrada, osea
-    # si existen 3 servidores y se aprueba la solicitud de 2 quedaria 1 servidor disponible
-    # Asegúrate de tener un dict real
+    # Convierte el campo items a dict (si es necesario)
     items_dict = parse_items_json(solicitud.items)
 
-    # Itera sobre los valores (cada producto solicitado)
+    # Itera sobre cada producto solicitado
     for item in items_dict.values():
         producto = Producto.objects.get(id=item['ID'])
-        if producto.stock_actual >= item['cantidad']:
-            producto.stock_actual -= item['cantidad']
+        cantidad_solicitada = item['cantidad']
+
+        # Verifica stock suficiente
+        if producto.stock_actual >= cantidad_solicitada:
+            # Resta la cantidad solicitada del stock
+            producto.stock_actual -= cantidad_solicitada
             producto.save()
-            
+
+            # Crea un ActivoFijo por cada unidad solicitada
+            for _ in range(cantidad_solicitada):
+                ActivoFijo.objects.create(
+                    producto=producto,
+                    responsable=solicitud.usuario,
+                    ubicacion=None,  # Sin ubicación asignada
+                    estado=ESTADOS.SIN_UBICACION,
+                    descripcion=f"Activo generado por solicitud #{solicitud.id}",
+                    fecha_adquisicion=datetime.now()
+                )
+
     return redirect('productos-solicitados')

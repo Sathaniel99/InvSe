@@ -138,6 +138,15 @@ html[data-bs-theme=dark] {
     color: rgba(var(--bs-orange-rgb), var(--bs-text-opacity)) !important;
 }
 
+.text-invert{
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-invert-full), var(--bs-text-opacity)) !important;
+}
+.text-invert-full{
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-invert-bw), var(--bs-text-opacity)) !important;
+}
+
 .btn-orange {
     --bs-btn-color: #fff;
     --bs-btn-bg: var(--bs-orange);
@@ -445,4 +454,58 @@ html[data-bs-theme=dark] {
 .backdrop-blur {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+}
+.bg-opacity-5 {
+    --bs-bg-opacity: 0.05;
+}
+.bg-opacity-10 {
+    --bs-bg-opacity: 0.1;
+}
+.bg-opacity-15 {
+    --bs-bg-opacity: 0.15;
+}
+.bg-opacity-20 {
+    --bs-bg-opacity: 0.2;
+}
+.bg-opacity-30 {
+    --bs-bg-opacity: 0.3;
+}
+.bg-opacity-35 {
+    --bs-bg-opacity: 0.35;
+}
+.bg-opacity-40 {
+    --bs-bg-opacity: 0.4;
+}
+.bg-opacity-45 {
+    --bs-bg-opacity: 0.45;
+}
+.bg-opacity-55 {
+    --bs-bg-opacity: 0.55;
+}
+.bg-opacity-60 {
+    --bs-bg-opacity: 06;
+}
+.bg-opacity-65 {
+    --bs-bg-opacity: 0.65;
+}
+.bg-opacity-70 {
+    --bs-bg-opacity: 0.7;
+}
+.bg-opacity-80 {
+    --bs-bg-opacity: 0.8;
+}
+.bg-opacity-85 {
+    --bs-bg-opacity: 0.85;
+}
+.bg-opacity-90 {
+    --bs-bg-opacity: 0.9;
+}
+.bg-opacity-95 {
+    --bs-bg-opacity: 0.95;
+}
+.border-invert{
+    border-color: var(--bs-invert-full) !important;
+}
+.border-invert-full{
+    border-color: var(--bs-invert-bw) !important;
 }

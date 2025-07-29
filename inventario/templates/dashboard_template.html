@@ -2,11 +2,12 @@
 {% load static %}
 {% block content_main %}
 <style>
-    body{
+    body {
         display: flex;
         height: 100dvh;
         width: 100%;
     }
+
     aside {
         width: 5rem;
         height: 100dvh;
@@ -26,35 +27,45 @@
 
 <!-- Main Content -->
 <main class="flex-grow-1 d-flex flex-column h-100">
-    <nav class="p-2 border-bottom border-secondary-subtle d-flex flex-row align-items-center justify-content-between gap-2">
+    <nav
+        class="p-2 border-bottom border-secondary-subtle d-flex flex-row align-items-center justify-content-between gap-2">
         <button type="button" id="aside-hide" name="aside-hide" class="btn btn-ghost-black shadow-sm">
             <i class="bi bi-layout-sidebar fs-5 fw-bold"></i>
         </button>
         <h1 class="fs-4 fw-bold mb-0">{{ title_page }}</h1>
         <div class="d-flex flex-row align-items-center" name="nav-user">
-            
+
             <div class="dropdown">
-              <button class="d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle me-2 shadow border border-2 border-secondary transition-200" type="button" name="user-img" id="user-img" data-bs-toggle="dropdown" aria-expanded="false" style="width: 2.5rem; height: 2.5rem;">
-                <i class="bi bi-person"></i>
-              </button>
-              <ul class="dropdown-menu bg-invert p-2">
-                <h5 class="text-center">Mi cuenta</h5>
-                <hr class="m-2">
-                <li><a class="btn btn-outline-black border-0 w-100 rounded-1" href="#">Configuración</a></li>
-                <li>
-                    <form action="{% url 'logout' %}" method="post">
-                        {% csrf_token %}
-                        <button class="btn btn-outline-black border-0 w-100 rounded-1" type="submit">Cerrar Sesión</button>        
-                    </form>
-                </li>
-              </ul>
+                <button
+                    class="d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle me-2 shadow border border-2 border-secondary transition-200"
+                    type="button" name="user-img" id="user-img" data-bs-toggle="dropdown" aria-expanded="false"
+                    style="width: 2.5rem; height: 2.5rem;">
+                    <i class="bi bi-person"></i>
+                </button>
+                <ul class="dropdown-menu bg-invert p-2">
+                    <h5 class="text-center">Mi cuenta</h5>
+                    <hr class="m-2">
+                    <li><a class="btn btn-outline-black border-0 w-100 rounded-1" href="#">Configuración</a></li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-black border-0 w-100 rounded-1" type="submit">Cerrar
+                                Sesión</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
             <div class="flex-column">
                 <h1 class="fs-6 mb-0">{{ request.user.username }}</h1>
                 <small class="text-muted">{{ request.user.email }}</small>
             </div>
+            <button
+                class="bg-invert btn btn-outline-black d-flex align-items-center justify-content-center rounded px-3 py-1 z-index-overall mx-2"
+                name="btn-theme" id="btn-theme">
+                <i class="bi bi-sun" style="width: 1rem;"></i>
+            </button>
         </div>
-    </div>
+        </div>
     </nav>
 
     <section class="p-4 h-100 overflow-y-scroll">
