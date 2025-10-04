@@ -2,6 +2,8 @@ const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle-tooltip="t
 const tooltipList = [...tooltipTriggerList].map(
   (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
 );
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
 const btn_theme = document.getElementById("btn-theme");
 const html_container = document.documentElement;
@@ -89,5 +91,3 @@ aside_hide.addEventListener('click', () => {
         main_aside.style.width = '5rem';
     }
 });
-
-// IMPLEMENTAR LOS TOAST ALERT

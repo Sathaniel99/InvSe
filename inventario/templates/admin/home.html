@@ -1,0 +1,55 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<div class="border border-2 border-secondary-subtle rounded-3 shadow-sm h-100 p-3">
+    <div class="container-fluid row mx-0 my-2 g-3">
+        <!-- Usuarios -->
+        <div class="col-12 col-md-4">
+            <div class="border border-2 border-secondary-subtle rounded-3 p-3 h-100 d-flex flex-column">
+                <h2 class="m-0 fs-5 fw-bold text-muted">Usuarios <span class="badge bg-success-subtle border border-1 border-success fs-6 text-muted ms-2">{{ users_count }}</span></h2>
+                <hr class="my-2 border-2">
+                <div class="d-flex flex-column gap-2 overflow-auto">
+                    {% for clave, valor in users %}
+                    <div class="d-flex justify-content-between align-items-center p-2 shadow-sm-sm hover-bg border-bottom border-1 border-secondary-subtle">
+                        <span class="fw-medium text-secondary">{{ clave }}:</span>
+                        <span class="badge bg-primary-subtle border border-1 border-primary text-muted fs-6">{{ valor }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Ubicaciones -->
+        <div class="col-12 col-md-4">
+            <div class="border border-2 border-secondary-subtle rounded-3 p-3 h-100 d-flex flex-column">
+                <h2 class="m-0 fs-5 fw-bold text-muted">Ubicaciones<span class="badge bg-success-subtle border border-1 border-success fs-6 text-muted ms-2">{{ ubicaciones_count }}</span></h2>
+                <hr class="my-2">
+                <div class="d-flex flex-column gap-2 overflow-auto">
+                    {% for ax in ubicaciones %}
+                    <div class="p-2 rounded-2 shadow-sm-sm hover-bg">
+                        <span class="text-secondary">{{ ax.nombre }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Áreas -->
+        <div class="col-12 col-md-4">
+            <div class="border border-2 border-secondary-subtle rounded-3 p-3 h-100 d-flex flex-column">
+                <h2 class="m-0 fs-5 fw-bold text-muted">Áreas</h2>
+                <hr class="my-2">
+                <div class="d-flex flex-column gap-2 overflow-auto">
+                    {% for ax in area %}
+                        {% if ax.nombre != "Sin Área" %}
+                        <div class="p-2 rounded-2 shadow-sm-sm hover-bg">
+                            <span class="text-secondary">{{ ax.nombre }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content_dashboard %}

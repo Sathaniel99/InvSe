@@ -5,10 +5,8 @@
     <h1 class="text-center">Area : {{ request.user.area.nombre }}</h1>
     <!-- añade un htmx a estos componentes donde se ejecute al hacer click en el button pero mande los values del input:text: -->
     <div class="input-group mb-3 justify-content-center">
-        <input type="text" class="form-control" placeholder="Buscar activos" aria-label="Buscar activos"
-            id="search_field" name="search_query" style="max-width: 20rem;">
-        <button class="btn btn-outline-black" type="button" hx-post="/ruta-de-busqueda" hx-trigger="click"
-            hx-include="#search_field" hx-target="#section-activos">
+        <input type="text" class="form-control" placeholder="Buscar activos" aria-label="Buscar activos" id="search_field" name="search_query" style="max-width: 20rem;">
+        <button class="btn btn-outline-black" type="button" hx-post="/ruta-de-busqueda" hx-trigger="click" hx-include="#search_field" hx-target="#section-activos">
             <i class="bi bi-search"></i>
         </button>
     </div>
@@ -55,41 +53,7 @@
         <div class="modal fade" id="activoModal" tabindex="-1" aria-labelledby="activoModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content bg-invert shadow d-flex flex-row flex-wrap position-relative overflow-hidden" id="activoModalBody">
-                    <!-- OBTENER TODAS LAS UBICACIONES DE UN AREA -->
-                    <!-- OBTENER EL ACTIVO A UBICAR -->
-                    <span class="position-absolute bottom-0 end-0 m-2 text-muted fs-6">{{ item.codigo_interno|default:'Vacío' }}</span>
-                    <div class="col border border-2 border-secondary-subtle">
-                        {% if item.producto.imagen.url %}
-                        <div class="position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center bg-white">
-                            <img src="{{ item.producto.imagen.url }}" class="object-fit-contain p-2" alt="{{ item.descripcion|truncatechars:20 }}" style="max-height: 100%; max-width: 100%;">
-                        </div>
-                        {% else %}
-                        <div class="position-absolute w-50 h-100 top-0 start-0 d-flex align-items-center justify-content-center bg-secondary-subtle-hover transition-200">
-                            <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
-                        </div>
-                        {% endif %}
-                        <div>
-                            <strong>Serial:</strong> <span class="text-muted {% if not item.serial_number %}text-decoration-underline{% endif %}">{{ item.serial_number|default:"Sin registrar" }}</span>
-                            <strong>Producto:</strong> <span class="text-muted">{{ item.producto.nombre|default:"-" }} {{ item.producto.marca|default:"" }} {{item.producto.modelo|default:"" }}</span>
-                            <strong>Desc:</strong> <span class="text-muted text-justify">{{ item.descripcion }}</span>
-                        </div>
-                    </div>
-                    <form class="col p-4 d-flex flex-column gap-4 border border-2 border-secondary-subtle" method="post" action="">
-                        <select class="form-select" name="ubicaciones">
-                            <option value="1">Area 1</option>
-                            <option value="2">Area 2</option>
-                            <option value="3">Area 3</option>
-                            <option value="4">Area 4</option>
-                            <option value="5">Area 5</option>
-                            <option value="6">Area 6</option>
-                        </select>
-                        <div class="d-flex justify-content-center p-2 pt-0 pb-4 gap-3">
-                            <button type="submit" class="btn btn-outline-success-sdcn rounded-0"><i
-                                    class="bi bi-check-circle"></i> Aplicar</a>
-                                <button type="button" class="btn btn-outline-danger-sdcn rounded-0"
-                                    data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
-                        </div>
-                    </form>
+                    
                 </div>
             </div>
         </div>
@@ -97,7 +61,8 @@
         <div class="d-flex flex-wrap gap-3">
             {% for item in activos %}
             <div class="btn p-0 text-start border border-2 border-secondary-subtle rounded-3 position-relative card-active cursor-pointer bg-info bg-opacity-10"
-                role="button" style="height: 15rem; width: 15rem;" data-bs-toggle="modal" data-bs-target="#activoModal">
+                role="button" style="height: 15rem; width: 15rem;" data-bs-toggle="modal" data-bs-target="#activoModal" hx-get="/inventario/sin-local-activos-api/{{item.id}}"
+                hx-target="#activoModalBody" hx-swap="innerHTML" hx-trigger="click">
                 <!-- Contenido principal -->
                 <div class="card-content w-100 h-100 p-2 position-absolute">
                     <div class="d-flex justify-content-between align-items-start">

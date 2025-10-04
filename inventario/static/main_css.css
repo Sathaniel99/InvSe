@@ -1,6 +1,11 @@
 html[data-bs-theme="dark"] .shadow{
     box-shadow: 0 0.5rem 1rem rgba(102, 102, 102, 0.15) !important;
 }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .highcharts-credits{
     display: none;
 }
@@ -51,7 +56,6 @@ select:focus{
 }
 
 body{
-    background-color: var(--bs-invert-full);
     font-family: "Winky Rough", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;

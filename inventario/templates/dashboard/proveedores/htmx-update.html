@@ -2,7 +2,7 @@
     <i class="bi bi-wind text-center display-5" style="transform: rotateY(180deg);"></i>
     <i class="bi bi-truck text-center display-5"></i>
 </div>
-<form class="d-flex flex-column" method="post" action="{% url 'update-proveedores' proveedor %}">
+<form class="d-flex flex-column" method="post" action="{% url 'update-proveedores-api' proveedor %}">
     {% csrf_token %}
     {{ form.as_p }}
     

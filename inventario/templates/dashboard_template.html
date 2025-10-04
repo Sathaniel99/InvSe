@@ -29,7 +29,7 @@
 <main class="flex-grow-1 d-flex flex-column h-100">
     <nav
         class="p-2 border-bottom border-secondary-subtle d-flex flex-row align-items-center justify-content-between gap-2">
-        <button type="button" id="aside-hide" name="aside-hide" class="btn btn-ghost-black shadow-sm">
+        <button type="button" id="aside-hide" name="aside-hide" class="btn btn-outline-black d-flex align-items-center justify-content-center rounded">
             <i class="bi bi-layout-sidebar fs-5 fw-bold"></i>
         </button>
         <h1 class="fs-4 fw-bold mb-0">{{ title_page }}</h1>
@@ -37,15 +37,19 @@
 
             <div class="dropdown">
                 <button
-                    class="d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle me-2 shadow border border-2 border-secondary transition-200"
+                    class="d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle me-2 shadow border border-2 border-secondary transition-200 overflow-hidden p-0"
                     type="button" name="user-img" id="user-img" data-bs-toggle="dropdown" aria-expanded="false"
                     style="width: 2.5rem; height: 2.5rem;">
-                    <i class="bi bi-person"></i>
+                    {% if request.user.img %}
+                    <img class="h-100 w-100 object-fit-cover" src="{{ request.user.img.url }}" alt="Profile Image">
+                    {% else %}
+                    <i class="bi bi-person text-secondary"></i>
+                    {% endif %}
                 </button>
                 <ul class="dropdown-menu bg-invert p-2">
                     <h5 class="text-center">Mi cuenta</h5>
                     <hr class="m-2">
-                    <li><a class="btn btn-outline-black border-0 w-100 rounded-1" href="#">Configuración</a></li>
+                    <li><a class="btn btn-outline-black border-0 w-100 rounded-1" href="{% url 'self-config' %}">Configuración</a></li>
                     <li>
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
@@ -60,7 +64,7 @@
                 <small class="text-muted">{{ request.user.email }}</small>
             </div>
             <button
-                class="bg-invert btn btn-outline-black d-flex align-items-center justify-content-center rounded px-3 py-1 z-index-overall mx-2"
+                class="btn btn-outline-black d-flex align-items-center justify-content-center rounded px-3 py-1 mx-2"
                 name="btn-theme" id="btn-theme">
                 <i class="bi bi-sun" style="width: 1rem;"></i>
             </button>
@@ -68,9 +72,8 @@
         </div>
     </nav>
 
-    <section class="p-4 h-100 overflow-y-scroll">
+    <section class="p-4 h-100 overflow-y-scroll position-relative">
         {% block content_dashboard %}
-
         {% endblock content_dashboard %}
     </section>
 </main>

@@ -6,28 +6,36 @@
         width: 100%;
         height: 100dvh;
         display: flex;
-        background: radial-gradient(circle at center, #dee2e6, #6c757d, #212529);
+        background: radial-gradient(circle at center, #ffffff, #6a6a6a, #000000);
     }
 </style>
-<div class="m-auto border border-1 border-secondary-subtle p-5 rounded bg-body shadow" style="width: 25rem;">
-    <div class="d-flex flex-wrap align-items-center justify-content-center gap-2 mb-4">
+<div class="m-auto border border-1 border-secondary-subtle p-5 rounded bg-invert shadow" style="width: 25rem;"
+    id="container">
+    <div class="d-flex flex-column align-items-center mb-4">
         <i class="bi bi-boxes display-6"></i>
-        <h2 class="fw-bold">InvSe</h2>
+        <h1 class="mb-0">¡Bienvenido!</h1>
+        <small class="small fw-bolder text-muted m-0">Por favor, introduzca sus credenciales.</small>
     </div>
-    <form class="d-flex flex-column" action="" method="post">
+    <form class="d-flex flex-column" action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        <div class="mb-2">
-            <label for="username" class="form-label">Usuario</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+        <div class="mb-4">
+            <label for="username" class="form-label fw-bolder mb-0">Usuario</label>
+            <input type="text" class="form-control bg-body" id="username" name="username" placeholder="ej: 'aramirez'" required>
         </div>
         <div class="mb-2">
-            <label for="password" class="col-form-label">Contraseña</label>
-            <div class="col d-flex flex-row">
-                <input type="password" class="form-control border-end-0 rounded-end-0" id="password" name="password" required>
-                <button class="btn btn-ghost-black rounded-start-0" type="button" onclick="password.type = password.type == 'text' ? 'password' : 'text'">
+            <label for="password" class="col-form-label fw-bolder p-0">Contraseña</label>
+            <div class="col d-flex flex-row bg-body rounded">
+                <input type="password" class="form-control border-end-0 rounded-end-0 bg-body" id="password" name="password"
+                    placeholder="ej: Password1234567890" required>
+                <button class="btn btn-outline-black rounded-start-0" type="button"
+                    onclick="password.type = password.type == 'text' ? 'password' : 'text'">
                     <i class="bi bi-eye"></i>
                 </button>
             </div>
+        </div>
+        <div class="d-flex justify-content-end mb-3">
+            <a class="link-primary cursor-pointer" hx-get="{% url 'password-forgot' %}" hx-target="#container"
+                hx-swap="innerHTML" hx-trigger="click">¿Contraseña olvidada?</a>
         </div>
         <button class="btn btn-black mt-2 mx-auto" type="submit">Iniciar Sesión</button>
     </form>

@@ -1,0 +1,25 @@
+<div class="container">
+    <h2 class="text-center my-3">Reporte de Valoración Económica</h2>
+    <hr class="my-3">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 p-2">
+        {% for ubicacion in ubicaciones %}
+        <div class="col">
+            <div class="h-100 border border-2 border-secondary shadow rounded bg-secondary-subtle-hover p-3 transition-200" style="">
+                <h5 class="fs-bold fs-5">{{ ubicacion.nombre }}</h5>
+                <hr class="my-2">
+                <p class="text-success fw-semibold fs-4">> {{ ubicacion.coste }} CUP</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr class="my-3">
+    <div class="container fs-3 d-flex flex-column">
+        <span class="fw-bold">Total:</span>
+        <span class="text-success">= {{ total_coste }} CUP</span>
+        <span class="text-success d-flex align-items-center">
+            <div class="d-flex flex-column">
+                <span style="line-height: 5px;">~</span>
+                <span style="line-height: 5px;">~</span>
+            </div> {{ usd }} USD</span>
+    </div>
+</div>

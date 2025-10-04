@@ -2,6 +2,7 @@ from django import forms
 from .models import *
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .utils import generar_numero_inventario
+from core.settings_web_project import DOMINIO, ENTIDAD_WEB
 
 # --- Formulario: Categoria ---
 class CategoriaForm(forms.ModelForm):
@@ -41,15 +42,22 @@ class ProveedorForm(forms.ModelForm):
 class UbicacionForm(forms.ModelForm):
     class Meta:
         model = Ubicacion
-        fields = ['nombre', 'descripcion']
+        fields = ['nombre', 'descripcion', 'area']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'area': forms.Select(attrs={'class': 'form-select'}),
         }
         labels = {
             'nombre': 'Nombre de la Ubicación',
             'descripcion': 'Descripción',
+            'area': 'Área',
         }
+
+    def __init__(self, *args, **kwargs):
+        super(UbicacionForm, self).__init__(*args, **kwargs)
+        self.fields['area'].required = False
+        self.fields['area'].empty_label = "Seleccione un Área"
 
 # --- Formulario: ActivoFijo ---
 class ActivoFijoForm(forms.ModelForm):
@@ -157,17 +165,64 @@ class MovimientoInventarioForm(forms.ModelForm):
         }
 
 # --- Formulario: Usuarios ---
-class UsuarioCreationForm(UserCreationForm):
-    telefono = forms.CharField(max_length=15, required=False, label="Teléfono")
-    tipo_user = forms.ChoiceField(choices=TIPO_USER, label="Tipo de Usuario",)
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import Usuario, Area
+
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import Usuario, Area
+
+class UsuarioCreateForm(UserCreationForm):
+    area = forms.ModelChoiceField(
+        queryset=Area.objects.all(),
+        label="Área",
+        required=True,
+        empty_label=None,  # Esto evita que Django añada el "---------" automáticamente
+    )
+    tipo_user = forms.ChoiceField(
+        choices=TIPO_USER,
+        label="Tipo de Usuario",
+        required=True,
+    )
 
     class Meta:
         model = Usuario
-        fields = ('username', 'email', 'telefono', 'tipo_user')
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'password1',
+            'password2',
+            'area',
+            'tipo_user'
+        ]
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control rounded-end'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control rounded-end'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control rounded-end'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control rounded-end'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Atributos adicionales para los select
+        self.fields['area'].widget.attrs.update({'class': 'form-select rounded-end'})
+        self.fields['tipo_user'].widget.attrs.update({'class': 'form-select rounded-end'})
+        self.fields['password1'].widget.attrs.update({'class': 'form-control rounded-end'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control rounded-end'})
+
+        # Help texts
+        self.fields['first_name'].help_text = 'Nombre/s real del usuario.'
+        self.fields['last_name'].help_text = 'Apellidos del usuario.'
+        self.fields['email'].help_text = f'Se recomienda correo: "@{DOMINIO}"'
+        self.fields['area'].help_text = 'Área a ubicar el trabajador.'
+        self.fields['tipo_user'].help_text = f'Función que ejercerá el usuario en la plataforma de la entidad {ENTIDAD_WEB}.'
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.telefono = self.cleaned_data['telefono']
+        user.area_id = self.cleaned_data['area'].id
         user.tipo_user = self.cleaned_data['tipo_user']
         if commit:
             user.save()
@@ -176,22 +231,16 @@ class UsuarioCreationForm(UserCreationForm):
 class UsuarioChangeForm(UserChangeForm):
     class Meta:
         model = Usuario
-        fields = (
-            'username',
-            'first_name',
-            'last_name',
-            'email',
-            'telefono',
-            'tipo_user',
-            'is_active',
-            'is_staff')
+        fields = ('first_name', 'last_name', 'email', 'telefono', 'tipo_user', 'area', 'img')
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
-            'tipo_user': forms.Select(attrs={'class': 'form-select'},choices=TIPO_USER,),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'img': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(UsuarioChangeForm, self).__init__(*args, **kwargs)
+        self.fields['tipo_user'] = forms.ChoiceField(choices=TIPO_USER, widget=forms.Select(attrs={'class': 'form-control'}))
+        self.fields['area'] = forms.ModelChoiceField(queryset=Area.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))

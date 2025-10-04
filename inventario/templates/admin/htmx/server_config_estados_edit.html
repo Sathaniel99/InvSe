@@ -1,0 +1,18 @@
+<div class="d-flex justify-content-center">
+    <form class="d-flex flex-column gap-3 col-sm-12 col-md-10 col-lg-8 col-xl-4 col-xxl-4" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="estados1">
+        <input type="hidden" name="action" value="update">
+        <input type="hidden" name="valor" value="{{ valor }}">
+        <div>
+            <h2 class="text-center m-0 lh-1">Editar estado</h2>
+            <h2 class="text-center m-0 lh-1">Activo Fijo</h2>
+        </div>
+        <hr class="mb-0">
+        <div>
+            <label for="id_estado">Nombre del Estado:</label>
+            <input type="text" name="estado" class="form-control" maxlength="100" required="" id="id_estado" value="{{ valor }}">
+        </div>
+        <button class="btn btn-outline-black" type="submit">Enviar datos</button>
+    </form>
+</div>

@@ -1,0 +1,133 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<div class="border border-2 border-secondary-subtle rounded h-100 p-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="border-0 transition-200 shadow-sm position-relative">
+                    <div class="card-header border-0 pb-0">
+                        <h2 class="h4 text-center">Registro de Usuario</h2>
+                    </div>
+
+                    <div class="card-body px-5 py-4">
+                        <form class="needs-validation" method="post">
+                            {% csrf_token %}
+
+                            <!-- Username y Email -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="id_username"
+                                        class="form-label fw-semibold small text-uppercase text-muted">{{form.username.label}} <i class="bi bi-question-circle ms-2 cursor-pointer" data-bs-toggle="popover"
+                                        data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.username.help_text }}"></i></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i
+                                                class="bi bi-person text-muted"></i></span>
+                                        {{form.username}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="id_email"
+                                        class="form-label fw-semibold small text-uppercase text-muted">{{form.email.label}}<i class="bi bi-question-circle ms-2 cursor-pointer" data-bs-toggle="popover"
+                                        data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.email.help_text }}"></i></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i
+                                                class="bi bi-envelope text-muted"></i></span>
+                                        {{form.email}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Nombre y Apellido en row -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="id_first_name"
+                                        class="form-label fw-semibold small text-uppercase text-muted">{{form.first_name.label}}<i class="bi bi-question-circle ms-2 cursor-pointer"
+                                        data-bs-toggle="popover" data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.first_name.help_text }}"></i></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i
+                                                class="bi bi-person-badge text-muted"></i></span>
+                                        {{ form.first_name }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="id_last_name"
+                                        class="form-label fw-semibold small text-uppercase text-muted">{{form.last_name.label}}<i class="bi bi-question-circle ms-2 cursor-pointer"
+                                        data-bs-toggle="popover" data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.last_name.help_text }}"></i></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i
+                                                class="bi bi-person-badge text-muted"></i></span>
+                                        {{form.last_name}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Área y Tipo de Usuario -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="id_area"
+                                        class="form-label fw-semibold small text-uppercase text-muted">{{form.area.label}} <i class="bi bi-question-circle ms-2 cursor-pointer"
+                                        data-bs-toggle="popover" data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.area.help_text }}"></i></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i class="bi bi-house-add text-muted"></i></span>
+                                        {{ form.area }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="id_tipo_user"
+                                        class="form-label fw-semibold small text-uppercase text-muted">{{form.tipo_user.label}}<i class="bi bi-question-circle ms-2 cursor-pointer" data-bs-toggle="popover"
+                                        data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.tipo_user.help_text }}"
+                                        ></i></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i
+                                                class="bi bi-person-gear text-muted"></i></span>
+                                        {{form.tipo_user}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contraseñas en row -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="id_password1"
+                                        class="form-label fw-semibold small text-uppercase text-muted">{{form.password1.label}}<i class="bi bi-question-circle ms-2 cursor-pointer"
+                                        data-bs-toggle="popover" data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.password1.help_text }}"></i></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i
+                                                class="bi bi-lock text-muted"></i></span>
+                                        {{form.password1}}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="id_password2" class="form-label fw-semibold small text-uppercase text-muted">{{form.password2.label}}
+                                        <i class="bi bi-question-circle ms-2 cursor-pointer" data-bs-toggle="popover" data-bs-title="Ayuda" data-bs-html="true" data-bs-trigger="hover focus" data-bs-content="{{ form.password2.help_text }}"></i>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary-subtle"><i
+                                                class="bi bi-lock-fill text-muted"></i></span>
+                                        {{form.password2}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-center align-items-center pt-3 border-top">
+                                <button class="btn btn-outline-black rounded-0" type="submit">
+                                    <i class="bi bi-send-check me-2"></i>Crear Usuario
+                                </button>
+                                <button class="btn btn-outline-black rounded-0 position-absolute top-0 end-0"
+                                    type="reset">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content_dashboard %}

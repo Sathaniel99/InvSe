@@ -1,0 +1,113 @@
+{% extends 'dashboard_template.html' %}
+{% load static %}
+{% block content_dashboard %}
+<!-- <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.css" rel="stylesheet" integrity="sha384-AHdXImV07k5XJYMyGLDf7LhYawou4SZouf2KCm2KfuRB1DubOpbvF57wzhPMCsY8" crossorigin="anonymous"> -->
+<link href="{% static 'libs/DataTables/datatables.min.css' %}" rel="stylesheet">
+<div class="border border-2 border-secondary-subtle rounded h-100 p-4">
+    <div class="w-100 d-flex justify-content-end mb-3">
+        <a class="btn btn-black me-0" href="{% url 'create-user' %}">
+            <i class="bi bi-plus-circle"></i> Nuevo usuario
+        </a>
+    </div>
+    <table
+        class="table table-hover table-striped table-hover shadow-sm border border-1 border-secondary-subtle rounded-2"
+        id="users-table" style="max-width: 70rem;">
+        <caption>Listado de {{ title_page }}</caption>
+        <thead>
+            <tr class="table-secondary">
+                <th scope="col" class="text-center" width="5rem">No</th>
+                <th scope="col" width="10rem">Img</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellidos</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Tipo Usuario</th>
+                <th scope="col">Area</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ax in users %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td>
+                    <div class="w-100 h-100 d-flex">
+                        <div class="rounded-circle overflow-hidden w-50 border border-2 border-secondary p-1 d-flex m-auto bg-secondary-subtle-hover transition-200">
+                            {% if ax.img %}
+                            <img class="object-fit-contain w-100 h-100 m-auto rounded-circle border border2 border-secondary" src="{{ ax.img.url }}" alt="">
+                            {% else %}
+                            <img class="object-fit-contain w-100 h-100 m-auto rounded-circle border border2 border-secondary" src="{% static 'img/no-image-available.jpg' %}" alt="No Contiene imagen para {{ ax.first_name }} {{ ax.last_name }}">
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td>{{ ax.first_name }}</td>
+                <td>{{ ax.last_name }}</td>
+                <td>{{ ax.telefono }}</td>
+                <td>{{ ax.tipo_user }}</td>
+                <td>{{ ax.area.nombre }}</td>
+                <th scope="col">
+                    <div class="w-100 h-100 d-flex flex-column gap-2">
+                        <div class="w-100" id="badge-{{ax.id}}">
+                            <div class="badge text-bg-{% if ax.is_active %}success{% else %}danger{% endif %} fs-6">
+                                Usuario {% if ax.is_active %}Activo{% else %}Inactivo{% endif %}
+                            </div>
+                        </div>
+                        <div class="form-check form-switch m-auto">
+                          <input class="form-check-input" type="checkbox" role="switch" id="switch-{{ax.id}}" {% if ax.is_active %}checked{% endif %} 
+                          hx-get="/users/state-user/{{ax.id}}" hx-target="#badge-{{ax.id}}" hx-swap="innerHTML" hx-trigger="click">
+                        </div>
+                    </div>    
+                </th>
+                <td style="width: 10rem;">
+                    <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                        data-bs-title="Editar usuario" data-bs-toggle="modal"
+                        data-bs-target="#usersModal" hx-get="{% url 'editar-usuario' ax.id %}"
+                        hx-target="#usersModalContent" hx-swap="innerHTML" hx-trigger="click">
+                        <i class="bi bi-pencil w-100 h-100"></i>
+                    </button>
+                    <a class="btn btn-outline-danger-sdcn" data-bs-toggle-tooltip="tooltip"
+                        data-bs-title="Eliminar usuario" href="{% url 'eliminar-usuario' ax.id %}">
+                        <i class="bi bi-trash w-100 h-100"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="usersModal" tabindex="-1" aria-labelledby="usersLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content overflow-hidden bg-invert shadow">
+            <div class="p-5 z-index-overall" id="usersModalContent">
+                <!--  EDITAR  -->
+
+                <!--  EDITAR  -->
+            </div>
+            <i class="bi bi-box position-absolute top-0 start-0"
+                style="font-size: 35rem; transform: rotate(-45deg) translate(6rem, -6rem); color: #7878781c !important;"></i>
+        </div>
+    </div>
+</div>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/pdfmake.min.js' %}"></script>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/vfs_fonts.js' %}"></script>
+
+<!-- <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.1/b-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sc-2.4.3/datatables.min.js" integrity="sha384-ekYQxP5UHe08BFvtvtcrjLc2YsPeISDgLZAqLtdHaJndItMrJ50Db356qMcHx/sH" crossorigin="anonymous"></script> -->
+<script src="{% static 'libs/DataTables/datatables.min.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#users-table').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.3.1/i18n/es-ES.json',
+            },
+            responsive: true,
+        });
+    });
+</script>
+{% endblock content_dashboard %}

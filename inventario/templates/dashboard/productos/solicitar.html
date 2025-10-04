@@ -43,7 +43,7 @@
                 class="btn btn-ghost-black d-flex align-items-center justify-content-center bg-opacity-25 rounded-circle me-2 transition-200 p-2"
                 style="width: 2.5rem; height: 2.5rem;" data-bs-toggle="dropdown" aria-expanded="false"
                 id="dropdownCartButton"
-                hx-get="/productos/ver-solicitud-api/"
+                hx-get="{% url 'ver_solicitud_api' %}"
                 hx-target="#SolicitudModalContent"
                 hx-swap="innerHTML"
                 hx-trigger="click">

@@ -1,4 +1,43 @@
-{% extends 'dashboard_template.html' %}
 {% load static %}
-
-{% endblock content_dashboard %}
+<div class="modal-header w-100">
+    <h5 class="modal-title" id="activoModalLabel">Asignar ubicación al activo</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+</div>
+<div class="col border border-2 border-secondary-subtle position-relative" style="min-height: 30rem;">
+    {% if item.producto.imagen.url %}
+    <div class="w-100 h-50 d-flex align-items-center justify-content-center bg-white">
+        <img src="{{ item.producto.imagen.url }}" class="object-fit-contain p-2" alt="{{ item.descripcion|truncatechars:20 }}" style="max-height: 100%; max-width: 100%;">
+    </div>
+    {% else %}
+    <div class="w-100 h-50 d-flex align-items-center justify-content-center bg-secondary-subtle-hover transition-200">
+        <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+    </div>
+    {% endif %}
+    <div class="h-50 d-flex flex-column text-start p-2">
+        <div>
+            <strong>Activo:</strong> <span class="text-muted">{{ item.codigo_interno|default:'Vacío' }}</span>
+        </div>
+        <div>
+            <strong>Serial:</strong> <span class="text-muted {% if not item.serial_number %}text-decoration-underline{% endif %}">{{ item.serial_number|default:"Sin registrar" }}</span>
+        </div>
+        <div>
+            <strong>Producto:</strong> <span class="text-muted">{{ item.producto.nombre|default:"-" }} {{ item.producto.marca|default:"" }} {{item.producto.modelo|default:"" }}</span>
+        </div>
+        <div>
+            <strong>Desc:</strong> <span class="text-muted text-justify">{{ item.descripcion }}</span>
+        </div>
+    </div>
+</div>
+<form class="col p-4 d-flex flex-column gap-4 justify-content-center border border-2 border-secondary-subtle" method="post" style="min-height: 30rem;">
+    {% csrf_token %}
+    <input type="hidden" name="activo_id" value="{{ item.id }}">
+    <select class="form-select" name="ubicacion_id">
+        {% for ubicacion in ubicaciones %}
+        <option value="{{ ubicacion.id }}">{{ ubicacion.nombre }}</option>
+        {% endfor %}
+    </select>
+    <div class="d-flex justify-content-center p-2 pt-0 pb-4 gap-3">
+        <button type="submit" class="btn btn-outline-success-sdcn rounded-0"><i class="bi bi-check-circle"></i> Aplicar</button>
+        <button type="button" class="btn btn-outline-danger-sdcn rounded-0" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
+    </div>
+</form>

@@ -1,0 +1,86 @@
+{% load static %}
+<div class="container">
+    <div class="shadow-sm">
+        <div class="card-body">
+            <h1 class="text-center">Editar Usuario</h1>
+            <hr class="my-2">
+            <form action="{% url 'editar-usuario' user.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3 text-center">
+                    <div class="px-5 shadow-sm">
+                        <div class="mb-3">
+                            <div>
+                                <h1>Foto de perfil:</h1>
+                                <div class="w-100 d-flex justify-content-center">
+                                    <div class="rounded-circle overflow-hidden border border-2 border-secondary p-2 bg-secondary bg-opacity-75" style="height: 15rem; width: 15rem;">
+                                        {% if user.img %}
+                                        <img class="rounded-circle object-fit-contain h-100 border border-2 border-secondary" src="{{ user.img.url }}" alt="Foto de perfil">
+                                        {% else %}
+                                        <img class="rounded-circle object-fit-contain h-100 border border-2 border-secondary" src="{% static 'img/no-image-available.jpg' %}" alt="Foto de perfil">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-3">
+                                <input class="form-check-input" type="checkbox" name="img-clear" id="img-clear_id">
+                                <label class="form-check-label ms-2" for="img-clear_id">Limpiar</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_img" class="form-label">Modificar:</label>
+                                <input type="file" name="img" class="form-control" accept="image/*" id="id_img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-3">
+                        <div class="form-group">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">Nombre</label>
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-3">
+                        <div class="form-group">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Apellido</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-3">
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-3">
+                        <div class="form-group">
+                            <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                            {{ form.telefono }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-3">
+                        <div class="form-group">
+                            <label for="{{ form.tipo_user.id_for_label }}" class="form-label">Tipo de Usuario</label>
+                            {{ form.tipo_user }}
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-3">
+                        <div class="form-group">
+                            <label for="{{ form.area.id_for_label }}" class="form-label">Área</label>
+                            {{ form.area }}
+                        </div>
+                    </div>
+                </div>
+                <div class="w-100 d-flex gap-2 justify-content-center mt-4">
+                    <button class="btn btn-outline-success-sdcn rounded-0" type="submit">Guardar Cambios</button>
+                    <button class="btn btn-outline-danger-sdcn rounded-0" type="button"
+                        data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

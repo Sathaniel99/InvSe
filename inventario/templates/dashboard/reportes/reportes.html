@@ -6,10 +6,26 @@
         min-width: 15rem !important;
     }
 </style>
+<div class="modal fade" id="ReporteModal" tabindex="-1" aria-labelledby="ReporteLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content overflow-hidden bg-invert shadow">
+            <div class="border-bottom border-2 border-secondary-subtle w-100 d-flex" style="z-index: 1600;">
+                <button class="btn-close p-2 ms-auto me-2 my-1" type="button" data-bs-toggle-tooltip="tooltip" data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="position-relative px-5 py-4 z-index-overall d-flex flex-column"
+                id="ReporteModalContent">
+                <!--  EDITAR  -->
+
+                <!--  EDITAR  -->
+            </div>
+        </div>
+    </div>
+</div>
 <div class="border border-secondary-subtle p-3 rounded shadow-sm">
     <div>
         <h1 class="fs-3 fw-semibold mb-1">Reportes</h1>
-        <h2 class="fs-6 fw-normal text-muted">Generación y visualización de informes</h2>
+        <h2 class="form-label fw-semibold small text-uppercase text-muted">Generación y visualización de informes</h2>
     </div>
     <div class="d-flex flex-wrap gap-3 mt-4">
         <!-- Card Inventario Actual -->
@@ -44,11 +60,11 @@
                 <h1 class="fs-5 fw-semibold">Valoración</h1>
                 <h2 class="fs-6 fw-normal text-muted">Valoración económica del inventario total.</h2>
             </div>
-            <button type="button"
-                class="btn btn-outline-black fw-semibold w-100"
-                style="width: max-content;">
+            <button data-bs-toggle="modal" data-bs-target="#ReporteModal" hx-get="{% url 'reporte-valoracion-economica' %}"
+                hx-target="#ReporteModalContent" hx-swap="innerHTML" hx-trigger="click" class="btn btn-outline-black fw-semibold w-100"
+                type="button" style="width: max-content;">
                 Generar
-            </button>
+        </button>
         </div>
     </div>
 </div>
@@ -56,7 +72,7 @@
 <div class="border border-secondary-subtle p-3 rounded shadow-sm mt-4">
     <div>
         <h1 class="fs-3 fw-semibold mb-1">Reportes Recientes</h1>
-        <h2 class="fs-6 fw-normal text-muted">Últimos informes generados</h2>
+        <h2 class="form-label fw-semibold small text-uppercase text-muted">Últimos informes generados</h2>
     </div>
     <div class="d-flex flex-column gap-3 mt-4">
         <!-- Reporte 1 -->

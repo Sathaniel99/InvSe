@@ -1,0 +1,159 @@
+<style>
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .toast {
+        position: relative;
+        padding: 12px 16px;
+        border-radius: 4px;
+        color: white;
+        display: flex;
+        align-items: center;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .toast.fade-out {
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.5s ease;
+    }
+
+    .toast-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .toast i {
+        font-size: 1.2rem;
+    }
+
+    /* Barra de progreso */
+    .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .toast-progress-bar {
+        height: 100%;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.7);
+        transition: width linear;
+    }
+
+    /* Colores de los toasts */
+    .toast-success {
+        background-color: #28a745;
+    }
+
+    .toast-error {
+        background-color: #dc3545;
+    }
+
+    .toast-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .toast-info {
+        background-color: #17a2b8;
+    }
+
+    .z-index-overall {
+        z-index: 9999;
+    }
+</style>
+<script>
+    function calculateToastDuration(message, baseTime = 2000, wordsPerSecond = 2, minDuration = 2000, maxDuration = 7000) {
+        const words = message.trim().split(/\s+/).filter(word => word.length > 0);
+        const wordCount = words.length;
+        const additionalTime = (wordCount / wordsPerSecond) * 1000;
+        let totalTime = baseTime + additionalTime;
+        totalTime = Math.max(minDuration, Math.min(maxDuration, totalTime));
+        return Math.round(totalTime / 500) * 500;
+    }
+
+    function showToast(type, message, icon = '') {
+        const duration = calculateToastDuration(message);
+        let toastContainer = document.getElementById('toast-container');
+
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'toast-container z-index-overall';
+            document.body.appendChild(toastContainer);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        const defaultIcons = {
+            success: 'check-circle',
+            error: 'x-circle',
+            warning: 'exclamation-circle',
+            info: 'info-circle'
+        };
+
+        const toastIcon = icon || defaultIcons[type] || 'info-circle';
+
+        toast.innerHTML = `
+        <div class="toast-content">
+            <i class="bi bi-${toastIcon}"></i>
+            <span style="font-size: 1.15rem">${message}</span>
+        </div>
+        <div class="toast-progress">
+            <div class="toast-progress-bar"></div>
+        </div>
+    `;
+
+        toastContainer.appendChild(toast);
+        void toast.offsetWidth;
+        toast.classList.add('show');
+
+        // Animación de la barra de progreso
+        const progressBar = toast.querySelector('.toast-progress-bar');
+        let width = 100;
+        const interval = setInterval(() => {
+            width -= (100 / (duration / 50)); // 50ms interval for smooth animation
+            progressBar.style.width = width + '%';
+        }, 50);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            toast.classList.add('fade-out');
+            toast.addEventListener('transitionend', () => {
+                toast.remove();
+                if (toastContainer.children.length === 0) {
+                    toastContainer.remove();
+                }
+            }, { once: true });
+        }, duration);
+    }
+
+    // Ejemplos de uso:
+    
+    {% for message in messages %}
+    showToast('{{ message.tags }}', '{{ message }}');
+    {% endfor %}
+        
+</script>

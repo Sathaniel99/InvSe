@@ -1,0 +1,9 @@
+<div class="d-flex justify-content-center">
+    <form class="d-flex flex-column gap-3 col-sm-12 col-md-10 col-lg-8 col-xl-4 col-xxl-4" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="areas">
+        <input type="hidden" name="action" value="create">
+        {{ form }}
+        <button class="btn btn-outline-black" type="submit">Enviar datos</button>
+    </form>
+</div>

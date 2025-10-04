@@ -5,7 +5,8 @@
         padding: 0.98in 1.18in;
     }
 </style>
-<div class="overflow-hidden border border-1 border-secondary-subtle m-auto position-relative" style="padding: 2.5cm 3cm; width: 8.5in;">
+<div class="overflow-hidden border border-1 border-secondary-subtle m-auto position-relative"
+    style="padding: 2.5cm 3cm; width: 8.5in;">
     <div id="XLR8">
         <h2 class="text-center mb-4" id="title-carta">{{ ubicacion }}</h2>
         <table class="table table-bordered border-black table-striped" id="tabla-inventario">
@@ -29,60 +30,6 @@
                     <td>{{ group.seriales|safe }}</td>
                 </tr>
                 {% endfor %}
-                {% for group in grouped_activo_list %}
-                <tr>
-                    <td>{{ group.no }}</td>
-                    <td>{{ group.producto_nombre }}</td>
-                    <td>{{ group.cantidad }}</td>
-                    <td>{{ group.codigos|safe }}</td>
-                    <td>{{ group.seriales|safe }}</td>
-                </tr>
-                {% endfor %}
-                {% for group in grouped_activo_list %}
-                <tr>
-                    <td>{{ group.no }}</td>
-                    <td>{{ group.producto_nombre }}</td>
-                    <td>{{ group.cantidad }}</td>
-                    <td>{{ group.codigos|safe }}</td>
-                    <td>{{ group.seriales|safe }}</td>
-                </tr>
-                {% endfor %}
-                {% for group in grouped_activo_list %}
-                <tr>
-                    <td>{{ group.no }}</td>
-                    <td>{{ group.producto_nombre }}</td>
-                    <td>{{ group.cantidad }}</td>
-                    <td>{{ group.codigos|safe }}</td>
-                    <td>{{ group.seriales|safe }}</td>
-                </tr>
-                {% endfor %}
-                {% for group in grouped_activo_list %}
-                <tr>
-                    <td>{{ group.no }}</td>
-                    <td>{{ group.producto_nombre }}</td>
-                    <td>{{ group.cantidad }}</td>
-                    <td>{{ group.codigos|safe }}</td>
-                    <td>{{ group.seriales|safe }}</td>
-                </tr>
-                {% endfor %}
-                {% for group in grouped_activo_list %}
-                <tr>
-                    <td>{{ group.no }}</td>
-                    <td>{{ group.producto_nombre }}</td>
-                    <td>{{ group.cantidad }}</td>
-                    <td>{{ group.codigos|safe }}</td>
-                    <td>{{ group.seriales|safe }}</td>
-                </tr>
-                {% endfor %}
-                {% for group in grouped_activo_list %}
-                <tr>
-                    <td>{{ group.no }}</td>
-                    <td>{{ group.producto_nombre }}</td>
-                    <td>{{ group.cantidad }}</td>
-                    <td>{{ group.codigos|safe }}</td>
-                    <td>{{ group.seriales|safe }}</td>
-                </tr>
-                {% endfor %}
                 {% else %}
                 <tr>
                     <td colspan="5" class="text-center text-muted">No hay activos disponibles.</td>
@@ -97,59 +44,20 @@
     </div>
     <i class="bi bi-folder position-absolute top-0 start-0"
         style="font-size: 35rem; transform: rotate(-45deg) translate(7rem, -6rem); color: #7878781c !important;"></i>
-    <button type="button" id="asa">usar</button>
+    <div class="position-absolute top-0 d-flex flex-row align-items-center border-top-0 border border-3 border-secondary overflow-hidden">
+        <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button" data-bs-toggle-tooltip="tooltip"
+            data-bs-title="Imprimir" id="print-modal-button" onclick="generarPaginas()">
+            <i class="bi bi-printer"></i>
+        </button>
+        <hr class="m-0 w-100 border border-2 border-secondary">
+        <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button" data-bs-toggle-tooltip="tooltip"
+            data-bs-title="Crear PDF" id="pdf-modal-button">
+            <i class="bi bi-file-pdf"></i>
+        </button>
+        <hr class="m-0 w-100 border border-2 border-secondary">
+        <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button" data-bs-toggle-tooltip="tooltip"
+            data-bs-title="Crear imágenes" id="img-modal-button">
+            <i class="bi bi-image"></i>
+        </button>
+    </div>
 </div>
-<div id="contenedor"></div>
-<script>
-    const title = document.getElementById('title-carta');
-    var tabla = document.getElementById('tabla-inventario');
-    var header = tabla.children[0].children;
-    var body = tabla.children[1].children;
-    const responsable_area = '<div class="text-center text-muted position-absolute top-0 end-0 m-2"><p class="lh-1 m-0">Responsable de Área</p><p class="">{{ responsable_area }}</p></div>';
-    const icon_pagina = '<i class="bi bi-folder position-absolute top-0 start-0" style="font-size: 35rem; transform: rotate(-45deg) translate(7rem, -6rem); color: #7878781c !important;"></i>';
-    
-    
-    // creo la pagina 
-    // le añado el titulo
-    // le añado el head
-    
-    const carta_util_height = parseFloat(carta_height - margen_y);
-
-    var header_list = Array.from(header);
-    var body_list = Array.from(body);
-    var list_elements = header_list.concat(body_list);
-    list_elements.unshift(title);
-    var index = -1;
-    
-    
-    do{
-        index++
-        list_elements.shift();
-
-    }while(x < carta_util_height)
-    
-    
-    
-    // crea funcion para hacer pagina
-    function crearPagina(id_pagina, alto_restante, body_restante) {
-        let carta_pagina = document.createElement("div");
-        let carta_interior = document.createElement("div");
-
-        // aqui va el codigo para empezar a introducirle al div
-        
-        
-        
-        
-        
-        
-        
-        carta_pagina.append(carta_interior);
-        carta_pagina.className = "pagina-carta overflow-hidden border border-1 border-secondary-subtle m-auto my-3 position-relative shadow";
-        carta_pagina.id = "pagina" + id_pagina;
-        carta_pagina.innerHTML = responsable_area + icon_pagina + `<div class="text-center text-muted position-absolute bottom-0 end-0 me-4 mb-3"><p class="">${id_pagina}</p></div>`;
-        document.getElementById("contenedor").append(carta_pagina);
-        return 0;
-    }
-
-
-</script>

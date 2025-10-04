@@ -1,86 +1,42 @@
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
-from django.views.decorators.http import require_http_methods
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from django.template.loader import render_to_string
-from django.views.generic.edit import CreateView
-from django.db.models import Sum, F, Count
 from django.urls import reverse_lazy
 from django.contrib import messages
 from collections import defaultdict
 from django.utils import timezone
 from django.db.models import Q
 from datetime import datetime
-from .utils import get_solicitud_sesion, guardar_solicitud_sesion, parse_items_json, generar_numero_inventario
+from core.settings_web_project import PRECIO_USD
+from .utils import parse_items_json, convert_CUP_to_USD, convert_num
 from .forms import *
 from .models import *
+from . import views_economico
+from . import views_jefe_area
+from . import views_admin
 
+# Pagina en Construccion
+@login_required
+def build_page(request):
+    context = {
+        'title_page': 'Desarrollando página',
+        'explicacion' : f"Página en desarrollo."
+    }
+    return render(request, 'includes/build.html', context)
+
+################################################      Pagina de Inicio      #################################################
 @login_required 
 def home_page(request):
     if request.user.tipo_user == TIPO_USER.ECONOMICO:
-        return economico(request)
+        return views_economico.home_page(request)
+    elif request.user.tipo_user == TIPO_USER.JEFE_AREA:
+        return views_jefe_area.home_page(request)
+    elif request.user.tipo_user == TIPO_USER.ADMIN_SITIO:
+        return views_admin.home_page(request)
     else:
-        return jefe_area(request)
-
-@login_required
-def economico(request):
-    # Seccion Resumen de Productos
-    productos = Producto.objects.all()
-    productos_total = productos.aggregate(total=Sum('stock_actual'))['total']
-    productos_agotados = productos.filter(stock_actual=0).count()
-    productos_bajo_stock = productos.filter(stock_actual__lte=F('stock_minimo'), stock_actual__gt=0).count()
-    productos_en_stock = productos.filter(stock_actual__gt=F('stock_minimo')).count()
-
-    # Seccion Resumen de Activos Fijos
-    activos_fijos = ActivoFijo.objects.all()
-    activos_fijos_en_uso = activos_fijos.filter(estado=ESTADOS.EN_USO).count()
-    activos_fijos_almacen = activos_fijos.filter(estado=ESTADOS.ALMACEN).count()
-    activos_fijos_en_reparacion = activos_fijos.filter(estado=ESTADOS.EN_REPARACION).count()
-    activos_fijos_dado_de_baja = activos_fijos.filter(estado=ESTADOS.DADO_DE_BAJA).count()
-
-    # Seccion Actividad Reciente
-    # 4 recientes items 
-    historial = HistorialActivo.objects.all()[:4]
-    
-    # entradas, salidas, movimientos
-    movimientos = MovimientoInventario.objects.all()
-    
-    # Obtener el primer y último día del mes actual
-    start_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    entradas = movimientos.filter(tipo=TIPO_MOVIMIENTO.ENTRADA,fecha__gte=start_of_month).count()
-    salidas = movimientos.filter(tipo=TIPO_MOVIMIENTO.SALIDA,fecha__gte=start_of_month).count()
-    ajustes = movimientos.filter(tipo=TIPO_MOVIMIENTO.AJUSTE,fecha__gte=start_of_month).count()
-
-    # Seccion Alertas
-    alertas = Alertas.objects.all()[:3]
-
-    context = {
-        'title_page': 'Inicio',
-        'productos_total': int(productos_total),
-        'productos_agotados': int(productos_agotados),
-        'productos_bajo_stock': int(productos_bajo_stock),
-        'productos_en_stock': int(productos_en_stock),
-        'activos_fijos_en_uso': int(activos_fijos_en_uso),
-        'activos_fijos_almacen': int(activos_fijos_almacen),
-        'activos_fijos_en_reparacion': int(activos_fijos_en_reparacion),
-        'activos_fijos_dado_de_baja': int(activos_fijos_dado_de_baja),
-        'historial' : historial,
-        'entradas': entradas,
-        'salidas': salidas,
-        'ajustes': ajustes,
-        'alertas': alertas,
-    }
-    return render(request, 'dashboard/economico_home_page.html', context)
-
-@login_required
-def jefe_area(request):
-    context = {
-        'title_page': 'Inicio',
-        'explicacion' : "Pagina inicial de Jefe de Área en desarrollo."
-    }
-    return render(request, 'includes/build.html', context)
+        return views_admin.home_page(request)
 
 @login_required
 def alertas_stock_api(request):
@@ -123,24 +79,69 @@ def alertas_stocks_api_delete(request, id):
     # ax.delete()
     return HttpResponse(status=204)
 
+#############################################################################################################################
+#############################                           AUTENTICACION                           #############################
+#############################################################################################################################
+class Main_LoginView(LoginView):
+    template_name = 'auth/login.html'
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(
+            self.request, 
+            f"¡Bienvenido {self.request.user.get_full_name() or self.request.user.username}!"
+        )
+        return response
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "Error al iniciar sesión. Verifica tus credenciales."
+        )
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title_page': 'Iniciar Sesión',
+        })
+        return context
+
+class Main_LogoutView(LogoutView):
+    success_url = reverse_lazy('home')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            messages.info(
+                request,
+                f"Has cerrado sesión correctamente. ¡Hasta pronto {request.user.get_full_name() or request.user.username}!"
+            )
+        return super().dispatch(request, *args, **kwargs)
+
+
+def password_forgot_htmx(request):
+    html = render(request, 'auth/htmx/password_forgot_htmx.html')
+    return HttpResponse(html)
+
+def login_form_htmx(request):
+    html = render(request, 'auth/htmx/login-form-htmx.html')
+    return HttpResponse(html)
 
 #############################################################################################################################
 ###################################                       INVENTARIO                      ###################################
 #############################################################################################################################
-# genera y guarda el inventario de una ubicacion
+# lista las ubicaciones para comprobar su inventario
 @login_required
 def revisar_inventario(request):
     ubicacion = Ubicacion.objects.filter(area = request.user.area)
-    print(request.user.area.nombre)
     context = {
         'title_page' : 'Revisar Inventario',
         'ubicaciones' : ubicacion,
     }
-    if request.user.area.nombre == "Almacén":
-        print("Alaamar")
     return render(request, 'dashboard/inventario/revisar_inventario.html', context)
 
-# lista las ubicaciones para consultar su inventario
+# lista las ubicaciones para consultar su inventario con su historial
 @login_required
 def list_inventario(request):
     ubicaciones = Ubicacion.objects.filter(area = request.user.area)
@@ -156,7 +157,7 @@ def list_inventario(request):
 @login_required
 def actual_inventario_api(request, id):
     activos_fijos = ActivoFijo.objects.filter(ubicacion__id = id).select_related('producto').order_by('producto__nombre')
-    responsable_area = Usuario.objects.filter(tipo_user = 'jefe_area').filter(area = get_object_or_404(Ubicacion, pk=id).area).first()
+    responsable_area = Usuario.objects.filter(tipo_user = TIPO_USER.JEFE_AREA).filter(area = get_object_or_404(Ubicacion, pk=id).area).first()
     
     nombre_responsable_area = "No posee aún"
     if responsable_area is not None:
@@ -165,13 +166,19 @@ def actual_inventario_api(request, id):
     grouped_data = defaultdict(list)
 
     for af in activos_fijos:
-        if af.get_estado_display() == 'En uso':
+        if af.estado == ESTADOS.EN_USO:
+            
             key = af.producto.nombre
+            if af.producto.modelo:
+                key = f"{key} {af.producto.modelo}"
+            if af.producto.marca:
+                key = f"{key} {af.producto.marca}"
+            
             grouped_data[key].append({
                 'codigo_interno': af.codigo_interno,
                 'serial_number': af.serial_number or 'No registrado'
             })
-
+    
     # formato final con listas unidas
     processed_data = []
     counter = 1
@@ -266,274 +273,64 @@ def delete_inventario(request, id):
     inventario = get_object_or_404(Inventario, pk=id)
     return redirect('list-inventario')
 
-
-# registra la entrada de un activo fijo y actualiza el stock del tipo de producto
-@login_required
-def entrada_activos(request):
-    if request.method == 'POST':
-        form = ActivoFijoForm(request.POST)
-        if form.is_valid():
-            activo = form.save(commit=False)
-            activo.serial_number = generar_numero_inventario()
-            activo.save()
-
-            id_activo = activo.producto.id
-            # filtrar todos los activos con el id del producto y contarlos
-            cantidad = ActivoFijo.objects.filter(producto__id = id_activo).count()
-            # actualizar el producto con la cantidad anterior
-            Producto.objects.filter(pk=id_activo).update(stock_actual=cantidad)
-            return redirect('entrada-activos')
-
-    context = {
-        'title_page' : 'Entrada de Activo Fijo',
-        'form' : ActivoFijoForm()
-    }
-    return render(request, 'dashboard/inventario/activos_entrada.html', context)
-
-# registra el cambio de ubicacion o area de un activo fijo
-@login_required
-def ajuste_activos(request):
-    pass
-
-# **** TERMINAR
+#############################################################################################################################
+######################################                  ACTIVOS FIJOS                     ###################################
+#############################################################################################################################
+# ENDPOINTS
 @login_required
 def sin_local_activos(request):
-    # mostrar los activos fijos que estan en un area pero no tienen ubicacion
-    area = request.user.area
+    if request.method == 'POST':
+        id_activo = request.POST.get('activo_id')
+        ubicacion_id = request.POST.get('ubicacion_id')
+        activo = get_object_or_404(ActivoFijo, pk=id_activo)
+        ubicacion = get_object_or_404(Ubicacion, pk=ubicacion_id)
+
+        # Asignar la nueva ubicación al activo
+        activo.ubicacion = ubicacion
+        activo.estado = ESTADOS.EN_USO
+        activo.save()
+
+        # Registrar el historial del cambio de ubicación
+        HistorialActivo.objects.create(
+            activo=activo,
+            responsable=request.user,
+            accion=ACCIONES_HISTORIAL.MOVIMIENTO_DE_AREA,
+            estado=ESTADO_ACCION_HISTORIAL.COMPLETADO,
+            descripcion=f"Activo movido a {ubicacion.nombre}"
+        )
+
+        messages.success(request, 'Activo movido correctamente.')
+        return redirect('sin-local-activos')
     
+    area = request.user.area
     activos = ActivoFijo.objects.filter(
         responsable__area=area,
         ubicacion__isnull=True
     ).filter(estado=ESTADOS.SIN_UBICACION)
-
     context = {
         'title_page' : 'Activos sin local',
         'activos' : activos
     }
     return render(request, 'dashboard/inventario/activos_sin_local.html', context)
 
-# # # # # # # # # # # # # # # # # # # # # #              REVISAR              # # # # # # # # # # # # # # # # # # # # # #
-# registra la salida de un activo fijo
 @login_required
-def salida_activos(request, id):
-    activo = get_object_or_404(ActivoFijo, pk = id)
-    if request.method == 'POST':
-        activo.estado = ESTADOS.DADO_DE_BAJA
-        activo.save() 
-        HistorialActivo.objects.create(
-            activo = activo,
-            responsable = request.user,
-            accion = ACCIONES_HISTORIAL.DADO_DE_BAJA,
-            estado = ESTADO_ACCION_HISTORIAL.COMPLETADO,
-        )
-    
-    historial = HistorialActivo.objects.filter(activo = id)
+def sin_local_activos_htmx(request,id):
     context = {
-        'title_page': 'Salida de Activo Fijo',
-        'historial' : historial,
-        'last_act': historial.last,
-        'activo': activo,
+        'item' : get_object_or_404(ActivoFijo, pk = id),
+        'ubicaciones' : Ubicacion.objects.filter(area = request.user.area),
     }
-    return render(request, 'dashboard/inventario/activos_salida.html', context)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    html = render(request, 'dashboard/inventario/activos_sin_local_htmx.html', context)
+    return HttpResponse(html)
 
 #############################################################################################################################
 ######################################                    PRODUCTOS                       ###################################
 #############################################################################################################################
-# economico
 @login_required
 def resumen_productos(request):
     context = {
         'title_page' : 'Resumen de Productos'
     }
     return render(request, 'dashboard/productos/productos.html', context)
-
-def create_productos(request):
-    if request.method == 'POST':
-        form = ProductoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('create-productos')  # Cambia '/' por el nombre de tu URL de éxito
-    else:
-        form = ProductoForm()
-
-    context = {
-        'form': form,
-        'title_page': 'Agregar Producto',
-    }
-
-    return render(request, 'dashboard/productos/create.html', context)
-
-@login_required
-def list_productos(request):
-    context = {
-        'title_page' : 'Listado de Productos',
-        'productos' : Producto.objects.all()
-    }
-
-    return render(request, 'dashboard/productos/list.html', context)
-
-@login_required
-def edit_productos(request,id):
-    producto = get_object_or_404(Producto, pk = id)
-    form = ProductoForm(instance=producto)
-    html = render(request, 'dashboard/productos/htmx-update.html', {'form' : form, 'item' : producto, 'producto' : id})
-    return HttpResponse(html)
-
-@login_required
-def show_productos(request,id):
-    producto = get_object_or_404(Producto, pk = id)
-    html = render(request, 'dashboard/productos/htmx-show.html', {'form' : producto, 'producto' : id})
-    return HttpResponse(html)
-
-@login_required
-def update_productos(request,id):
-    producto = get_object_or_404(Producto, id = id)
-    form = ProductoForm()
-    if request.method == 'POST':
-        form = ProductoForm(request.POST, request.FILES, instance=producto)
-        if form.is_valid():
-            form.save()
-    context = {
-        'title_page' : 'Productos',
-        'productos' : Producto.objects.all()
-    }
-    return render(request, 'dashboard/productos/list.html', context)
-
-@login_required
-def delete_productos(request, id):
-    get_object_or_404(Producto, pk=id).delete()
-    return redirect('list-productos')
-
-@login_required
-def productos_solicitados(request):
-    solicitudes = SolicitudesProductos.objects.all()
-    
-    context = {
-        'title_page' : 'Solicitudes de Productos',
-        'solicitudes' : solicitudes
-    }
-
-    return render(request, 'dashboard/productos/productos_solicitados.html', context)
-
-#############################################################################################################################
-######################################                   PROVEEDORES                      ###################################
-#############################################################################################################################
-# rol economico
-@login_required
-def resumen_proveedores(request):
-    
-    # Mes actual
-    hoy = datetime.today()
-    dia_actual = hoy.day
-    mes_actual = hoy.month
-    year_actual = hoy.year
-    
-    # total de proveedores
-    total_proveedores = Proveedor.objects.count()
-
-    # cuantos proveedores aportaron este mes 
-    proveedores_activos_mes = Proveedor.objects.filter(
-        producto__movimientoinventario__tipo='entrada',
-        producto__movimientoinventario__fecha__year=year_actual,
-        producto__movimientoinventario__fecha__month=mes_actual
-    ).distinct().count()
-    
-    # capital gastado este mes en proveedores
-    total_gastado_mes = MovimientoInventario.objects.filter(
-        tipo='entrada',
-        producto__proveedor__isnull=False,
-        fecha__year=year_actual,
-        fecha__month=mes_actual
-    ).annotate(
-        costo_total=models.ExpressionWrapper(
-            models.F('cantidad') * models.F('producto__precio_unitario'),
-            output_field=models.DecimalField()
-        )
-    ).aggregate(total=models.Sum('costo_total'))['total'] or 0
-    
-    # top 5 proveedores mas usados
-    proveedores_mas_usados = MovimientoInventario.objects.filter(
-        tipo='entrada',
-        fecha__year=year_actual,
-        fecha__month=mes_actual
-    ).values('producto__proveedor__nombre').annotate(
-        total_entradas=Count('id'),
-        total_gastado=Sum(F('cantidad') * F('producto__precio_unitario'))
-    ).order_by('-total_entradas')[:5]
-
-    # ultima entrada del mes
-    ultima_entrada = MovimientoInventario.objects.filter(
-        tipo='entrada',
-        fecha__year=year_actual,
-        fecha__month=mes_actual
-    ).order_by('-fecha').first()
-
-    if not ultima_entrada:
-        # Última entrada registrada (sin importar la fecha)
-        ultima_entrada = MovimientoInventario.objects.filter(
-            tipo='entrada'
-        ).order_by('-fecha').first()
-
-    context = {
-        'title_page' : 'Resumen de Proveedores',
-        'fecha_hoy' : f"{dia_actual}/{mes_actual}/{year_actual}",
-        'total_proveedores' : total_proveedores,
-        'total_gastado_mes' : total_gastado_mes,
-        'proveedores_activos_mes' : proveedores_activos_mes,
-        'proveedores_mas_usados' : proveedores_mas_usados,
-        'ultima_entrada' : ultima_entrada,
-    }
-    return render(request, 'dashboard/proveedores/resumen.html', context)
-
-class create_proveedores(CreateView):
-    model = Proveedor
-    form_class = ProveedorForm
-    template_name = 'dashboard/proveedores/create.html'
-    success_url = '/proveedores/create-proveedores/'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context = {
-            'title_page': 'Agregar Proveedor',
-        }
-
-        return context
-
-@login_required
-def list_proveedores(request):
-    proveedores = Proveedor.objects.all()
-    context = {
-        'title_page' : 'Listado de Proveedores',
-        'proveedores' : proveedores
-    }
-    return render(request, 'dashboard/proveedores/list.html', context)
-
-@login_required
-def update_proveedores(request, id):
-    proveedor = get_object_or_404(Proveedor, id = id)
-    form = ProveedorForm()
-    if request.method == 'POST':
-        form = ProveedorForm(request.POST, instance=proveedor)
-        if form.is_valid():
-            form.save()
-    context = {
-        'title_page' : 'Listar Proveedores',
-        'proveedores' : Proveedor.objects.all()
-    }
-    return render(request, 'dashboard/proveedores/list.html', context)
-
-@login_required
-def delete_proveedores(request, id):
-    get_object_or_404(Proveedor, pk=id).delete()
-    return redirect('list-proveedores')
-
-@login_required
-def show_proveedor(request,id):
-    proveedor = get_object_or_404(Proveedor, pk = id)
-    form = ProveedorForm(instance=proveedor)
-    html = render(request, 'dashboard/proveedores/htmx-update.html', {'form' : form, 'proveedor' : id})
-    return HttpResponse(html)
 
 #############################################################################################################################
 ######################################                    REPORTES                       ####################################
@@ -545,30 +342,40 @@ def main_reportes(request):
     }
     return render(request, 'dashboard/reportes/reportes.html', context)
 
+@login_required
+def reporte_valoracion_economica(request):
+    ubicaciones = Ubicacion.objects.filter(area = request.user.area)
+    context = {
+        'ubicaciones': [],
+        'total_coste' : '',
+        'usd': ''
+    }
+    total_coste = 0
+
+    for ubicacion in ubicaciones:
+        activos = ActivoFijo.objects.filter(ubicacion = ubicacion)
+        coste = 0
+        for activo in activos:
+            coste += activo.producto.precio_unitario
+        total_coste += coste
+        # añadir la información de cada ubicación al contexto
+        context['ubicaciones'].append({
+            'nombre': ubicacion.nombre,
+            'coste': convert_num(str(coste)),
+        })
+    
+    context['total_coste'] = convert_num(str(total_coste))
+    context['usd'] = convert_num(str(convert_CUP_to_USD(total_coste, PRECIO_USD)))
+    
+    html = render(request, 'dashboard/reportes/valoracion_economica_htmx.html', context)
+    return HttpResponse(html)
 
 #############################################################################################################################
-#############################                           AUTENTICACION                           #############################
+#############################                           CONFIGURACION                           #############################
 #############################################################################################################################
-class Main_LoginView(LoginView):
-    template_name = 'auth/login.html'
-    success_url = reverse_lazy('home')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        context = {
-            'title_page': 'Iniciar Sesión',
-        }
-
-        return context
-
-class Main_LogoutView(LogoutView):
-    success_url = reverse_lazy('home')
-
 @login_required
 def self_account_config(request):
     usuario = get_object_or_404(Usuario, pk=request.user.id)
-    
     context = {
         'title_page' : 'Configuración',
         'UsuarioChangeForm' : UsuarioChangeForm(instance=usuario),
@@ -577,7 +384,6 @@ def self_account_config(request):
     }            
     return render(request, 'auth/config.html', context)
 
-# ARREGLAR CON EL CAMBIAR CONTRASEÑA
 @login_required
 def update_self_user(request):
     user = get_object_or_404(Usuario, pk=request.user.id)
@@ -585,178 +391,75 @@ def update_self_user(request):
     if request.method == 'POST':
         form = UsuarioChangeForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()
+            try:
+                form.save()
+                messages.success(request, "¡Tus datos se actualizaron correctamente!")
+            except Exception as e:
+                messages.error(request, f"Error al guardar: {str(e)}")
             return redirect('self-config')
         else:
-            print(form.errors)  # Para ver errores en consola
-
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error en {field}: {error}")
+    
     return redirect('self-config')
 
-# ARREGLAR CON EL UPDATE CUENTA
 @login_required
 def update_self_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Mantiene la sesión iniciada
-            messages.success(request, 'Tu contraseña ha sido actualizada correctamente.')
-            return redirect('self-config')  # Cambia por tu URL de éxito
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Su contraseña ha sido actualizada correctamente.')
         else:
             messages.error(request, 'Por favor corrige los errores del formulario.')
-            print(form.errors)  # Para ver los errores en consola
     return redirect('self-config')
 
-
 @login_required
-def self_cambiar_password(request, pk):
-    usuario = get_object_or_404(Usuario, pk=pk)
-
-    if not request.user.is_authenticated or request.user.pk != usuario.pk:
-        return redirect('inicio')  # O donde dirijas al usuario no autorizado
-
-    if request.method == 'POST':
-        form = PasswordChangeForm(user=usuario, data=request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')  # Redirige al login o a un mensaje de éxito
-    else:
-        form = PasswordChangeForm(user=usuario)
-
-    redirect('auth-config')
-
+def update_self_photo(request):
+    if request.method != 'POST':
+        return redirect("self-config")
+    
+    # Verificar si se envió un archivo
+    if 'imageUpload' not in request.FILES:
+        messages.error(request, "No se seleccionó ningún archivo")
+        return redirect("self-config")
+    
+    # Obtener el archivo subido
+    new_image = request.FILES['imageUpload']
+    
+    # Validar que sea una imagen (por extensión y tipo MIME)
+    valid_extensions = ['jpg', 'jpeg', 'png', 'gif']
+    extension = new_image.name.split('.')[-1].lower()
+    
+    if extension not in valid_extensions:
+        messages.error(request, "Formato de archivo no válido. Use JPG, JPEG, PNG o GIF")
+        return redirect("self-config")
+    
+    # Validar tamaño del archivo (ejemplo: máximo 5MB)
+    if new_image.size > 5 * 1024 * 1024:
+        messages.error(request, "La imagen es demasiado grande (máximo 5MB)")
+        return redirect("self-config")
+    
+    try:
+        # Actualizar la imagen del usuario
+        user = request.user
+        user.img = new_image
+        user.save()
+        
+        messages.success(request, "Foto de perfil actualizada correctamente")
+    except Exception as e:
+        messages.error(request, f"Error al actualizar la foto: {str(e)}")
+    
+    return redirect("self-config")
 
 #############################################################################################################################
 #############################                            SOLICITUDES                            #############################
 #############################################################################################################################
-# rol Jefe de Area
-
-@login_required
-def solicitudes_productos_tabla(request):
-    solicitudes = SolicitudesProductos.objects.filter(usuario = request.user.id)
-    context = {
-        'title_page' : 'Solicitudes de Productos',
-        'solicitudes' : solicitudes,
-    }
-    return render(request, 'dashboard/productos/solicitudes.html', context)
-
-@login_required
-def solicitar_productos(request):
-    context = {
-        'title_page' : 'Solicitar Productos',
-        'productos' : Producto.objects.exclude(stock_actual = 0),
-    }
-    return render(request, 'dashboard/productos/solicitar.html', context)
-
-@login_required
-def solicitudes_productos_api(request):
-    solicitudes = SolicitudesProductos.objects.filter(usuario = request.user.id)
-    context = {
-        'title_page' : 'Solicitudes de Productos',
-        'solicitudes' : solicitudes,
-    }
-    return render(request, 'dashboard/productos/solicitudes/solicitudes_htmx.html', context)
-
-
-def preparar_solicitud_api(request, id, cant):
-    producto = get_object_or_404(Producto, pk=id)
-    
-    # Validación adicional
-    try:
-        cant = int(cant)
-    except ValueError:
-        return HttpResponse("Cantidad inválida", status=400)
-
-    if cant <= 0:
-        return HttpResponse("<p>Cantidad debe ser mayor a cero.</p>", status=400)
-
-    stock_actual = int(producto.stock_actual or 0)
-    stock_restante = max(stock_actual - cant, 0)
-
-    context = {
-        'producto': f"{producto.nombre} {producto.marca or ''} {producto.modelo or ''}".strip(),
-        'img': producto.imagen.url if producto.imagen else "",
-        'precio_unitario': float(producto.precio_unitario or 0),
-        'stock_restante': stock_restante,
-        'cantidad': cant,
-        'id': id,
-    }
-
-    html = render(request, 'dashboard/productos/solicitudes/preparar_solicitud_htmx.html', context)
-    return HttpResponse(html)
-
-# agregar producto a la lista de solicitud
-def agregar_a_la_solicitud_api(request, id, cant):
-    producto = get_object_or_404(Producto, id=id)
-    solicitud = get_solicitud_sesion(request)
-    cant = int(cant)
-
-    solicitud[str(id)] = {
-        "ID": producto.id,
-        "nombre": producto.nombre,
-        "marca": producto.marca,
-        "modelo": producto.modelo,
-        "proveedor": producto.proveedor.nombre if producto.proveedor else "",
-        "imagen": producto.imagen.url if producto.imagen else "",
-        "cantidad": cant,
-        "precio": float(producto.precio_unitario or 0),
-    }
-
-    guardar_solicitud_sesion(request, solicitud)
-
-    # Devuelve el HTML actualizado del carrito
-    context = {
-        'solicitud': solicitud.items(),
-        'fecha': datetime.now().date,
-        'title_page' : 'Solicitar Productos',
-        'productos' : Producto.objects.exclude(stock_actual = 0),
-    }
-    return redirect('solicitar-productos')
-
-def ver_solicitud(request):
-    solicitud = get_solicitud_sesion(request)
-    context = {
-        'solicitud': solicitud.items(),
-        'fecha': datetime.now().date,
-    }
-    html = render(request, 'dashboard/productos/solicitudes/ver_solicitud_htmx.html', context)
-    return HttpResponse(html)
-
-def eliminar_item_solicitud_api(request, producto_id):
-    solicitud = get_solicitud_sesion(request)
-    producto_id_str = str(producto_id)
-
-    if producto_id_str in solicitud:
-        del solicitud[producto_id_str]
-        guardar_solicitud_sesion(request, solicitud)
-
-    html = render_to_string('dashboard/productos/solicitudes/ver_solicitud_htmx.html', {
-        'solicitud': solicitud.items(),
-        'fecha': datetime.now().date,
-    })
-
-    return HttpResponse(html)
-
-def confirmar_solicitud_api(request):
-    if request.method == 'POST':
-        solicitud = get_solicitud_sesion(request)
-
-        # Guardar la solicitud
-        SolicitudesProductos.objects.create(
-            usuario=request.user,
-            items=solicitud,
-            fecha_creacion=datetime.now(),
-            estado='pendiente'
-        )
-
-        # Limpiar la solicitud después de guardar
-        guardar_solicitud_sesion(request, {})
-
-    return redirect('solicitudes-productos-tabla')
-
 def ver_solicitud_creada(request, id):
     solicitud = SolicitudesProductos.objects.get(id=id)
-    items_dict = parse_items_json(solicitud.items)  # Asegúrate que esto devuelve un dict
+    items_dict = parse_items_json(solicitud.items)
 
     context = {
         'solicitud': items_dict,
@@ -768,58 +471,9 @@ def ver_solicitud_creada(request, id):
     html = render(request, 'dashboard/productos/solicitudes/ver_solicitud_creada_htmx.html', context)
     return HttpResponse(html)
 
-def eliminar_solicitudes_productos_tabla(request, id):
-    solicitud = get_object_or_404(SolicitudesProductos, pk=id)
-    solicitud.delete()
-    
-    return redirect('solicitudes-productos-tabla')
-
-def vaciar_carrito_api(request):
-    guardar_solicitud_sesion(request, {})
-    solicitud = get_solicitud_sesion(request)
-    html = render_to_string('dashboard/productos/solicitudes/ver_solicitud_htmx.html', {
-        'solicitud': solicitud.items(),
-        'fecha': datetime.now().date,
-    })
-
-    return HttpResponse(html)
-
-def rechazar_solicitud(request, id):
-    solicitud = get_object_or_404(SolicitudesProductos, pk=id)
-    solicitud.estado = 'rechazada'
-    solicitud.save()
-
-    return redirect('productos-solicitados')
-
-def aprobar_solicitud(request, id):
-    solicitud = get_object_or_404(SolicitudesProductos, pk=id)
-    # Cambia el estado de la solicitud y guarda
-    solicitud.estado = ESTADOS_SOLICITUD.APROBADA
-    solicitud.save()
-
-    # Convierte el campo items a dict (si es necesario)
-    items_dict = parse_items_json(solicitud.items)
-
-    # Itera sobre cada producto solicitado
-    for item in items_dict.values():
-        producto = Producto.objects.get(id=item['ID'])
-        cantidad_solicitada = item['cantidad']
-
-        # Verifica stock suficiente
-        if producto.stock_actual >= cantidad_solicitada:
-            # Resta la cantidad solicitada del stock
-            producto.stock_actual -= cantidad_solicitada
-            producto.save()
-
-            # Crea un ActivoFijo por cada unidad solicitada
-            for _ in range(cantidad_solicitada):
-                ActivoFijo.objects.create(
-                    producto=producto,
-                    responsable=solicitud.usuario,
-                    ubicacion=None,  # Sin ubicación asignada
-                    estado=ESTADOS.SIN_UBICACION,
-                    descripcion=f"Activo generado por solicitud #{solicitud.id}",
-                    fecha_adquisicion=datetime.now()
-                )
-
-    return redirect('productos-solicitados')
+#############################################################################################################################
+#############################                           VISTAS A UBICAR                         #############################
+#############################################################################################################################
+# INVENTARIO
+# ACTIVOS FIJOS
+# REPORTES

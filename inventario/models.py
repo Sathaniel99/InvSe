@@ -5,7 +5,7 @@ from core.settings_web_project import ENTIDAD_WEB
 from .choices import *
 
 class Area(models.Model):
-    nombre = models.CharField(max_length=15, blank=False, null=False)
+    nombre = models.CharField(max_length=150, blank=False, null=False)
 
     class Meta:
             verbose_name = "Área"
@@ -150,6 +150,7 @@ class HistorialActivo(models.Model):
     fecha = models.DateTimeField(default=now)
     accion = models.CharField(max_length=25, choices=ACCIONES_HISTORIAL)
     estado = models.CharField(max_length=20, choices=ESTADO_ACCION_HISTORIAL)
+    descripcion = models.TextField(blank=True, null=True)
     
     def __str__(self):
         return f"Activo fijo {self.activo.codigo_interno} - Usuario -> {self.responsable.first_name} {self.responsable.last_name} - {self.fecha}"
