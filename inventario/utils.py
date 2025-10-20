@@ -151,7 +151,7 @@ def manage_choice(request, class_name, action, choice_value=None, new_value=None
         messages.error(request, f'Error al {action}: {str(e)}..')
         return False
 
-def actualizar_config(key_project=None, entidad_web=None, precio_usd=None, dominio=None):
+def actualizar_config(key_project=None, entidad_web=None, precio_usd=None, dominio=None, img_web=None):
     archivo = Path(settings.BASE_DIR) / 'core' / 'settings_web_project.py'
     try:
         if not Path(archivo).exists():
@@ -182,6 +182,9 @@ def actualizar_config(key_project=None, entidad_web=None, precio_usd=None, domin
         
         if dominio is not None:
             contenido = actualizar_valor(contenido, 'DOMINIO', dominio)
+
+        if img_web is not None:
+            contenido = actualizar_valor(contenido, 'IMG_WEB', img_web)
         
         with open(archivo, 'w') as f:
             f.write(contenido)

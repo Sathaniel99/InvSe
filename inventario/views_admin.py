@@ -1,12 +1,15 @@
 from .forms import UbicacionForm, AreaForm, UsuarioChangeForm, UsuarioCreateForm
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
-from core.settings_web_project import DOMINIO, ENTIDAD_WEB
+from core.settings_web_project import DOMINIO, ENTIDAD_WEB, IMG_WEB
 from .utils import actualizar_config, manage_choice
-from .choices import ESTADOS, ACCIONES_HISTORIAL, TIPO_USER
+from .choices import ESTADOS, ACCIONES_HISTORIAL, TIPO_USER, get_choices_filtrados
 from .models import Ubicacion, Area, Usuario
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.conf import settings
+import os
+
 
 def home_page(request):
     usuarios = dict()
@@ -49,6 +52,8 @@ def server_config(request, id=None):
                 return accion_estados_historial(request)
             elif tipo == "entidad" or tipo == "dominio":
                 return accion_configuracion(request)
+            elif tipo == "img":
+                return accion_img_web(request)
         except Exception as e:
             messages.error(request, f'Ocurrió un error: {str(e)}')
         return redirect('server-config')
@@ -57,10 +62,12 @@ def server_config(request, id=None):
         "title_page": "Configurar servidor",
         'ubicaciones' : Ubicacion.objects.all(),
         'areas' : Area.objects.all(),
-        'ESTADOS' : ESTADOS,
+        'ESTADOS' : get_choices_filtrados(ESTADOS, [ESTADOS.SIN_UBICACIÓN, ESTADOS.ALMACEN, ESTADOS.DADO_DE_BAJA, ESTADOS.EN_REPARACIÓN, ESTADOS.EN_USO]),
         'ACCIONES_HISTORIAL' : ACCIONES_HISTORIAL,
         'dominio' : DOMINIO,
-        'entidad' : ENTIDAD_WEB
+        'entidad' : ENTIDAD_WEB,
+        'img_web' : IMG_WEB
+
     }
     return render(request, 'admin/server_config.html', context)
 
@@ -158,6 +165,46 @@ def accion_configuracion(request):
         else:
             messages.error(request, 'Error al actualizar entidad..')
     
+    return redirect('server-config')
+
+def accion_img_web(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'delete':
+            # Borrar la imagen
+            media_root = settings.MEDIA_ROOT
+            image_path = os.path.join(media_root, "img-web")
+            os.remove(image_path)
+            # Actualiza la configuración con un valor vacío
+            actualizar_config(img_web="")
+            messages.success(request, 'Imagen borrada con éxito..')
+            return redirect('server-config')
+
+        elif action == 'upload':
+            # Subir imagen
+            if 'imageUpload' not in request.FILES or not request.FILES['imageUpload']:
+                messages.error(request, 'No se ha seleccionado ninguna imagen.')
+                return redirect('server-config')
+
+            uploaded_image = request.FILES['imageUpload']
+            media_root = settings.MEDIA_ROOT
+            image_path = os.path.join(media_root, "img-web")
+
+            # Elimina la imagen anterior si existe
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
+            # Guarda la nueva imagen
+            with open(image_path, 'wb+') as destination:
+                for chunk in uploaded_image.chunks():
+                    destination.write(chunk)
+
+            # Actualiza la URL
+            url = os.path.join(settings.MEDIA_URL, "img-web")
+            actualizar_config(img_web=url)
+            messages.success(request, 'Imagen actualizada con éxito..')
+
     return redirect('server-config')
 
 # end point para los htmx

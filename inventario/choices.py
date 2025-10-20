@@ -34,3 +34,13 @@ class ESTADO_ACCION_HISTORIAL(models.TextChoices):
     COMPLETADO = "Completado",
     PROCESO = "Proceso",
     FALLIDO = "Fallido",
+
+# 'array' es la lista de valores a excluir
+# 'choice' es el choice a devolver
+def get_choices_filtrados(choice, array):
+    # Devolver las opciones filtradas
+    return [
+        (estado.value, estado.label)
+        for estado in choice
+        if estado.value not in array
+    ]

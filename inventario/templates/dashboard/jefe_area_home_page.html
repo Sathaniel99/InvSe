@@ -9,13 +9,12 @@
         box-shadow: 0 0 0 !important;
     }
 </style>
-
 <!-- Contenedor principal -->
 <div class="d-flex flex-wrap flex-row row g-4 my-1">
 
     <!-- Columna izquierda: Resumen de Inventario -->
     <div class="d-flex flex-column justify-content-between col-sm-12 col-md-7 col-lg-7 col-xl-8 col-xxl-8">
-        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4 bg-secondary bg-opacity-5">
+        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4">
             <h1 class="fs-3 fw-semibold mb-2">Resumen de Ubicaciones</h1>
             <h2 class="small fw-normal text-muted mb-4 text-uppercase">Visión general del estado actual de las ubicaciones.</h2>
 
@@ -88,16 +87,18 @@
 
     <!-- Columna derecha: Alertas de Stock -->
     <div class="col-sm-12 col-md-5 col-lg-5 col-xl-4 col-xxl-4">
-        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4 bg-secondary bg-opacity-5">
-            <h1 class="fs-3 fw-semibold mb-2">Alertas de Stock</h1>
-            <h2 class="small fw-normal text-muted mb-4 text-uppercase">Productos con bajo nivel de Stock</h2>
+        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4 bg-secondary bg-opacity-5 h-100 d-flex flex-column justify-content-between">
+            <div>
+                <h1 class="fs-3 fw-semibold m-0">Alertas de Stock</h1>
+                <small class="fw-normal text-muted m-0 text-uppercase">Productos con bajo nivel de Stock</small>
+            </div>
 
             <!-- Lista de alertas -->
-            <div class="d-flex flex-column gap-3 mt-3">
+            <div class="d-flex flex-column gap-2 mt-3">
                 
                 {% for item in alertas %}
                 <button
-                    class="btn d-flex align-items-center border text-start border-danger rounded shadow-danger-sm p-3 w-100 text-danger bg-danger bg-opacity-15 position-relative bg-danger-subtle-hover transition-200">
+                    class="btn d-flex align-items-center border text-start border-danger rounded shadow-danger-sm p-3 w-100 text-danger bg-danger bg-opacity-5 position-relative bg-danger-subtle-hover transition-200">
                     <i class="bi bi-exclamation-circle me-2"></i>
                     <div>
                         <div class="fw-bold fs-6">{{ item.producto.nombre }} {{ item.producto.modelo|default_if_none:"" }} {{ item.producto.marca|default_if_none:"" }}</div>
@@ -113,7 +114,7 @@
                     
 
                 <!-- Botón de acción -->
-                <button class="btn btn-outline-black fw-semibold mt-2" type="button"
+                <button class="btn btn-sm btn-outline-black fw-semibold mt-2" type="button"
                     data-bs-toggle="modal" data-bs-target="#AlertasStockModal"
                     hx-get="/alertas-stock-api"
                     hx-target="#AlertasStockModalContent"
@@ -148,7 +149,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -159,32 +159,34 @@
 
     <!-- Actividad Reciente -->
     <div class="col-sm-12 col-md-7 col-lg-7 col-xl-8 col-xxl-8">
-        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4 bg-secondary bg-opacity-5">
+        <div class="border border-1 border-secondary-subtle rounded shadow-sm p-4 bg-secondary bg-opacity-5 h-100">
             <h1 class="fs-3 fw-semibold mb-2">Actividad Reciente</h1>
             <h2 class="small fw-normal text-muted mb-4 text-uppercase">Últimas acciones realizadas en el sistema</h2>
 
             <!-- Lista de actividades -->
-            <div class="d-flex flex-column gap-3 mt-3">
+            <div class="row mt-3">
 
                 {% if historial %}
                 {% for item in historial %}
-                <div
-                    class="d-flex align-items-start border border-secondary-subtle rounded p-3 w-100 bg-secondary-subtle-hover transition-200">
-
-                    <div class="rounded-circle bg-secondary-subtle text-center me-3 border border-1 border-secondary-subtle shadow-sm d-flex justify-content-center align-items-center overflow-hidden"
-                        style="width: 2rem; height: 2rem;">
-                        {% if item.responsable.img %}
-                        <img class="w-100 h-100 object-fit-contain" src="media/{{item.responsable.img}}" alt=""
-                            srcset="">
-                        {% else %}
-                        {{item.responsable.first_name|slice:":1"|upper}}
-                        {% endif %}
-                    </div>
-                    <div>
-                        <div class="fw-bold fs-6">{{item.responsable.first_name}} {{item.responsable.last_name}}</div>
-                        <small class="text-muted">{{item.accion}}: <strong>{{item.activo.producto.nombre}}
-                                ({{item.activo.codigo_interno}})</strong></small><br>
-                        <small class="text-muted">{{item.fecha|date:"d/m/Y"}}</small>
+                <div class="col-6 p-1">
+                    <div
+                        class="d-flex align-items-start py-2 px-3 rounded transition-200 position-relative border {% if item.estado == 'Completado' %}border-success-subtle bg-success-subtle-hover{% elif item.estado == 'Proceso' %}border-warning-subtle bg-warning-subtle-hover{% else %}border-danger-subtle bg-danger-subtle-hover{% endif %}">
+                        <span class="position-absolute top-0 end-0 m-2 badge border border-1 fs-7 bg-{% if item.estado == 'Completado' %}success border-success-subtle text-light{% elif item.estado == 'Proceso' %}warning border-warning-subtle text-dark{% else %}danger border-danger-subtle text-light{% endif %}">{{item.estado}}</span>
+                        <div class="rounded-circle bg-secondary-subtle text-center me-3 border border-1 border-secondary-subtle shadow-sm d-flex justify-content-center align-items-center overflow-hidden"
+                            style="width: 2rem; height: 2rem;">
+                            {% if item.responsable.img %}
+                            <img class="w-100 h-100 object-fit-contain" src="media/{{item.responsable.img}}" alt=""
+                                srcset="">
+                            {% else %}
+                            {{item.responsable.first_name|slice:":1"|upper}}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-6">{{item.responsable.first_name}} {{item.responsable.last_name}}</div>
+                            <small class="text-muted">{{item.accion}}: <strong>{{item.activo.producto.nombre}}
+                                    ({{item.activo.codigo_interno}})</strong></small><br>
+                            <small class="text-muted">{{item.fecha|date:"d/m/Y"}}</small>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}

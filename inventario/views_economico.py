@@ -22,7 +22,7 @@ def home_page(request):
     activos_fijos = ActivoFijo.objects.all()
     activos_fijos_en_uso = activos_fijos.filter(estado=ESTADOS.EN_USO).count()
     activos_fijos_almacen = activos_fijos.filter(estado=ESTADOS.ALMACEN).count()
-    activos_fijos_en_reparacion = activos_fijos.filter(estado=ESTADOS.EN_REPARACION).count()
+    activos_fijos_en_reparacion = activos_fijos.filter(estado=ESTADOS.EN_REPARACIÓN).count()
     activos_fijos_dado_de_baja = activos_fijos.filter(estado=ESTADOS.DADO_DE_BAJA).count()
 
     # Seccion Actividad Reciente

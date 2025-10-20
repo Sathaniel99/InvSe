@@ -9,8 +9,8 @@
 <div class="modal fade" id="ReporteModal" tabindex="-1" aria-labelledby="ReporteLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content overflow-hidden bg-invert shadow">
-            <div class="border-bottom border-2 border-secondary-subtle w-100 d-flex" style="z-index: 1600;">
+        <div class="modal-content overflow-hidden bg-invert shadow position-relative">
+            <div class="w-100 d-flex position-absolute top-0" style="z-index: 1600;">
                 <button class="btn-close p-2 ms-auto me-2 my-1" type="button" data-bs-toggle-tooltip="tooltip" data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="position-relative px-5 py-4 z-index-overall d-flex flex-column"
@@ -35,7 +35,7 @@
                 <h2 class="fs-6 fw-normal text-muted">Generación de informes detallados del inventario actual.</h2>
             </div>
             <button type="button"
-                class="btn btn-outline-black fw-semibold w-100"
+                class="btn btn-sm btn-outline-black fw-semibold w-100"
                 style="width: max-content;">
                 Generar
             </button>
@@ -48,7 +48,7 @@
                 <h2 class="fs-6 fw-normal text-muted">Análisis de la rotación de productos a lo largo del tiempo.</h2>
             </div>
             <button type="button"
-                class="btn btn-outline-black fw-semibold w-100"
+                class="btn btn-sm btn-outline-black fw-semibold w-100"
                 style="width: max-content;">
                 Generar
             </button>
@@ -61,7 +61,7 @@
                 <h2 class="fs-6 fw-normal text-muted">Valoración económica del inventario total.</h2>
             </div>
             <button data-bs-toggle="modal" data-bs-target="#ReporteModal" hx-get="{% url 'reporte-valoracion-economica' %}"
-                hx-target="#ReporteModalContent" hx-swap="innerHTML" hx-trigger="click" class="btn btn-outline-black fw-semibold w-100"
+                hx-target="#ReporteModalContent" hx-swap="innerHTML" hx-trigger="click" class="btn btn-sm btn-outline-black fw-semibold w-100"
                 type="button" style="width: max-content;">
                 Generar
         </button>
@@ -82,7 +82,7 @@
                 <h2 class="fs-6 fw-normal text-muted">Generado: 10/05/2025</h2>
             </div>
             <button type="button"
-                class="btn btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
+                class="btn btn-sm btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
                 <i class="bi bi-download"></i> Descargar
             </button>
         </div>
@@ -94,7 +94,7 @@
                 <h2 class="fs-6 fw-normal text-muted">Generado: 01/05/2025</h2>
             </div>
             <button type="button"
-                class="btn btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
+                class="btn btn-sm btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
                 <i class="bi bi-download"></i> Descargar
             </button>
         </div>
@@ -106,7 +106,7 @@
                 <h2 class="fs-6 fw-normal text-muted">Generado: 30/04/2025</h2>
             </div>
             <button type="button"
-                class="btn btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
+                class="btn btn-sm btn-outline-black fw-semibold fs-6 d-flex align-items-center gap-2">
                 <i class="bi bi-download"></i> Descargar
             </button>
         </div>

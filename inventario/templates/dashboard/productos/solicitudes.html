@@ -10,7 +10,7 @@
 
 <!-- Tabla -->
 <div class="d-flex justify-content-end align-items-center mb-4">
-    <a href="{% url 'solicitar-productos' %}" class="btn btn-black fw-semibold d-flex align-items-center gap-2">
+    <a href="{% url 'solicitar-productos' %}" class="btn btn-sm btn-black fw-semibold d-flex align-items-center gap-2">
         <i class="bi bi-plus-circle"></i> Nueva Solicitud
     </a>
 </div>
@@ -47,13 +47,13 @@
             </div>
             <hr class="m-0">
             <div class="d-flex justify-content-around mt-2">
-                <button class="btn btn-outline-info" data-bs-toggle-tooltip="tooltip"
+                <button class="btn btn-sm btn-outline-info" data-bs-toggle-tooltip="tooltip"
                     data-bs-title="Visualizar productos Solicitados" data-bs-toggle="modal"
                     data-bs-target="#ProductosSolicitudModal" hx-get="/productos/ver-solicitud-creada-api/{{ ax.id }}"
                     hx-target="#ProductosSolicitudContent" hx-swap="innerHTML" hx-trigger="click">
                     <i class="bi bi-eye"></i>
                 </button>
-                <a class="btn btn-outline-danger-sdcn" data-bs-toggle-tooltip="tooltip"
+                <a class="btn btn-sm btn-outline-danger-sdcn" data-bs-toggle-tooltip="tooltip"
                     data-bs-title="Eliminar lista de productos Solicitados"
                     href="{% url 'eliminar-solicitudes-productos-creados' ax.id %}">
                     <i class="bi bi-trash"></i>

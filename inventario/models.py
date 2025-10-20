@@ -159,6 +159,7 @@ class HistorialActivo(models.Model):
         verbose_name_plural = "Historial de Activos"
 
 class Alertas(models.Model):
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, default=1)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     historial = models.ForeignKey(HistorialActivo, on_delete=models.CASCADE)
     fecha = models.DateTimeField(default=now)

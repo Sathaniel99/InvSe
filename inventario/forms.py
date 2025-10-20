@@ -10,8 +10,8 @@ class CategoriaForm(forms.ModelForm):
         model = Categoria
         fields = ['nombre', 'descripcion']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 3}),
         }
         labels = {
             'nombre': 'Nombre de la Categoría',
@@ -24,11 +24,11 @@ class ProveedorForm(forms.ModelForm):
         model = Proveedor
         fields = ['nombre', 'contacto', 'telefono', 'email', 'direccion']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'contacto': forms.TextInput(attrs={'class': 'form-control'}),
-            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'contacto': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control form-control-sm'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
         }
         labels = {
             'nombre': 'Nombre del Proveedor',
@@ -44,9 +44,9 @@ class UbicacionForm(forms.ModelForm):
         model = Ubicacion
         fields = ['nombre', 'descripcion', 'area']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'area': forms.Select(attrs={'class': 'form-select'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 3}),
+            'area': forms.Select(attrs={'class': 'form-select form-select-sm'}),
         }
         labels = {
             'nombre': 'Nombre de la Ubicación',
@@ -73,13 +73,13 @@ class ActivoFijoForm(forms.ModelForm):
             'observaciones'
         ]
         widgets = {
-            'producto' : forms.Select(attrs={'class': 'form-select'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'fecha_adquisicion': forms.DateInput(format='%Y-%m-%d',attrs={'type': 'date', 'class': 'form-control'}),
-            'estado': forms.Select(attrs={'class': 'form-select pe-none'}),
-            'serial_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'ubicacion': forms.Select(attrs={'class': 'form-select pe-none'}),
-            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'producto' : forms.Select(attrs={'class': 'form-select form-select-sm'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 3}),
+            'fecha_adquisicion': forms.DateInput(format='%Y-%m-%d',attrs={'type': 'date', 'class': 'form-control form-control-sm'}),
+            'estado': forms.Select(attrs={'class': 'form-select form-select-sm pe-none'}),
+            'serial_number': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'ubicacion': forms.Select(attrs={'class': 'form-select form-select-sm pe-none'}),
+            'observaciones': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 3}),
         }
         labels = {
             'producto' : 'Producto',
@@ -103,7 +103,7 @@ class AreaForm(forms.ModelForm):
             'nombre',
         ]
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
         }
         labels = {
             'nombre': 'Nombre del Área',
@@ -127,17 +127,17 @@ class ProductoForm(forms.ModelForm):
             'imagen'
         ]
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'categoria': forms.Select(attrs={'class': 'form-select'}),
-            'marca': forms.TextInput(attrs={'class': 'form-control'}),
-            'modelo': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'unidad_medida': forms.TextInput(attrs={'class': 'form-control'}),
-            'stock_minimo': forms.NumberInput(attrs={'class': 'form-control'}),
-            'stock_actual': forms.NumberInput(attrs={'class': 'form-control'}),
-            'precio_unitario': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'proveedor': forms.Select(attrs={'class': 'form-select'}),
-            'imagen': forms.FileInput(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'categoria': forms.Select(attrs={'class': 'form-select form-select-sm'}),
+            'marca': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'modelo': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 3, 'style' : 'field-sizing: content;'}),
+            'unidad_medida': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'stock_minimo': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
+            'stock_actual': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
+            'precio_unitario': forms.NumberInput(attrs={'class': 'form-control form-control-sm', 'step': '0.01'}),
+            'proveedor': forms.Select(attrs={'class': 'form-select form-select-sm'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-control form-control-sm'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -150,11 +150,11 @@ class MovimientoInventarioForm(forms.ModelForm):
         model = MovimientoInventario
         fields = ['producto', 'tipo', 'cantidad', 'responsable', 'motivo']
         widgets = {
-            'producto': forms.Select(attrs={'class': 'form-select'}),
-            'tipo': forms.Select(attrs={'class': 'form-select'}),
-            'cantidad': forms.NumberInput(attrs={'class': 'form-control'}),
-            'responsable': forms.TextInput(attrs={'class': 'form-control'}),
-            'motivo': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'producto': forms.Select(attrs={'class': 'form-select form-select-sm'}),
+            'tipo': forms.Select(attrs={'class': 'form-select form-select-sm'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
+            'responsable': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'motivo': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 3}),
         }
         labels = {
             'producto': 'Producto',
@@ -165,14 +165,6 @@ class MovimientoInventarioForm(forms.ModelForm):
         }
 
 # --- Formulario: Usuarios ---
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import Usuario, Area
-
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import Usuario, Area
-
 class UsuarioCreateForm(UserCreationForm):
     area = forms.ModelChoiceField(
         queryset=Area.objects.all(),
@@ -199,19 +191,19 @@ class UsuarioCreateForm(UserCreationForm):
             'tipo_user'
         ]
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control rounded-end'}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control rounded-end'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control rounded-end'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control rounded-end'}),
+            'username': forms.TextInput(attrs={'class': 'form-control form-control-sm rounded-end'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control form-control-sm rounded-end'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control form-control-sm rounded-end'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control form-control-sm rounded-end'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Atributos adicionales para los select
-        self.fields['area'].widget.attrs.update({'class': 'form-select rounded-end'})
-        self.fields['tipo_user'].widget.attrs.update({'class': 'form-select rounded-end'})
-        self.fields['password1'].widget.attrs.update({'class': 'form-control rounded-end'})
-        self.fields['password2'].widget.attrs.update({'class': 'form-control rounded-end'})
+        self.fields['area'].widget.attrs.update({'class': 'form-select form-select-sm rounded-end'})
+        self.fields['tipo_user'].widget.attrs.update({'class': 'form-select form-select-sm rounded-end'})
+        self.fields['password1'].widget.attrs.update({'class': 'form-control form-control-sm rounded-end'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control form-control-sm rounded-end'})
 
         # Help texts
         self.fields['first_name'].help_text = 'Nombre/s real del usuario.'
@@ -233,14 +225,14 @@ class UsuarioChangeForm(UserChangeForm):
         model = Usuario
         fields = ('first_name', 'last_name', 'email', 'telefono', 'tipo_user', 'area', 'img')
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
-            'img': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control form-control-sm'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'img': forms.ClearableFileInput(attrs={'class': 'form-control form-control-sm'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(UsuarioChangeForm, self).__init__(*args, **kwargs)
-        self.fields['tipo_user'] = forms.ChoiceField(choices=TIPO_USER, widget=forms.Select(attrs={'class': 'form-control'}))
-        self.fields['area'] = forms.ModelChoiceField(queryset=Area.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+        self.fields['tipo_user'] = forms.ChoiceField(choices=TIPO_USER, widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+        self.fields['area'] = forms.ModelChoiceField(queryset=Area.objects.all(), widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))

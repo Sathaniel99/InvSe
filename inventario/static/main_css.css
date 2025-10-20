@@ -172,3 +172,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:active{
 .bg-danger-subtle-hover:hover{
     background-color: var(--bs-danger-bg-subtle) !important;
 }
+/* Datables config */
+.dt-column-order{
+    display: none;
+}
+table caption{
+    margin-left: .5rem;
+}

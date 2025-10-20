@@ -12,19 +12,19 @@
             </div>
             <hr class="my-2">
             <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                <button class="btn btn-sm btn-outline-black" data-bs-toggle-tooltip="tooltip"
                     data-bs-title="Comprobar inventario actual" data-bs-toggle="modal" data-bs-target="#RevisarInventarioModal"
                     hx-get="/inventario/revisar-inventario-api/{{ax.id}}" hx-target="#RevisarInventarioModalContent"
                     hx-swap="innerHTML" hx-trigger="click">
                     <i class="bi bi-check-all"></i>
                 </button>
-                <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                <button class="btn btn-sm btn-outline-black" data-bs-toggle-tooltip="tooltip"
                     data-bs-title="Ver inventario actual" data-bs-toggle="modal" data-bs-target="#RevisarInventarioModal"
                     hx-get="/inventario/actual-inventario-api/{{ax.id}}" hx-target="#RevisarInventarioModalContent"
                     hx-swap="innerHTML" hx-trigger="click">
                     <i class="bi bi-clipboard-minus w-100 h-100"></i>
                 </button>
-                <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                <button class="btn btn-sm btn-outline-black" data-bs-toggle-tooltip="tooltip"
                     data-bs-title="Ver historial de inventarios" data-bs-toggle="modal"
                     data-bs-target="#HistorialInventarioModal" hx-get="/inventario/historial-inventario-api/{{ax.id}}"
                     hx-target="#HistorialInventarioModalContent" hx-swap="innerHTML" hx-trigger="click">

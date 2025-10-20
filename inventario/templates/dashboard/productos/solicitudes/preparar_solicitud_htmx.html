@@ -36,14 +36,14 @@
 <div class="d-flex justify-content-center gap-3">
     <form action="{% url 'agregar-item_solicitud-api' id cantidad %}" method="post">
         {% csrf_token %}
-        <button class="btn btn-success rounded-0 fw-semibold"
+        <button class="btn btn-sm btn-success rounded-0 fw-semibold"
             data-bs-id="{{ id }}"
             data-bs-cant="{{ cantidad }}"
             id="add-modal-solicitud">
             <i class="bi bi-check-circle me-2"></i> Añadir
         </button>
     </form>
-    <button class="btn btn-outline-danger-sdcn rounded-0 fw-semibold" data-bs-dismiss="modal">
+    <button class="btn btn-sm btn-outline-danger-sdcn rounded-0 fw-semibold" data-bs-dismiss="modal">
         <i class="bi bi-check-circle me-2"></i> Cancelar
     </button>
 </div>

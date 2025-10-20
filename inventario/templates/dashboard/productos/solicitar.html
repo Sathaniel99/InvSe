@@ -37,21 +37,19 @@
     }
 </style>
 <div class="border border-2 border-secondary-subtle rounded-2 w-100 overflow-auto">
-    <div class="container-fluid d-flex justify-content-end align-items-center gap-2 p-4">
+    <div class="container-fluid d-flex justify-content-end align-items-center p-4">
         <div class="dropdown">
             <button
-                class="btn btn-ghost-black d-flex align-items-center justify-content-center bg-opacity-25 rounded-circle me-2 transition-200 p-2"
+                class="btn btn-sm btn-ghost-black border border-secondary-subtle d-flex align-items-center justify-content-center bg-opacity-25 rounded-circle transition-200 p-2"
                 style="width: 2.5rem; height: 2.5rem;" data-bs-toggle="dropdown" aria-expanded="false"
-                id="dropdownCartButton"
-                hx-get="{% url 'ver_solicitud_api' %}"
-                hx-target="#SolicitudModalContent"
-                hx-swap="innerHTML"
+                data-bs-toggle-tooltip="tooltip" title="Ver listado de solicitudes." id="dropdownCartButton"
+                hx-get="{% url 'ver_solicitud_api' %}" hx-target="#SolicitudModalContent" hx-swap="innerHTML"
                 hx-trigger="click">
                 <i class="bi bi-cart"></i>
             </button>
-            <div class="dropdown-menu p-3" aria-labelledby="dropdownCartButton"
-                style="width: auto; min-width: 25rem; max-height: 80vh;"
-                data-bs-auto-close="outside"> <!-- Cierre al hacer clic fuera -->
+            <div class="dropdown-menu p-3 bg-invert" aria-labelledby="dropdownCartButton"
+                style="width: auto; min-width: 25rem; max-height: 80vh;" data-bs-auto-close="outside">
+                <!-- Cierre al hacer clic fuera -->
                 <div class="position-relative d-flex justify-content-center overflow-hidden h-100">
                     <div id="SolicitudModalContent" class="mt-2 overflow-auto w-100" style="z-index: 2;">
                         <!-- Contenido dinámico -->
@@ -61,88 +59,81 @@
                 </div>
             </div>
         </div>
-        <span class="fw-semibold">Solicitud</span>
     </div>
     <div class="container-fluid d-flex flex-row flex-wrap gap-3 justify-content-center" id="container-productos">
 
         {% if productos %}
         {% for ax in productos %}
-        <div class="card transition-200" style="width: 25rem;">
-            <div class="d-flex justify-content-center align-items-center border border-2 border-secondary-subtle bg-secondary-subtle rounded-2 m-auto w-100 position-relative overflow-hidden"
-                style="height: 15rem; width: 15rem;">
+        <div class="card border border-secondary-subtle transition-all transition-200" style="width: 20rem; font-size: 0.9rem;">
+            <!-- Imagen del producto -->
+            <div class="bg-light d-flex justify-content-center align-items-center p-3"
+                style="height: 12rem; border-bottom: 1px solid #f0f0f0;">
                 {% if ax.imagen and ax.imagen.url != " " %}
-                <img class="w-100 h-100 object-fit-contain transition-200" src="{{ ax.imagen.url }}"
-                    alt="Imagen del Producto {{ ax.nombre }} {{ ax.marca|default_if_none:'' }} {{ ax.modelo|default_if_none:'' }}"
-                    style="z-index: 2; filter: grayscale(1);">
-                <img class="w-100 h-auto object-fit-cover position-absolute transition-200" src="{{ ax.imagen.url }}"
-                    alt="Imagen del Producto {{ ax.nombre }} {{ ax.marca|default_if_none:'' }} {{ ax.modelo|default_if_none:'' }}"
-                    style="z-index: 1; filter: blur(1rem);">
+                <img class="w-100 h-100 object-fit-contain p-2" src="{{ ax.imagen.url }}"
+                    alt="Imagen del Producto {{ ax.nombre }} {{ ax.marca|default_if_none:'' }} {{ ax.modelo|default_if_none:'' }}">
                 {% else %}
-                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle fw-bold rounded position-relative"
-                    style="font-size: 1.1rem;">
-                    <i class="bi bi-image-alt position-absolute display-1 text-secondary-emphasis"></i>
+                <div class="text-center py-4">
+                    <i class="bi bi-image-alt text-muted" style="font-size: 2rem;"></i>
                 </div>
                 {% endif %}
             </div>
-            <div class="card-body">
-                <h5 class="card-title fw-bold">{{ ax.nombre }} {{ ax.marca|default_if_none:"" }} {{ ax.modelo|default_if_none:"" }}</h5>
-                <hr>
-                <div class="mb-2 overflow-y-scroll-hidden overflow-x-hidden border border-2 border-secondary-subtle rounded-2 p-2"
-                    style="height: 11rem;">
-                    <div class="row g-3 mb-2">
-                        <div class="col-6">
-                            <label class="form-label fw-semibold">Cantidad Disponible:</label>
-                            <div
-                                class="border border-2 {% if ax.stock_actual < 4 %}border-danger bg-danger-subtle text-danger{% elif ax.stock_actual > 3 and ax.stock_actual < 6 %}border-warning bg-warning-subtle text-warning{% else %}border-success bg-success-subtle text-success{% endif %} fw-semibold p-2 rounded-2">
-                                {{ ax.stock_actual }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label fw-semibold">Precio unitario:</label>
-                            <div class="border border-2 border-secondary-subtle p-2 rounded-2">
-                                $ {{ ax.precio_unitario }}
-                            </div>
-                        </div>
+
+            <!-- Cuerpo de la card -->
+            <div class="card-body p-3">
+                <!-- Título y marca/modelo -->
+                <h6 class="fw-semibold mb-1" style="font-size: 1rem;">{{ ax.nombre }}</h6>
+                {% if ax.marca or ax.modelo %}
+                <small class="text-muted d-block mb-2">{{ ax.marca|default_if_none:"" }} {{ ax.modelo|default_if_none:""
+                    }}</small>
+                {% endif %}
+
+                <!-- Precio y stock en la misma línea -->
+                <div class="d-flex justify-content-between mb-2">
+                    <div>
+                        <span class="fw-semibold">${{ ax.precio_unitario }}</span>
                     </div>
-                    <div class="col-12 mb-2">
-                        <label class="form-label fw-semibold">Proveedor:</label>
-                        <div class="border border-2 border-secondary-subtle p-2 rounded-2">
-                            {{ ax.proveedor }}
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label fw-semibold">Descripción:</label>
-                        <div class="border border-2 border-secondary-subtle p-2 rounded-2">
-                            {{ ax.descripcion }}
-                        </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <small class="fw-semibold">Stock:</small>
+                        <small class="rounded px-2 py-1 {% if ax.stock_actual < 4 %}bg-danger text-light{% elif ax.stock_actual > 3 and ax.stock_actual < 6 %}bg-warning text-black{% else %}text-light bg-primary{% endif %}">
+                            {{ ax.stock_actual }}
+                        </small>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end">
-                    <div class="d-flex flex-row">
-                        <p class="m-0 bg-warning text-black d-flex justify-content-center align-items-center fw-semibold"
-                            style="width: 3rem;" id="select_stock_{{ ax.id }}">
-                            0
-                        </p>
-                        <div class="d-flex flex-column">
-                            <button
-                                class="btn btn-warning d-flex justify-content-center align-items-center rounded-0 border-warning-subtle fw-semibold"
-                                type="button" style="height: 1.2rem; width: 1rem;"
-                                onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val > 0) select_stock_{{ ax.id }}.innerHTML = val - 1;">-</button>
-                            <button
-                                class="btn btn-warning d-flex justify-content-center align-items-center rounded-0 border-warning-subtle fw-semibold"
-                                type="button" style="height: 1.2rem; width: 1rem;"
-                                onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val < {{ ax.stock_actual }}) select_stock_{{ ax.id }}.innerHTML = val + 1;">+</button>
-                        </div>
+
+                <!-- Proveedor -->
+                <div class="mb-2">
+                    <small class="fw-semibold d-block text-muted">Proveedor:</small>
+                    <small>{{ ax.proveedor }}</small>
+                </div>
+
+                <!-- Descripción (opcional: ocultar si es muy larga) -->
+                <div class="mb-3">
+                    <small class="fw-semibold d-block text-muted">Descripción:</small>
+                    <small class="text-truncate d-block" style="max-width: 100%;">{{ ax.descripcion }}</small>
+                </div>
+
+                <!-- Controles -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2 border border-secondary-subtle p-1 rounded">
+                        <button class="btn btn-sm btn-outline-black px-2 py-0"
+                            onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val > 0) select_stock_{{ ax.id }}.innerHTML = val - 1;">
+                            -
+                        </button>
+                        <span class="fw-semibold" id="select_stock_{{ ax.id }}"
+                            style="min-width: 15px; text-align: center;">0</span>
+                        <button class="btn btn-sm btn-outline-black px-2 py-0"
+                            onclick="let val = parseInt(select_stock_{{ ax.id }}.innerHTML); if (val < {{ ax.stock_actual }}) select_stock_{{ ax.id }}.innerHTML = val + 1;">
+                            +
+                        </button>
                     </div>
-                    <button class="btn btn-warning rounded-0 fw-semibold" data-bs-toggle="modal"
-                        data-bs-toggle-tooltip="tooltip" data-bs-title="Añadir al carrito"
-                        data-bs-target="#CarritoModal" onclick="abrirResumenSolicitud({{ ax.id }})" type="button"
-                        title="Añadir producto a la solicitud">
-                        <i class="bi bi-cart me-2"></i> Añadir
+                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#CarritoModal"
+                        onclick="abrirResumenSolicitud({{ ax.id }})">
+                        <i class="bi bi-cart me-1"></i> Añadir al carrito
                     </button>
                 </div>
             </div>
         </div>
+        
         {% endfor %}
         {% else %}
         <div class="border border-2 border-secondary-subtle p-5 bg-secondary-subtle shadow">
@@ -158,10 +149,6 @@
 
     function abrirResumenSolicitud(productoId) {
         const cantidad = parseInt(document.getElementById('select_stock_' + productoId).innerText) || 0;
-        if (cantidad <= 0) {
-            alert('Selecciona una cantidad mayor a cero.');
-            return;
-        }
         fetch(`/productos/preparar_solicitud/${productoId}/${cantidad}`)
             .then(res => res.text())
             .then(html => {
@@ -172,7 +159,7 @@
 <div class="modal fade" id="CarritoModal" tabindex="-1" aria-labelledby="CarritoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content overflow-hidden bg-invert shadow p-4">
-            <div class="p-3 z-index-overall" id="CarritoModalContent">
+            <div class="p-3 z-index-overall position-relative" id="CarritoModalContent">
                 <!--  EDITAR  -->
                 <!--  EDITAR  -->
             </div>

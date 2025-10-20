@@ -12,14 +12,14 @@
 
 <!-- Tabla -->
 <div class="d-flex justify-content-end align-items-center mb-4">
-    <button type="button" class="btn btn-black fw-semibold d-flex align-items-center gap-2">
+    <button type="button" class="btn btn-sm btn-black fw-semibold d-flex align-items-center gap-2">
         <i class="bi bi-plus-circle"></i> Nuevo producto
     </button>
 </div>
-<table class="table table-hover table-striped table-hover shadow-sm border border-1 border-secondary-subtle rounded-2" id="productos-table">
+<table class="table table-hover table-striped table-hover shadow-sm rounded my-3 overflow-hidden" id="productos-table" style="max-width: 80rem; width: 100%;">
     <caption>Listado de {{ title_page }}</caption>
     <thead>
-        <tr class="table-secondary">
+        <tr>
             <th scope="col" width="8rem">ID</th>
             <th scope="col">Nombre</th>
             <th scope="col" width="12rem">Precio</th>
@@ -28,7 +28,7 @@
         </tr>
     </thead>
     <tbody class="">
-        <tr class="border border-neutral-300">
+        <tr>
             <td class="text-center">P001</td>
             <td class="">Laptop HP EliteBook</td>
             <td class="">$ 899.99</td>
@@ -37,7 +37,7 @@
                 <span class="badge bg-black rounded-pill py-2 text-white">Activo</span>
             </td>
         </tr>
-        <tr class="border border-neutral-300">
+        <tr>
             <td class="text-center">P002</td>
             <td class="">Monitor Dell 27"</td>
             <td class="">$ 349.99</td>
@@ -46,7 +46,7 @@
                 <span class="badge bg-black rounded-pill py-2 text-white">Activo</span>
             </td>
         </tr>
-        <tr class="border border-neutral-300">
+        <tr>
             <td class="text-center">P003</td>
             <td class="">Teclado Mecánico Logitech</td>
             <td class="">129.99</td>
@@ -55,7 +55,7 @@
                 <span class="badge bg-black rounded-pill py-2 text-white">Activo</span>
             </td>
         </tr>
-        <tr class="border border-neutral-300">
+        <tr>
             <td class="text-center">P004</td>
             <td class="">Impresora Epson EcoTank</td>
             <td class="">$299.99</td>
@@ -64,7 +64,7 @@
                 <span class="badge bg-black rounded-pill py-2 text-white">Activo</span>
             </td>
         </tr>
-        <tr class="border border-neutral-300">
+        <tr>
             <td class="text-center">P005</td>
             <td class="">Disco Duro Externo 2TB</td>
             <td class="">$89.99</td>

@@ -1,7 +1,7 @@
 {% extends 'dashboard_template.html' %}
 {% load static %}
 {% block content_dashboard %}
-<div class="border border-2 border-secondary-subtle rounded h-100 p-4">
+<div class="border border-2 border-secondary-subtle rounded h-100 p-4 overflow-y-auto">
     <div class="row">
         <!-- Formulario de Ubicaciones -->
         <form class="col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4 mb-3" method="post" id="ubicacionesForm">
@@ -14,6 +14,7 @@
                 </div>
                 <div class="card-body d-flex flex-column flex-md-row p-2 p-md-3">
                     <!-- Select - Ocupa todo el espacio disponible -->
+                    {% if ubicaciones %}
                     <select id="listUbicaciones"
                         class="form-select bg-transparent border border-2 border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1"
                         size="5" name="element" required>
@@ -21,18 +22,26 @@
                         <option value="{{ ubicacion.id }}">{{ ubicacion.nombre }}</option>
                         {% endfor %}
                     </select>
+                    {% else %}
+                    <div class="bg-transparent border border-2 rounded border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1 p-2">
+                        <div class="w-100 h-100 d-flex justify-content-center align-items-center bg-danger bg-opacity-10 rounded">
+                            <span class="text-muted fs-4">No hay elementos <i class="bi bi-x-circle text-danger"></i></span>
+                        </div>
+                    </div>
+                    {% endif %}
 
                     <!-- Botones - Tamaño fijo con espacio responsive -->
                     <div class="d-flex flex-row flex-md-column justify-content-center gap-2" style="min-width: 40px;">
                         <button type="button" id="create-ubicacion" data-bs-toggle-tooltip="tooltip"
                             data-bs-title="Agregar Ubicacion" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-get="{% url 'create-ubicacion-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
-                            class="btn btn-outline-success-sdcn rounded-0 w-100">
+                            hx-get="{% url 'create-ubicacion-htmx' %}" hx-target="#configModalContent"
+                            hx-swap="innerHTML" hx-trigger="click" class="btn btn-outline-success-sdcn rounded-0 w-100">
                             <i class="bi bi-plus-circle"></i>
                         </button>
                         <button type="button" id="update-ubicacion" data-bs-toggle-tooltip="tooltip"
                             data-bs-title="Editar Ubicacion" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-include="#listUbicaciones" hx-get="{% url 'update-ubicacion-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
+                            hx-include="#listUbicaciones" hx-get="{% url 'update-ubicacion-htmx' %}"
+                            hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
                             data-bs-toggle="modal" data-bs-target="#configModal"
                             class="btn btn-outline-primary-sdcn rounded-0 w-100">
                             <i class="bi bi-pencil"></i>
@@ -56,6 +65,7 @@
                     <h5 class="form-label fw-semibold text-uppercase text-muted mb-0">Áreas</h5>
                 </div>
                 <div class="card-body d-flex flex-column flex-md-row p-2 p-md-3">
+                    {% if areas %}
                     <select id="listAreas"
                         class="form-select bg-transparent border border-2 border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1"
                         size="5" name="element" required>
@@ -65,16 +75,24 @@
                         {% endif %}
                         {% endfor %}
                     </select>
+                    {% else %}
+                    <div class="bg-transparent border border-2 rounded border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1 p-2">
+                        <div class="w-100 h-100 d-flex justify-content-center align-items-center bg-danger bg-opacity-10 rounded">
+                            <span class="text-muted fs-4">No hay elementos <i class="bi bi-x-circle text-danger"></i></span>
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="d-flex flex-row flex-md-column justify-content-center gap-2" style="min-width: 40px;">
-                        <button type="button" id="create-area"  data-bs-toggle-tooltip="tooltip"
+                        <button type="button" id="create-area" data-bs-toggle-tooltip="tooltip"
                             data-bs-title="Agregar Área" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-get="{% url 'create-areas-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
-                            class="btn btn-outline-success-sdcn rounded-0 w-100">
+                            hx-get="{% url 'create-areas-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML"
+                            hx-trigger="click" class="btn btn-outline-success-sdcn rounded-0 w-100">
                             <i class="bi bi-plus-circle"></i>
                         </button>
                         <button type="button" id="update-area" data-bs-toggle-tooltip="tooltip"
                             data-bs-title="Editar Área" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-include="#listAreas" hx-get="{% url 'update-areas-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
+                            hx-include="#listAreas" hx-get="{% url 'update-areas-htmx' %}"
+                            hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
                             data-bs-toggle="modal" data-bs-target="#configModal"
                             class="btn btn-outline-primary-sdcn rounded-0 w-100">
                             <i class="bi bi-pencil"></i>
@@ -98,29 +116,42 @@
                     <h5 class="form-label fw-semibold text-uppercase text-muted mb-0">Estados</h5>
                 </div>
                 <div class="card-body d-flex flex-column flex-md-row p-2 p-md-3">
+                    
+                    {% if ESTADOS %}
                     <select id="listEstados"
                         class="form-select bg-transparent border border-2 border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1"
                         size="5" name="valor" required>
-                        {% for value, label in ESTADOS.choices %}
+                        {% for value, label in ESTADOS %}
                         <option value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
+                    {% else %}
+                    <div class="bg-transparent border border-2 rounded border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1 p-2">
+                        <div class="w-100 h-100 d-flex justify-content-center align-items-center bg-danger bg-opacity-10 rounded">
+                            <span class="text-muted fs-4">No hay elementos <i class="bi bi-x-circle text-danger"></i></span>
+                        </div>
+                    </div>
+                    {% endif %}
+                        
                     <div class="d-flex flex-row flex-md-column justify-content-center gap-2" style="min-width: 40px;">
                         <button type="button" id="create-estados" data-bs-toggle-tooltip="tooltip"
-                            data-bs-title="Agregar Estado de Activo fijo" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-get="{% url 'create-estados-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
+                            data-bs-title="Agregar Estado de Activo fijo" data-bs-toggle="modal"
+                            data-bs-target="#configModal" hx-get="{% url 'create-estados-htmx' %}"
+                            hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
                             class="btn btn-outline-success-sdcn rounded-0 w-100">
                             <i class="bi bi-plus-circle"></i>
                         </button>
                         <button type="button" id="update-estados" data-bs-toggle-tooltip="tooltip"
-                            data-bs-title="Editar Estado de Activo fijo" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-include="#listEstados" hx-post="{% url 'update-estados-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
-                            data-bs-toggle="modal" data-bs-target="#configModal"
+                            data-bs-title="Editar Estado de Activo fijo" data-bs-toggle="modal"
+                            data-bs-target="#configModal" hx-include="#listEstados"
+                            hx-post="{% url 'update-estados-htmx' %}" hx-target="#configModalContent"
+                            hx-swap="innerHTML" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#configModal"
                             class="btn btn-outline-primary-sdcn rounded-0 w-100">
                             <i class="bi bi-pencil"></i>
                         </button>
                         <button type="submit" id="delete-estados" data-bs-toggle-tooltip="tooltip"
-                            data-bs-title="Eliminar Estado" class="btn btn-outline-danger-sdcn rounded-0 flex-grow-1 w-100">
+                            data-bs-title="Eliminar Estado"
+                            class="btn btn-outline-danger-sdcn rounded-0 flex-grow-1 w-100">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -138,6 +169,7 @@
                     <h5 class="form-label fw-semibold text-uppercase text-muted mb-0">Acciones</h5>
                 </div>
                 <div class="card-body d-flex flex-column flex-md-row p-2 p-md-3">
+                    {% if ACCIONES_HISTORIAL %}
                     <select id="listAcciones"
                         class="form-select bg-transparent border border-2 border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1"
                         size="5" name="valor" required>
@@ -145,22 +177,32 @@
                         <option value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
+                    {% else %}
+                    <div class="bg-transparent border border-2 rounded border-secondary-subtle mb-2 mb-md-0 me-md-2 flex-grow-1 p-2">
+                        <div class="w-100 h-100 d-flex justify-content-center align-items-center bg-danger bg-opacity-10 rounded">
+                            <span class="text-muted fs-4">No hay elementos <i class="bi bi-x-circle text-danger"></i></span>
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="d-flex flex-row flex-md-column justify-content-center gap-2" style="min-width: 40px;">
                         <button type="button" id="create-acciones" data-bs-toggle-tooltip="tooltip"
-                            data-bs-title="Agregar Estado de Activo fijo" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-get="{% url 'create-acciones-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
+                            data-bs-title="Agregar Estado de Activo fijo" data-bs-toggle="modal"
+                            data-bs-target="#configModal" hx-get="{% url 'create-acciones-htmx' %}"
+                            hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
                             class="btn btn-outline-success-sdcn rounded-0 w-100">
                             <i class="bi bi-plus-circle"></i>
                         </button>
                         <button type="button" id="update-acciones" data-bs-toggle-tooltip="tooltip"
-                            data-bs-title="Editar Estado de Activo fijo" data-bs-toggle="modal" data-bs-target="#configModal"
-                            hx-include="#listAcciones" hx-post="{% url 'update-acciones-htmx' %}" hx-target="#configModalContent" hx-swap="innerHTML" hx-trigger="click"
-                            data-bs-toggle="modal" data-bs-target="#configModal"
+                            data-bs-title="Editar Estado de Activo fijo" data-bs-toggle="modal"
+                            data-bs-target="#configModal" hx-include="#listAcciones"
+                            hx-post="{% url 'update-acciones-htmx' %}" hx-target="#configModalContent"
+                            hx-swap="innerHTML" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#configModal"
                             class="btn btn-outline-primary-sdcn rounded-0 w-100">
                             <i class="bi bi-pencil"></i>
                         </button>
                         <button type="submit" id="delete-acciones" data-bs-toggle-tooltip="tooltip"
-                            data-bs-title="Eliminar Acción" class="btn btn-outline-danger-sdcn rounded-0 flex-grow-1 w-100">
+                            data-bs-title="Eliminar Acción"
+                            class="btn btn-outline-danger-sdcn rounded-0 flex-grow-1 w-100">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -178,9 +220,9 @@
                     <h5 class="form-label fw-semibold text-uppercase text-muted mb-0">Dominio</h5>
                 </div>
                 <div class="card-body d-flex flex-column align-items-center">
-                    <input class="form-control mb-3 w-100" type="text" name="dominio" required {% if dominio %}value="{{dominio}}" {% endif %}>
+                    <input class="form-control mb-3 w-100 " type="text" name="dominio" required {% if dominio %}value="{{dominio}}" {% else %}style="--bs-border-color : red; --bs-body-color: red;"{% endif %}>
                     {% if dominio %}
-                    <button class="btn btn-outline-black" type="submit">Actualizar</button>
+                    <button class="btn btn-outline-black" type="submit"><i class="bi bi-arrow-clockwise me-1"></i> Actualizar</button>
                     {% else %}
                     <button class="btn btn-outline-black" type="submit">Enviar</button>
                     {% endif %}
@@ -198,12 +240,62 @@
                     <h5 class="form-label fw-semibold text-uppercase text-muted mb-0">Entidad</h5>
                 </div>
                 <div class="card-body d-flex flex-column align-items-center">
-                    <input class="form-control mb-3 w-100" type="text" name="entidad" required {% if entidad %}value="{{entidad}}" {% endif %}>
+                    <input class="form-control mb-3 w-100" type="text" name="entidad" required {% if entidad %}value="{{entidad}}" {% else %}style="--bs-border-color : red; --bs-body-color: red;"{% endif %}>
                     {% if entidad %}
-                    <button class="btn btn-outline-black" type="submit">Actualizar</button>
+                    <button class="btn btn-outline-black" type="submit"><i class="bi bi-arrow-clockwise me-1"></i> Actualizar</button>
                     {% else %}
                     <button class="btn btn-outline-black" type="submit">Enviar</button>
                     {% endif %}
+                </div>
+            </div>
+        </form>
+
+        <!-- Formulario de Imagen de la Web -->
+        <form class="col-sm-12 col-md-12 col-lg-8 col-xl-7 col-xxl-6 mb-3" method="post" id="imgWebForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="img">
+            <input type="hidden" name="action" value="update_imgWeb">
+            <div class="card bg-transparent transition-200 h-100">
+                <div class="card-header bg-secondary bg-opacity-10">
+                    <h5 class="form-label fw-semibold text-uppercase text-muted mb-0">Imagen/Logo Web</h5>
+                </div>
+                <div class="card-body d-flex flex-column align-items-center p-0" style="">
+                    <div class="row h-100 p-3">
+                        <div class="col">
+                            <div class="border border-2 border-secondary-subtle bg-secondary-subtle-hover transition-200 rounded-circle d-flex align-items-center justify-content-center overflow-hidden mx-auto"
+                                style="width: 12rem; height: 12rem;">
+                                {% if img_web == '' %}
+                                <i class="bi bi-x text-secondary" style="font-size: 5rem;" title="Sin imagen establecida en la web."></i>
+                                {% else %}
+                                <img src="{{ img_web }}" class="img-fluid h-100 w-100 object-fit-cover" alt="Imagen de la web">
+                                {% endif %}
+                            </div>
+                            <div class="text-center mt-3">
+                                <small class="form-text m-0">Foto actual</small>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="border border-2 border-secondary-subtle bg-secondary-subtle-hover transition-200 rounded-circle d-flex align-items-center justify-content-center overflow-hidden mx-auto position-relative"
+                                style="width: 12rem; height: 12rem;">
+                                <input type="file" name="imageUpload" id="imageUpload" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" accept="image/*">
+                                <i class="bi bi-cloud-arrow-up text-secondary" style="font-size: 5rem;"
+                                    id="uploadIcon"></i>
+                                <img id="uploadPreview" class="img-fluid h-100 w-100 object-fit-cover d-none" src=""
+                                    alt="Vista previa de nueva foto">
+                            </div>
+                            <div class="text-center mt-3 d-flex flex-column">
+                                <small class="form-text m-0">Nueva foto</small>
+                                <small class="form-text m-0">Formatos: JPG, PNG (Máx. 5MB)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-top border-2 border-secondary-subtle d-flex justify-content-center w-100 p-2 gap-2">
+                        <button class="btn btn-outline-black my-auto" type="submit" name="action" value="upload"><i class="bi bi-arrow-clockwise me-1"></i> Actualizar</button>
+                        {% if img_web != '' %}
+                        <button class="btn btn-outline-danger-sdcn my-auto" type="submit" name="action" value="delete"><i class="bi bi-trash me-1"></i> Eliminar</button>
+                        {% endif %}
+                            
+                    </div>
                 </div>
             </div>
         </form>
@@ -212,7 +304,8 @@
 
 <!-- Modal para Crear/Editar -->
 
-<div class="modal fade" id="configModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="configLabel" aria-hidden="true">
+<div class="modal fade" id="configModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="configLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content overflow-hidden bg-invert shadow">
             <div class="border-bottom border-2 border-secondary-subtle w-100 d-flex" style="z-index: 1600;">
@@ -220,37 +313,59 @@
                     data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="position-relative px-5 py-4 z-index-overall d-flex flex-column" id="configModalContent">
-                
+
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('imageUpload').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('uploadPreview');
+        const icon = document.getElementById('uploadIcon');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                icon.classList.add('d-none');
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "";
+            preview.classList.add('d-none');
+            icon.classList.remove('d-none');
+        }
+    });
+</script>
 {% if messages %}
-    {% for message in messages %}
-        {% if ".." in message.message %}
-        <script>
-            var banner = document.createElement('div');
-            banner.id = 'fullPageBanner';
-            banner.className = 'position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark text-white';
-            banner.style.zIndex = '1050';
-            banner.innerHTML = '<div class="text-center"><h1 class="display-4">¡Operación realizada!</h1><h1 class="display-4" id="label-act">En 3 segundos la página se actualizará.</h1></div>';
-            
-            document.body.appendChild(banner);
-            
-            var tiempoRestante = 3;
-            var labelAct = document.getElementById('label-act');
-            var intervalo = setInterval(function() {
-                tiempoRestante--;
-                labelAct.textContent = 'En ' + tiempoRestante + ' segundos la página se actualizará.';
-            
-                if (tiempoRestante <= 0) {
-                    clearInterval(intervalo);
-                    document.body.removeChild(banner);
-                    location.reload();
-                }
-            }, 1000);
-        </script>
-        {% endif %}
-    {% endfor %}
+{% for message in messages %}
+{% if ".." in message.message %}
+<script>
+    var banner = document.createElement('div');
+    banner.id = 'fullPageBanner';
+    banner.className = 'position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark text-white';
+    banner.style.zIndex = '1050';
+    banner.innerHTML = '<div class="text-center"><h1 class="display-4">¡Operación realizada!</h1><h1 class="display-4" id="label-act">En 3 segundos la página se actualizará.</h1></div>';
+
+    document.body.appendChild(banner);
+
+    var tiempoRestante = 3;
+    var labelAct = document.getElementById('label-act');
+    var intervalo = setInterval(function () {
+        tiempoRestante--;
+        labelAct.textContent = 'En ' + tiempoRestante + ' segundos la página se actualizará.';
+
+        if (tiempoRestante <= 0) {
+            clearInterval(intervalo);
+            document.body.removeChild(banner);
+            location.reload();
+        }
+    }, 1000);
+</script>
+{% endif %}
+{% endfor %}
 {% endif %}
 {% endblock content_dashboard %}

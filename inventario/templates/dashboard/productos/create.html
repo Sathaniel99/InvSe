@@ -3,7 +3,7 @@
 
 {% block content_dashboard %}
 <style>section{display: flex; position: relative; overflow: hidden;}</style>
-<div class="border border-1 border-secondary-subtle rounded shadow p-4 m-auto col-xs-10 col-sm-10 col-md-10 col-lg-7 col-xl-5 col-xxl-4 z-index-overall bg-invert">
+<div class="border border-1 border-secondary-subtle rounded shadow p-4 m-auto col-xs-10 col-sm-12 col-md-10 col-lg-7 col-xl-8 col-xxl-5 z-index-overall bg-invert">
     <div class="d-flex justify-content-center gap-2 p-2 mb-3">
         <i class="bi bi-wind text-center display-5" style="transform: rotateY(180deg);"></i>
         <i class="bi bi-truck text-center display-5"></i>
@@ -11,7 +11,7 @@
     <form class="d-flex flex-column" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
-        <button type="submit" class="btn btn-outline-black mt-2">
+        <button type="submit" class="btn btn-sm btn-outline-black mt-2">
             <i class="bi bi-plus-circle"></i> Guardar
         </button>
     </form>

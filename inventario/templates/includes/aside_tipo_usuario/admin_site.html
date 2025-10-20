@@ -1,30 +1,31 @@
 <div class="d-flex flex-column gap-1">
     <a href="{% url 'home' %}"
-        class="btn {% if 'Inicio' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
+        class="btn btn-sm {% if 'Inicio' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
         <i class="bi bi-house-door fs-5"></i> Inicio
     </a>
 </div>
 <div class="d-flex flex-column gap-1">
     <a href="{% url 'server-config' %}"
-        class="btn {% if 'Configurar servidor' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
-        <i class="bi bi-database fs-5"></i> Configurar Servidor
+        class="btn btn-sm {% if 'Configurar servidor' in title_page %}btn-black{% else %}btn-ghost-black border-0{% endif %} d-flex align-items-center text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9">
+        <i class="bi bi-database fs-5"></i>Servidor
     </a>
 </div>
 <div class="w-100 overflow-hidden">
     <button
-        class="btn {% if 'users' in request.path %}btn-black rounded-bottom-0 {% else %}btn-ghost-black border-0 {% endif %}d-flex align-items-center w-100 text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9"
+        class="btn btn-sm {% if 'users' in request.path %}btn-black rounded-bottom-0 {% else %}btn-ghost-black border-0 {% endif %}d-flex align-items-center justify-content-between w-100 text-decoration-none rounded gap-3 text-nowrap overflow-hidden px-9"
         type="button" data-bs-toggle="collapse" data-bs-target="#proveedores-collapse" aria-expanded="false"
         aria-controls="proveedores-collapse">
-        <i class="bi bi-people fs-5"></i> Gestionar Usuarios
+        <span class="d-flex align-items-center gap-3"><i class="bi bi-people fs-5"></i>Usuarios</span>
+        <i class="bi bi-chevron-down d-flex"></i>
     </button>
-    <div class="collapse multi-collapse border border-secondary-subtle rounded-1 rounded-top-0 p-0 {% if 'users' in request.path %}show{% endif %}"
+    <div class="collapse multi-collapse border-start border-secondary-subtle rounded-0 p-0 {% if 'users' in request.path %}show{% endif %}"
         id="proveedores-collapse">
         <a href="{% url 'create-user' %}"
-            class="btn btn-outline-black {% if 'create-user' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+            class="btn btn-sm btn-outline-black {% if 'create-user' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-4 text-start text-nowrap overflow-hidden px-9">
             <i class="bi bi-plus-circle"></i> Crear usuario
         </a>
         <a href="{% url 'manage-users' %}"
-            class="btn btn-outline-black {% if 'manage-users' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-3 text-start text-nowrap overflow-hidden px-9">
+            class="btn btn-sm btn-outline-black {% if 'manage-users' in request.path %}active {% endif %}border-0 rounded-0 w-100 d-flex align-items-center flex-row gap-4 text-start text-nowrap overflow-hidden px-9">
             <i class="bi bi-list"></i> Listar usuarios
         </a>
     </div>

@@ -1,4 +1,4 @@
-<h4 class="text-center fw-semibold">Solicitud</h4>
+<h4 class="text-center fw-semibold fs-5">Solicitud</h4>
 <hr class="my-2">
 <div>
     {% for key, item in solicitud %}
@@ -8,36 +8,31 @@
             Cantidad: {{ item.cantidad }}
         </div>
         <button hx-get="{% url 'eliminar-item-solicitud-api' key %}" hx-target="#SolicitudModalContent"
-            hx-swap="innerHTML" class="btn btn-danger">
+            hx-swap="innerHTML" class="btn btn-sm btn-danger-sdcn">
             <i class="bi bi-trash"></i> Eliminar
         </button>
     </div>
     {% empty %}
     <div class="rounded-2 p-4" style="background-color: rgba(127.5, 127.5, 127.5, 0.5);">
-        <p class="text-center fs-5 fw-semibold m-0">No hay productos en la solicitud.</p>
+        <p class="text-center fs-6 fw-semibold m-0">No hay productos en la solicitud.</p>
     </div>
     {% endfor %}
 </div>
-<div class="d-flex justify-content-around align-items-center mt-3">
-    {% if solicitud %}
+{% if solicitud %}
+<div class="d-flex justify-content-around align-items-center my-2">
     <form method="post" action="{% url 'confirmar-solicitud-api' %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-outline-success-sdcn rounded-0 fw-semibold d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-outline-success-sdcn fw-semibold d-flex gap-2">
             <i class="bi bi-check-circle"></i>
             Crear Solicitud
         </button>
     </form>
-    {% endif %}
-    {% if solicitud %}
     <button type="button" hx-get="{% url 'vaciar-carrito-api' %}" hx-target="#SolicitudModalContent" hx-swap="innerHTML"
-        class="btn btn-outline-danger-sdcn rounded-0 fw-semibold d-flex gap-2">
+        class="btn btn-sm btn-outline-danger-sdcn fw-semibold d-flex gap-2">
         <i class="bi bi-trash3"></i>Vaciar carrito
     </button>
-    {% endif %}
-
-
-
 </div>
-<div class="position-relative w-100" style="height: 2rem;">
+{% endif %}
+<div class="position-relative w-100" style="height: 1.5rem;">
     <p class="position-absolute end-0 bottom-0 text-muted m-0">{{ fecha }}</p>
 </div>

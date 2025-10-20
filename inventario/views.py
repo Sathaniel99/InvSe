@@ -40,7 +40,7 @@ def home_page(request):
 
 @login_required
 def alertas_stock_api(request):
-    alertas = Alertas.objects.all()
+    alertas = Alertas.objects.all().filter(area__id = request.user.area.id).order_by("-fecha")
     html = render(request, 'dashboard/alertas_stocks_htmx.html', {'alertas' : alertas})
     return HttpResponse(html)
 
@@ -294,7 +294,7 @@ def sin_local_activos(request):
         HistorialActivo.objects.create(
             activo=activo,
             responsable=request.user,
-            accion=ACCIONES_HISTORIAL.MOVIMIENTO_DE_AREA,
+            accion=ACCIONES_HISTORIAL.MOVIMIENTO_DE_ÁREA,
             estado=ESTADO_ACCION_HISTORIAL.COMPLETADO,
             descripcion=f"Activo movido a {ubicacion.nombre}"
         )
@@ -306,7 +306,7 @@ def sin_local_activos(request):
     activos = ActivoFijo.objects.filter(
         responsable__area=area,
         ubicacion__isnull=True
-    ).filter(estado=ESTADOS.SIN_UBICACION)
+    ).filter(estado=ESTADOS.SIN_UBICACIÓN)
     context = {
         'title_page' : 'Activos sin local',
         'activos' : activos

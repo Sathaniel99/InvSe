@@ -19,6 +19,10 @@ def home_page(request):
         ax.baja = ActivoFijo.objects.filter(ubicacion = ax).exclude(estado = ESTADOS.EN_USO).exclude(estado = ESTADOS.EN_REPARACIÓN)
         ax.reparacion = ActivoFijo.objects.filter(ubicacion = ax).exclude(estado = ESTADOS.EN_USO).exclude(estado = ESTADOS.DADO_DE_BAJA)
 
+    user_area_id = request.user.area.id
+    
+    historial = HistorialActivo.objects.all().order_by("-fecha")[:10]
+
     context = {
         'title_page': 'Inicio',
         'ubicaciones': ubicaciones,
@@ -26,6 +30,8 @@ def home_page(request):
         'reparacion' : activos.filter(estado = ESTADOS.EN_REPARACIÓN).count(),
         'baja' : activos.filter(estado = ESTADOS.DADO_DE_BAJA).count(),
         'sin_ubicacion' : activos.filter(estado = ESTADOS.SIN_UBICACIÓN).count(),
+        'alertas' : Alertas.objects.all().filter(area__id = user_area_id).order_by("-fecha")[:4],
+        'historial' : historial
     }
     return render(request, 'dashboard/jefe_area_home_page.html', context)
 
@@ -64,10 +70,26 @@ def preparar_solicitud_api(request, id, cant):
     try:
         cant = int(cant)
     except ValueError:
-        return HttpResponse("Cantidad inválida", status=400)
+        return HttpResponse("""
+        <div class="w-100 d-flex position-absolute top-0" style="z-index: 1600;">
+            <button class="btn-close p-2 ms-auto me-2 my-1" type="button" data-bs-toggle-tooltip="tooltip" data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close" aria-describedby="tooltip933150"></button>
+        </div>
+        <div class="p-4 d-flex flex-column align-items-center">
+            <i class="bi bi-exclamation-triangle-fill text-warning fs-1"></i>
+            <h1 class="text-center">Cantidad introducida inválida.</h1>
+        </div>                    
+        """, status=400)
 
     if cant <= 0:
-        return HttpResponse("<p>Cantidad debe ser mayor a cero.</p>", status=400)
+        return HttpResponse("""
+        <div class="w-100 d-flex position-absolute top-0" style="z-index: 1600;">
+            <button class="btn-close p-2 ms-auto me-2 my-1" type="button" data-bs-toggle-tooltip="tooltip" data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close" aria-describedby="tooltip933150"></button>
+        </div>
+        <div class="p-4 d-flex flex-column align-items-center">
+            <i class="bi bi-exclamation-triangle-fill text-warning fs-1"></i>
+            <h1 class="text-center">La cantidad seleccionada debe ser mayor a cero.</h1>
+        </div>                    
+        """, status=400)
 
     stock_actual = int(producto.stock_actual or 0)
     stock_restante = max(stock_actual - cant, 0)
@@ -92,7 +114,7 @@ def agregar_a_la_solicitud_api(request, id, cant):
 
     solicitud[str(id)] = {
         "ID": producto.id,
-        "nombre": producto.nombre,
+        "nombre": producto.nombre, 
         "marca": producto.marca,
         "modelo": producto.modelo,
         "proveedor": producto.proveedor.nombre if producto.proveedor else "",

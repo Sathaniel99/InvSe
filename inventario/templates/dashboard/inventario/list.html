@@ -12,7 +12,7 @@
     </style>
 
     <!-- Tabla -->
-    <table class="table table-hover table-striped table-hover shadow-sm border border-1 border-secondary-subtle rounded-2"
+    <table class="table table-hover table-striped table-hover shadow-sm border border-1 border-secondary-subtle rounded my-3 overflow-hidden"
         id="inventario-table" style="max-width: 55rem;">
         <caption>Listado de {{ title_page }}</caption>
         <thead>
@@ -28,13 +28,13 @@
                 <td class="text-center">{{ forloop.counter }}</td>
                 <td>{{ ax.nombre }}</td>
                 <td>
-                    <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                    <button class="btn btn-sm btn-outline-black" data-bs-toggle-tooltip="tooltip"
                         data-bs-title="Ver inventario actual" data-bs-toggle="modal" data-bs-target="#VerInventarioModal"
                         hx-get="/inventario/actual-inventario-api/{{ax.id}}" hx-target="#VerInventarioModalContent"
                         hx-swap="innerHTML" hx-trigger="click">
                         <i class="bi bi-clipboard-minus w-100 h-100"></i>
                     </button>
-                    <button class="btn btn-outline-black" data-bs-toggle-tooltip="tooltip"
+                    <button class="btn btn-sm btn-outline-black" data-bs-toggle-tooltip="tooltip"
                         data-bs-title="Ver historial de inventarios" data-bs-toggle="modal"
                         data-bs-target="#HistorialInventarioModal" hx-get="/inventario/historial-inventario-api/{{ax.id}}"
                         hx-target="#HistorialInventarioModalContent" hx-swap="innerHTML" hx-trigger="click">
@@ -55,18 +55,18 @@
                     data-bs-title="Cerrar" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div
                     class="d-flex flex-column align-items-center border-end-0 border border-3 border-secondary overflow-hidden">
-                    <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button"
+                    <button class="btn btn-sm btn-ghost-black rounded-0 border-0 w-100" type="button"
                         data-bs-toggle-tooltip="tooltip" data-bs-title="Imprimir" id="print-modal-button"
                         onclick="generarPaginas()">
                         <i class="bi bi-printer"></i>
                     </button>
                     <hr class="m-0 w-100 border border-2 border-secondary">
-                    <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button"
+                    <button class="btn btn-sm btn-ghost-black rounded-0 border-0 w-100" type="button"
                         data-bs-toggle-tooltip="tooltip" data-bs-title="Crear PDF" id="pdf-modal-button">
                         <i class="bi bi-file-pdf"></i>
                     </button>
                     <hr class="m-0 w-100 border border-2 border-secondary">
-                    <button class="btn btn-ghost-black rounded-0 border-0 w-100" type="button"
+                    <button class="btn btn-sm btn-ghost-black rounded-0 border-0 w-100" type="button"
                         data-bs-toggle-tooltip="tooltip" data-bs-title="Crear imágenes" id="img-modal-button">
                         <i class="bi bi-image"></i>
                     </button>

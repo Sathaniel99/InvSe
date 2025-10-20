@@ -29,7 +29,7 @@
 <main class="flex-grow-1 d-flex flex-column h-100">
     <nav
         class="p-2 border-bottom border-secondary-subtle d-flex flex-row align-items-center justify-content-between gap-2">
-        <button type="button" id="aside-hide" name="aside-hide" class="btn btn-outline-black d-flex align-items-center justify-content-center rounded">
+        <button type="button" id="aside-hide" name="aside-hide" class="btn btn-sm btn-outline-black d-flex align-items-center justify-content-center rounded">
             <i class="bi bi-layout-sidebar fs-5 fw-bold"></i>
         </button>
         <h1 class="fs-4 fw-bold mb-0">{{ title_page }}</h1>
@@ -49,11 +49,11 @@
                 <ul class="dropdown-menu bg-invert p-2">
                     <h5 class="text-center">Mi cuenta</h5>
                     <hr class="m-2">
-                    <li><a class="btn btn-outline-black border-0 w-100 rounded-1" href="{% url 'self-config' %}">Configuración</a></li>
+                    <li><a class="btn btn-sm btn-outline-black border-0 w-100 rounded-1" href="{% url 'self-config' %}">Configuración</a></li>
                     <li>
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
-                            <button class="btn btn-outline-black border-0 w-100 rounded-1" type="submit">Cerrar
+                            <button class="btn btn-sm btn-outline-black border-0 w-100 rounded-1" type="submit">Cerrar
                                 Sesión</button>
                         </form>
                     </li>
@@ -64,7 +64,7 @@
                 <small class="text-muted">{{ request.user.email }}</small>
             </div>
             <button
-                class="btn btn-outline-black d-flex align-items-center justify-content-center rounded px-3 py-1 mx-2"
+                class="btn btn-sm btn-outline-black d-flex align-items-center justify-content-center rounded px-3 py-1 mx-2"
                 name="btn-theme" id="btn-theme">
                 <i class="bi bi-sun" style="width: 1rem;"></i>
             </button>
